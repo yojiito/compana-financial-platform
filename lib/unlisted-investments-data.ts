@@ -461,5 +461,214 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       strategicSynergy: 'SmartHRプラットフォームとのAPI連携およびアプリストア「SmartHR Plus」を通じたエコシステム拡大。',
       enStrategicSynergy: 'Expands the SmartHR Plus App Store ecosystem through strategic API integrations and growth capital.'
     }
+  ],
+
+  // ⑩ 株式会社竹中工務店 (Takenaka)
+  'takenaka': [
+    {
+      id: 'takenaka-road',
+      targetName: '株式会社竹中道路',
+      targetEnName: 'Takenaka Civil Engineering & Road Co., Ltd.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結子会社 (舗装・土木)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Paving & Civil Engineering)',
+      purpose: '道路舗装・都市土木インフラ工事の施工統括',
+      enPurpose: 'Road paving & civil infrastructure construction',
+      holdingRatioPct: 100.0,
+      officialSource: '竹中工務店グループ公式会社概要',
+      enOfficialSource: 'Takenaka Corporation Official Group Disclosures',
+      strategicSynergy: '建築本体と外構・道路舗装の一体施工体制を構築。',
+      enStrategicSynergy: 'Integrated building construction and civil road infrastructure capabilities.'
+    }
+  ],
+
+  // ⑪ YKK株式会社 (YKK)
+  'ykk': [
+    {
+      id: 'ykk-ap',
+      targetName: 'YKK AP株式会社',
+      targetEnName: 'YKK AP Inc.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結中核子会社 (窓・建材事業)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Architectural Products)',
+      purpose: '断熱アルミ樹脂複合窓・ビルファサード・エクステリア建材の製造販売',
+      enPurpose: 'Manufacturing & distribution of insulated windows & commercial facades',
+      holdingRatioPct: 100.0,
+      officialSource: 'YKKグループ公式開示・有報',
+      enOfficialSource: 'YKK Group Official Disclosures',
+      strategicSynergy: '国内住宅用サッシ・ビル用建材でトップシェア。売上高5,000億円超の中核事業。',
+      enStrategicSynergy: 'Domestic market leader in architectural building products generating ¥500B+ revenue.'
+    }
+  ],
+
+  // ⑫ ヤンマーホールディングス株式会社 (Yanmar)
+  'yanmar': [
+    {
+      id: 'yanmar-agri',
+      targetName: 'ヤンマーアグリ株式会社',
+      targetEnName: 'Yanmar Agri Co., Ltd.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結子会社 (スマート農業・農機)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Smart Agriculture & Farm Machinery)',
+      purpose: '自動運転ロボットトラクター・農業DXソリューションの提供',
+      enPurpose: 'Autonomous robotic tractors & agricultural DX solutions',
+      holdingRatioPct: 100.0,
+      officialSource: 'ヤンマーグループ公式開示',
+      enOfficialSource: 'YANMAR Group Corporate Profile',
+      strategicSynergy: 'スマート農業・衛星測位連携農機による食農生産性向上を牽引。',
+      enStrategicSynergy: 'Leads precision agriculture and autonomous satellite-guided farm robotics.'
+    }
+  ],
+
+  // ⑬ 株式会社ロッテホールディングス (Lotte HD)
+  'lotte-hd': [
+    {
+      id: 'lotte-marines',
+      targetName: '株式会社千葉ロッテマリーンズ',
+      targetEnName: 'Chiba Lotte Marines Co., Ltd.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結子会社 (プロ野球球団運営)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (NPB Pro Baseball Club)',
+      purpose: 'パ・リーグ名門球団の運営 ＆ ZOZOマリンスタジアム興行',
+      enPurpose: 'Operation of Pacific League pro baseball franchise & ZOZO Marine Stadium events',
+      holdingRatioPct: 100.0,
+      officialSource: 'ロッテグループ公式会社案内',
+      enOfficialSource: 'LOTTE Group Official Corporate Profile',
+      strategicSynergy: '球団運営を通じたブランド認知拡大とスタジアムエンタメ事業の展開。',
+      enStrategicSynergy: 'Drives national brand affinity and stadium sports entertainment operations.'
+    }
+  ],
+
+  // ⑭ 森ビル株式会社 (Mori Building)
+  'mori-building': [
+    {
+      id: 'mori-hills-reit',
+      targetName: '森ヒルズリート投資法人 (3234)',
+      targetEnName: 'Mori Hills REIT Investment Corporation (3234)',
+      tickerCode: '3234',
+      category: 'listed_strategic',
+      categoryLabel: '上場スポンサー ＆ 旗艦J-REIT (100%資産運用委託)',
+      enCategoryLabel: 'Listed Sponsor & Flagship J-REIT (100% Asset Management)',
+      purpose: '六本木ヒルズ森タワー・愛宕グリーンヒルズ等のコアプレミアム資産の運用',
+      enPurpose: 'Asset management of prime office & commercial properties (Roppongi Hills Mori Tower)',
+      holdingRatioPct: 100.0,
+      officialSource: '森ヒルズリート 有価証券報告書 / スポンサー開示',
+      enOfficialSource: 'Mori Hills REIT Securities Report (EDINET) / Sponsor Profile',
+      strategicSynergy: '資産規模4,000億円超の都心特化型プレミアムJ-REITの単独スポンサー。',
+      enStrategicSynergy: 'Sole sponsor of ¥400B+ premier central Tokyo office REIT.'
+    }
+  ],
+
+  // ⑮ 株式会社新潮社 (Shinchosha)
+  'shinchosha': [
+    {
+      id: 'shinchosha-papyless',
+      targetName: '株式会社パピレス (3641)',
+      targetEnName: 'PAPYLESS CO., LTD. (3641)',
+      tickerCode: '3641',
+      category: 'listed_strategic',
+      categoryLabel: '上場電子書籍レンタルPF (主要取引先・資本提携)',
+      enCategoryLabel: 'Listed E-Book Rental Platform (Strategic Equity Partner)',
+      purpose: '電子書籍レンタルサイト「Renta!」等を通じた新潮文庫・コミックス配信提携',
+      enPurpose: 'Digital distribution alliance for Shincho Bunko and manga via Renta!',
+      officialSource: 'パピレス 有価証券報告書 / 主要取引先開示',
+      enOfficialSource: 'Papyless Securities Report (EDINET) / Primary Partners',
+      strategicSynergy: '電子書籍・コミックレンタルの黎明期からの強固なコンテンツ流通アライアンス。',
+      enStrategicSynergy: 'Longstanding content wholesale distribution partnership since early days of digital reading.'
+    }
+  ],
+
+  // ⑯ 株式会社文藝春秋 (Bungeishunju)
+  'bungeishunju': [
+    {
+      id: 'bungei-bungaku-shinko',
+      targetName: '公益財団法人 日本文学振興会',
+      targetEnName: 'The Society for the Promotion of Japanese Literature',
+      category: 'group_subsidiary',
+      categoryLabel: '文化事業母体 (芥川賞・直木賞・大宅壮一ノンフィクション賞)',
+      enCategoryLabel: 'Cultural Foundation (Akutagawa & Naoki Prize Organizer)',
+      purpose: '日本最高峰の純文学・大衆文学新人賞の選考および日本文学の振興',
+      enPurpose: 'Administration of Japan’s most prestigious literary awards (Akutagawa & Naoki Prizes)',
+      officialSource: '日本文学振興会 公式法人登記 / 文藝春秋公式開示',
+      enOfficialSource: 'Official Corporate Registry & Bungeishunju Disclosures',
+      strategicSynergy: '文壇最高峰の顕彰制度を運営し、世界的ベストセラー作家の登竜門として機能。',
+      enStrategicSynergy: 'Administers the pinnacle literary awards in Japan, launching generational bestseller authors.'
+    }
+  ],
+
+  // ⑰ 株式会社秋田書店 (Akita Shoten)
+  'akitashoten': [
+    {
+      id: 'akita-media-do',
+      targetName: '株式会社メディアドゥ (3678)',
+      targetEnName: 'MEDIA DO Co., Ltd. (3678)',
+      tickerCode: '3678',
+      category: 'listed_strategic',
+      categoryLabel: '上場電子書籍流通・取次 (主要流通パートナー)',
+      enCategoryLabel: 'Listed E-Book Wholesaler (Strategic Distribution Partner)',
+      purpose: 'チャンピオンコミックスの全国電子書店向け取次流通 ＆ 電子配信',
+      enPurpose: 'Wholesale distribution and e-book delivery of Champion comics',
+      officialSource: 'メディアドゥ 有価証券報告書 / 取引先開示',
+      enOfficialSource: 'MEDIA DO Securities Report (EDINET)',
+      strategicSynergy: '少年チャンピオン・ヤングチャンピオン作品のデジタルストア取次を全面推進。',
+      enStrategicSynergy: 'Full-scale wholesale distribution partner for Champion digital comic titles.'
+    }
+  ],
+
+  // ⑱ 株式会社大創産業 (DAISO)
+  'daiso': [
+    {
+      id: 'daiso-us',
+      targetName: 'Daiso USA LLC (米国カリフォルニア州)',
+      targetEnName: 'Daiso USA LLC (California, USA)',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 海外直営子会社 (北米100店舗超展開)',
+      enCategoryLabel: '100% Wholly Owned Overseas Subsidiary (100+ US Stores)',
+      purpose: '北米主要都市（カリフォルニア、テキサス、ニューヨーク等）における直営店舗網拡大',
+      enPurpose: 'Expansion of retail store network across major US metro regions',
+      holdingRatioPct: 100.0,
+      officialSource: '大創産業公式リリース・米国法人登記',
+      enOfficialSource: 'Daiso Industries Official Disclosures & US Filings',
+      strategicSynergy: '全米で急成長する均一価格ジャパニーズライフスタイルショップの直営統括。',
+      enStrategicSynergy: 'Oversees rapid retail footprint expansion of affordable Japanese lifestyle products across the US.'
+    }
+  ],
+
+  // ⑲ アイリスオーヤマ株式会社 (IRIS OHYAMA)
+  'iris-ohyama': [
+    {
+      id: 'iris-chitose',
+      targetName: 'アイリスチトセ株式会社',
+      targetEnName: 'Iris Chitose Inc.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結子会社 (オフィス・教育施設家具)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Office & Educational Furniture)',
+      purpose: '学校・オフィス・福祉施設向け家具および内装システムの製造販売',
+      enPurpose: 'Manufacturing of school desks, office seating & healthcare interior systems',
+      holdingRatioPct: 100.0,
+      officialSource: 'アイリスオーヤマ公式会社案内',
+      enOfficialSource: 'IRIS OHYAMA Official Group Disclosures',
+      strategicSynergy: '全国の学校・官公庁・オフィス市場への強固なBtoB販路を構築。',
+      enStrategicSynergy: 'Establishes commanding B2B distribution across nationwide schools and public offices.'
+    }
+  ],
+
+  // ⑳ 株式会社TBM (LIMEX)
+  'tbm': [
+    {
+      id: 'tbm-circulex',
+      targetName: '株式会社Circulex (再生材リサイクル)',
+      targetEnName: 'Circulex Inc.',
+      category: 'group_subsidiary',
+      categoryLabel: '100% 連結子会社 (循環型リサイクル)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Circular Economy Recycling)',
+      purpose: '使用済みプラスチックおよびLIMEXのマテリアルリサイクル・高度再資源化',
+      enPurpose: 'Material recycling and advanced resource recovery of post-consumer plastics & LIMEX',
+      holdingRatioPct: 100.0,
+      officialSource: 'TBM公式リリース',
+      enOfficialSource: 'TBM Official Press Release',
+      strategicSynergy: '横須賀・大崎工場の最先端自動選別リサイクルプラントを運用。',
+      enStrategicSynergy: 'Operates state-of-the-art automated optical sorting recycling mega-plants.'
+    }
   ]
 };
