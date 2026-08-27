@@ -30,9 +30,17 @@ interface Props {
   companies: any[];
   unlistedCompanies: any[];
   recentGazettes: any[];
+  totalListedCount?: number;
+  totalUnlistedCount?: number;
 }
 
-export default function HomeClientView({ companies, unlistedCompanies, recentGazettes }: Props) {
+export default function HomeClientView({
+  companies,
+  unlistedCompanies,
+  recentGazettes,
+  totalListedCount = 3903,
+  totalUnlistedCount = 25
+}: Props) {
   const { isEn, t } = useLanguage();
 
   const formatMillionYen = (val: number | null | undefined) => {
@@ -56,7 +64,11 @@ export default function HomeClientView({ companies, unlistedCompanies, recentGaz
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-950/80 border border-teal-700/60 text-teal-300 text-xs font-semibold shadow-inner">
             <BarChart2 className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Corporate Financial Intelligence Platform: compana' : '企業分析プラットフォーム「カンパーナ (compana)」'}</span>
+            <span>
+              {isEn
+                ? `TSE All Listed ${totalListedCount.toLocaleString()} Equities + ${totalUnlistedCount} Unlisted Giants + 50 J-REITs`
+                : `東証全上場 ${totalListedCount.toLocaleString()}社 ＋ 未上場メガ企業 ${totalUnlistedCount}社 ＋ J-REIT 50銘柄 完全網羅`}
+            </span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-4xl mx-auto leading-tight sm:leading-none">
