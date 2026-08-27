@@ -39,7 +39,9 @@ export async function GET(request: NextRequest) {
   }
 
   const qLower = rawQ.toLowerCase();
-  const searchTerms = [rawQ];
+  const qUpper = rawQ.toUpperCase();
+  const qNfkc = rawQ.normalize('NFKC');
+  const searchTerms = Array.from(new Set([rawQ, qLower, qUpper, qNfkc]));
 
   // 英語エイリアスを追加
   for (const [enKey, jpTerms] of Object.entries(ENGLISH_TO_JAPANESE_SEARCH_MAP)) {

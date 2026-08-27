@@ -72,8 +72,8 @@ export function validateTickerCode(tickerCode: string): { isValid: boolean; erro
     return { isValid: false, error: '証券コードが指定されていません（記載漏れ）' };
   }
   const cleaned = tickerCode.trim();
-  // 4桁数字または4桁+英字
-  if (/^\d{4}$/.test(cleaned) || /^\d{3}[A-Z\d]$/.test(cleaned)) {
+  // JPX公式コード体系: 4桁数字(7203)、5桁数字(種類株 25935)、または新英字コード(130A)
+  if (/^[0-9A-Z]{4,5}$/.test(cleaned)) {
     return { isValid: true };
   }
   return { isValid: false, error: `無効な証券コード形式です (入力: "${cleaned}")` };
