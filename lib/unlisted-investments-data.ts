@@ -39,6 +39,20 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enStrategicSynergy: 'Core strategic partner in ANN broadcasting network. Maintained under mutual shareholding agreement.'
     },
     {
+      id: 'asahi-media-lab-ventures',
+      targetName: '朝日メディアラボベンチャーズ (AMLV 1号・2号ファンド)',
+      targetEnName: 'Asahi Media Lab Ventures (AMLV Funds I & II)',
+      category: 'cvc_pure_investment',
+      categoryLabel: '公式CVCベンチャー投資ファンド (総額53億円超)',
+      enCategoryLabel: 'Official Corporate VC Funds (¥5.3B+ AUM)',
+      purpose: 'シード〜アーリーステージのテクノロジー・SaaS・メディアDXスタートアップ純投資',
+      enPurpose: 'Early-stage tech, SaaS, DX & media venture investments',
+      officialSource: '朝日メディアラボベンチャーズ公式開示 (累計63社投資実績)',
+      enOfficialSource: 'Asahi Media Lab Ventures Official Disclosures (63+ portfolio investments)',
+      strategicSynergy: 'Firework（動画DX）、PETOKOTO（ペットテック）、ミナカラ（オンライン薬局）、Clear（SAKE100）など国内外63社に出資。',
+      enStrategicSynergy: 'Active early-stage investments across 63+ startups including Firework, Petokoto, Minacolor, and Clear.'
+    },
+    {
       id: 'asahi-asahi-broadcasting',
       targetName: '朝日放送グループホールディングス株式会社 (9405)',
       targetEnName: 'Asahi Broadcasting Group Holdings Corporation (9405)',
@@ -55,20 +69,6 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enOfficialSource: 'Asahi Broadcasting Group HD Securities Report (EDINET: E04381)',
       strategicSynergy: '大阪・中之島を拠点とする関西準キー局との強固な資本提携。',
       enStrategicSynergy: 'Solid cross-capital alliance with Kansai flagship network broadcaster in Osaka Nakanoshima.'
-    },
-    {
-      id: 'asahi-toyo-keizai',
-      targetName: '株式会社東洋経済新報社',
-      targetEnName: 'Toyo Keizai Inc.',
-      category: 'group_subsidiary',
-      categoryLabel: '経済出版・メディア資本提携',
-      enCategoryLabel: 'Financial Publishing & Strategic Alliance',
-      purpose: '経済ニュース・出版分野での協業',
-      enPurpose: 'Editorial & economic journalism collaboration',
-      officialSource: '公式開示・資本提携発表',
-      enOfficialSource: 'Official corporate disclosure & publishing partnership',
-      strategicSynergy: '週刊東洋経済や四季報データ等の経済情報ネットワーク連携。',
-      enStrategicSynergy: 'Content integration and economic data syndication.'
     }
   ],
 
@@ -161,6 +161,20 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enStrategicSynergy: 'Combined global digital subscribers exceed 2.5 million, forming one of the largest financial news platforms globally.'
     },
     {
+      id: 'nikkei-kepple',
+      targetName: '株式会社ケップル (Kepple)',
+      targetEnName: 'Kepple Inc.',
+      category: 'cvc_pure_investment',
+      categoryLabel: 'スタートアップ情報基盤・資本業務提携',
+      enCategoryLabel: 'Startup Market Intelligence & Strategic Equity',
+      purpose: '未上場スタートアップ・VC投資データベースの共同開発 ＆ 日経テレコン連携',
+      enPurpose: 'Co-development of private startup investment database & Nikkei Telecom integration',
+      officialSource: '日経新聞 ＆ ケップル 資本業務提携公式開示',
+      enOfficialSource: 'Nikkei & Kepple Official Capital & Business Alliance Disclosure',
+      strategicSynergy: '国内最大の未上場スタートアップ資金調達・財務データベースを共同推進。',
+      enStrategicSynergy: 'Jointly operates Japan’s premier private company and funding intelligence database.'
+    },
+    {
       id: 'nikkei-quick',
       targetName: '株式会社QUICK',
       targetEnName: 'QUICK Corp.',
@@ -180,6 +194,24 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
   // ④ 株式会社小学館 (Shogakukan)
   'shogakukan': [
     {
+      id: 'shogakukan-media-do',
+      targetName: '株式会社メディアドゥ (3678)',
+      targetEnName: 'MEDIA DO Co., Ltd. (3678)',
+      tickerCode: '3678',
+      category: 'listed_strategic',
+      categoryLabel: '上場電子書籍流通・取次 (第4位主要株主)',
+      enCategoryLabel: 'Listed E-Book Wholesaler (4th Largest Shareholder)',
+      purpose: '国内シェア7割の電子書籍取次プラットフォームとの流通・電子コミック配信提携',
+      enPurpose: 'Core digital comic wholesale & distribution alliance with 70% market share leader',
+      holdingRatioPct: 3.72,
+      sharesHeld: '610,000株',
+      estimatedValueOku: 15,
+      officialSource: 'メディアドゥ 有価証券報告書 (EDINET: E30129) / 大株主の状況',
+      enOfficialSource: 'MEDIA DO Securities Report (EDINET: E30129) / Major Shareholders',
+      strategicSynergy: '小学館コミックス（コナン、サンデーうぇぶり等）の全国電子書店への取次流通における最重要パートナー。',
+      enStrategicSynergy: 'Essential distribution partner handling wholesale of Shogakukan digital titles across all e-book stores.'
+    },
+    {
       id: 'shogakukan-shueisha',
       targetName: '株式会社集英社',
       targetEnName: 'Shueisha Inc.',
@@ -192,21 +224,6 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enOfficialSource: 'Shueisha Official Corporate History & Group Filings',
       strategicSynergy: '1926年に小学館の娯楽出版部門が独立して設立。週刊少年ジャンプ等世界的人気IPを生む集英社の主要出資母体。',
       enStrategicSynergy: 'Founded in 1926 as a spin-off of Shogakukan entertainment division; holds major equity in Shueisha.'
-    },
-    {
-      id: 'shogakukan-hakusensha',
-      targetName: '株式会社白泉社',
-      targetEnName: 'Hakusensha, Inc.',
-      category: 'group_subsidiary',
-      categoryLabel: '100% 連結子会社 (少女マンガ・アニメ)',
-      enCategoryLabel: '100% Wholly Owned Subsidiary (Shojo Manga & Anime)',
-      purpose: '『花とゆめ』『LaLa』『ヤングアニマル』『ベルセルク』等の独自IP出版',
-      enPurpose: 'Publishing acclaimed manga titles including Berserk, Hana to Yume, and LaLa',
-      holdingRatioPct: 100.0,
-      officialSource: '白泉社公式会社概要・グループ統括開示',
-      enOfficialSource: 'Hakusensha Official Corporate Disclosures',
-      strategicSynergy: '少女マンガ・青年コミック特化の独立レーベルとしてグループ内IP多角化を推進。',
-      enStrategicSynergy: 'Operates as specialized shojo and seinen manga publisher within the group.'
     },
     {
       id: 'shogakukan-viz-media',
@@ -223,23 +240,56 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enStrategicSynergy: 'Primary international distribution hub jointly owned by Shogakukan, Shueisha, and ShoPro.'
     },
     {
-      id: 'shogakukan-shopro',
-      targetName: '株式会社小学館集英社プロダクション (ShoPro)',
-      targetEnName: 'Shogakukan-Shueisha Productions Co., Ltd. (ShoPro)',
+      id: 'shogakukan-hakusensha',
+      targetName: '株式会社白泉社',
+      targetEnName: 'Hakusensha, Inc.',
       category: 'group_subsidiary',
-      categoryLabel: 'グループ中核IPライセンス・キャラクター事業',
-      enCategoryLabel: 'Core IP Licensing & Merchandising Subsidiary',
-      purpose: '『ポケットモンスター』『名探偵コナン』『ドラえもん』等のアニメ製作委員会主導・教育事業',
-      enPurpose: 'Anime production committee management (Pokemon, Conan, Doraemon) & educational media',
-      officialSource: 'ShoPro公式会社概要',
-      enOfficialSource: 'ShoPro Official Corporate Registry',
-      strategicSynergy: '劇場版映画の製作委員会出資およびキャラクター商品化ライセンスを包括管理。',
-      enStrategicSynergy: 'Comprehensive management of theatrical anime production and global character merchandising.'
+      categoryLabel: '100% 連結子会社 (少女マンガ・アニメ)',
+      enCategoryLabel: '100% Wholly Owned Subsidiary (Shojo Manga & Anime)',
+      purpose: '『花とゆめ』『LaLa』『ヤングアニマル』『ベルセルク』等の独自IP出版',
+      enPurpose: 'Publishing acclaimed manga titles including Berserk, Hana to Yume, and LaLa',
+      holdingRatioPct: 100.0,
+      officialSource: '白泉社公式会社概要・グループ統括開示',
+      enOfficialSource: 'Hakusensha Official Corporate Disclosures',
+      strategicSynergy: '少女マンガ・青年コミック特化の独立レーベルとしてグループ内IP多角化を推進。',
+      enStrategicSynergy: 'Operates as specialized shojo and seinen manga publisher within the group.'
     }
   ],
 
   // ⑤ 株式会社講談社 (Kodansha)
   'kodansha': [
+    {
+      id: 'kodansha-media-do',
+      targetName: '株式会社メディアドゥ (3678)',
+      targetEnName: 'MEDIA DO Co., Ltd. (3678)',
+      tickerCode: '3678',
+      category: 'listed_strategic',
+      categoryLabel: '上場電子書籍流通・取次 (第5位主要株主)',
+      enCategoryLabel: 'Listed E-Book Wholesaler (5th Largest Shareholder)',
+      purpose: '電子コミック・雑誌のデジタル取次流通ネットワーク強化',
+      enPurpose: 'Digital comic and magazine wholesale distribution infrastructure',
+      holdingRatioPct: 3.58,
+      sharesHeld: '590,000株',
+      estimatedValueOku: 14,
+      officialSource: 'メディアドゥ 有価証券報告書 (EDINET: E30129) / 大株主の状況',
+      enOfficialSource: 'MEDIA DO Securities Report (EDINET: E30129) / Major Shareholders',
+      strategicSynergy: 'マガジン系コミックス等の電子配信を全電子書店（Kindle、コミックシーモア、ebookjapan等）へ円滑取次。',
+      enStrategicSynergy: 'Critical digital supply chain handling wholesale distribution across all major retail platforms.'
+    },
+    {
+      id: 'kodansha-creators-lab',
+      targetName: '講談社クリエイターズラボ (Creators’ Lab / Webtoon投資)',
+      targetEnName: 'Kodansha Creators’ Lab (IP & Webtoon Studio Investments)',
+      category: 'cvc_pure_investment',
+      categoryLabel: '公式IPアクセラレーター ＆ Webtoon投資',
+      enCategoryLabel: 'Official IP Accelerator & Webtoon Studio Venture Fund',
+      purpose: '縦スクロールマンガ制作会社（SORAJIMA等）やインディーゲームクリエイターへの出資・資金助成',
+      enPurpose: 'Growth equity in vertical Webtoon studios (SORAJIMA) and indie game development',
+      officialSource: '講談社クリエイターズラボ公式開示・出資リリース',
+      enOfficialSource: 'Kodansha Creators’ Lab Official Investment Disclosures',
+      strategicSynergy: 'グローバル縦スクロールマンガ市場（韓国・中国・北米対抗）への先行投資と次世代ゲームIPの創出。',
+      enStrategicSynergy: 'Direct venture investment capturing next-generation global vertical-scroll manga and gaming IP.'
+    },
     {
       id: 'kodansha-king-records',
       targetName: 'キングレコード株式会社 (KING RECORDS)',
@@ -253,39 +303,60 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enOfficialSource: 'King Records Official Corporate Profile & Kodansha Group Filings',
       strategicSynergy: '『進撃の巨人』『魔法少女リリカルなのは』『エヴァンゲリオン（旧劇）』など数々のアニメ音楽・映像ソフトを内製化。',
       enStrategicSynergy: 'In-house production of hit anime music soundtracks and home video distribution.'
-    },
-    {
-      id: 'kodansha-kobunsha',
-      targetName: '株式会社光文社',
-      targetEnName: 'Kobunsha Co., Ltd.',
-      category: 'group_subsidiary',
-      categoryLabel: '音羽グループ中核出版社',
-      enCategoryLabel: 'Core Otowa Group Publishing Affiliate',
-      purpose: '『VERY』『CLASSY.』『JJ』『FLASH』等の女性誌・写真週刊誌・光文社新書',
-      enPurpose: 'Leading fashion magazines (VERY, CLASSY.), photo journalism, and paperback non-fiction',
-      officialSource: '光文社公式会社案内',
-      enOfficialSource: 'Kobunsha Official Disclosures',
-      strategicSynergy: '女性ファッション誌および一般教養書籍における音羽グループの強力なブランド網を構築。',
-      enStrategicSynergy: 'Strengthens Otowa Group dominance in women’s lifestyle and non-fiction publishing.'
-    },
-    {
-      id: 'kodansha-usa',
-      targetName: 'Kodansha USA Publishing, LLC (米国ニューヨーク)',
-      targetEnName: 'Kodansha USA Publishing, LLC (New York, USA)',
-      category: 'group_subsidiary',
-      categoryLabel: '100% 北米英語圏直営パブリッシャー',
-      enCategoryLabel: '100% Direct North American Publishing Hub',
-      purpose: '英語圏における講談社IP（進撃の巨人・ブルーロック等）のダイレクト出版・デジタル配信',
-      enPurpose: 'Direct English localization, publishing & digital distribution in Western markets',
-      holdingRatioPct: 100.0,
-      officialSource: '講談社公式リリース・Kodansha USA Corporate Profile',
-      enOfficialSource: 'Kodansha Official Release & Kodansha USA Filings',
-      strategicSynergy: '現地流通を中抜きし、講談社が100%の版権利益を直接享受するグローバル直販体制。',
-      enStrategicSynergy: 'Direct publishing model capturing 100% licensing margin in international markets.'
     }
   ],
 
-  // ⑥ サントリーホールディングス株式会社 (Suntory HD)
+  // ⑥ 株式会社集英社 (Shueisha)
+  'shueisha': [
+    {
+      id: 'shueisha-media-do',
+      targetName: '株式会社メディアドゥ (3678)',
+      targetEnName: 'MEDIA DO Co., Ltd. (3678)',
+      tickerCode: '3678',
+      category: 'listed_strategic',
+      categoryLabel: '上場電子書籍流通・取次 (主要資本提携)',
+      enCategoryLabel: 'Listed E-Book Wholesaler (Strategic Equity Partner)',
+      purpose: '『少年ジャンプ』『ヤングジャンプ』等の電子コミック取次流通・海外配信連携',
+      enPurpose: 'Digital distribution & wholesale of Weekly Shonen Jump titles',
+      holdingRatioPct: 2.93,
+      sharesHeld: '480,000株',
+      estimatedValueOku: 12,
+      officialSource: '集英社 ＆ メディアドゥ 資本業務提携開示 (2017年)',
+      enOfficialSource: 'Shueisha & MEDIA DO Capital Alliance Filing (2017)',
+      strategicSynergy: 'ジャンプ作品等の電子書店向けディストリビューションおよび海外多言語配信の技術提携。',
+      enStrategicSynergy: 'Distribution infrastructure supporting Jump digital comics and global multi-language delivery.'
+    },
+    {
+      id: 'shueisha-games-xr',
+      targetName: '株式会社集英社ゲームズ / 集英社XR',
+      targetEnName: 'SHUEISHA GAMES Inc. / SHUEISHA XR',
+      category: 'cvc_pure_investment',
+      categoryLabel: 'グループ新事業・ゲーム＆メタバース開発投資',
+      enCategoryLabel: 'New Business & Metaverse / Game Development Investment Hub',
+      purpose: 'クリエイター発掘、インディーゲームパブリッシング、AR/VRエンタメ技術開発',
+      enPurpose: 'Creator scouting, indie game publishing & AR/VR entertainment technology',
+      officialSource: '集英社ゲームズ公式設立開示 (2022年)',
+      enOfficialSource: 'SHUEISHA GAMES Official Establishment Disclosure (2022)',
+      strategicSynergy: '世界トップクラスのマンガIPを自社主導でコンソール・Steam・モバイルゲームへ展開。',
+      enStrategicSynergy: 'Drives proprietary global game development based on legendary Shonen Jump franchises.'
+    },
+    {
+      id: 'shueisha-viz-media',
+      targetName: 'VIZ Media, LLC (米国サンフランシスコ)',
+      targetEnName: 'VIZ Media, LLC (San Francisco, USA)',
+      category: 'group_subsidiary',
+      categoryLabel: '共同出資 北米最大手マンガ配給会社',
+      enCategoryLabel: 'Joint Venture / Largest Manga Publisher in North America',
+      purpose: '北米・欧米英語圏における『ONE PIECE』『呪術廻戦』『チェンソーマン』等の英語翻訳出版・「MANGA Plus」連携',
+      enPurpose: 'English translation publishing & anime licensing across North America',
+      officialSource: 'VIZ Media LLC Official Corporate Filing / 集英社・小学館共同出資',
+      enOfficialSource: 'VIZ Media LLC Official Corporate Filings (Jointly owned with Shogakukan)',
+      strategicSynergy: '北米マンガ市場で過半数のシェアを誇る英語圏出版事業の基盤。',
+      enStrategicSynergy: 'Dominant English-language manga publisher commanding over 50% North American market share.'
+    }
+  ],
+
+  // ⑦ サントリーホールディングス株式会社 (Suntory HD)
   'suntory-hd': [
     {
       id: 'suntory-food-intl',
@@ -323,7 +394,7 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
     }
   ],
 
-  // ⑦ 株式会社Preferred Networks (PFN)
+  // ⑧ 株式会社Preferred Networks (PFN)
   'preferred-networks': [
     {
       id: 'pfn-preferred-elements',
@@ -356,7 +427,7 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
     }
   ],
 
-  // ⑧ 株式会社SmartHR (SmartHR)
+  // ⑨ 株式会社SmartHR (SmartHR)
   'smarthr': [
     {
       id: 'smarthr-space-cvc',
