@@ -15,7 +15,7 @@ async function main() {
     console.log(`  • Price: ¥${c.currentPrice} | Market Cap: ¥${c.marketCap}B`);
     console.log(`  • Shareholders Sample (${c.shareholders.length}):`);
     for (const s of c.shareholders) {
-      console.log(`    - Rank ${s.rank}: ${s.name} | ${s.ratio}% | ${s.sharesCount?.toLocaleString()} shares`);
+      console.log(`    - Rank ${s.rank}: ${s.shareholderName} | ${s.holdingRatio}% | ${s.sharesHeld?.toLocaleString()} shares`);
     }
     console.log(`  • Financials Sample (${c.financials.length}):`);
     for (const f of c.financials) {

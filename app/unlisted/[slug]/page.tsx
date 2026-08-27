@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { Building, Globe, MapPin, User, Calendar, Scale, ArrowLeft, Coins, Users, BookOpen, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Building, Globe, MapPin, User, Calendar, Scale, ArrowLeft, Coins, Users, BookOpen, Clock, ShieldCheck, CheckCircle2, Briefcase } from 'lucide-react';
 import GazetteBsVisualizer from '@/components/GazetteBsVisualizer';
 import CapitalEventTimeline from '@/components/CapitalEventTimeline';
 import UnlistedShareholderTracker from '@/components/UnlistedShareholderTracker';
 import UnlistedShikihoProfile from '@/components/UnlistedShikihoProfile';
+import UnlistedInvestmentPortfolio from '@/components/UnlistedInvestmentPortfolio';
+import { UNLISTED_INVESTMENTS_DATA } from '@/lib/unlisted-investments-data';
 
 interface PageProps {
   params: Promise<{
@@ -38,6 +40,7 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
   }
 
   const latestReport = company.gazetteReports[company.gazetteReports.length - 1];
+  const investmentHoldings = UNLISTED_INVESTMENTS_DATA[slug] || [];
 
   return (
     <div className="space-y-8 pb-16">
@@ -138,7 +141,17 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
           <UnlistedShikihoProfile company={company} />
         </section>
 
-        {/* 2. 大株主名簿 ＆ 資本構成 (Cap Table) */}
+        {/* 2. 💼 保有株式ポートフォリオ ＆ 株式持合い・純投資 */}
+        {investmentHoldings.length > 0 && (
+          <section className="space-y-4">
+            <UnlistedInvestmentPortfolio
+              companyName={company.name}
+              holdings={investmentHoldings}
+            />
+          </section>
+        )}
+
+        {/* 3. 大株主名簿 ＆ 資本構成 (Cap Table) */}
         {company.shareholders.length > 0 && (
           <section className="space-y-4">
             <UnlistedShareholderTracker
@@ -148,7 +161,7 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
           </section>
         )}
 
-        {/* 3. 官報決算公告 & AI BS診断 */}
+        {/* 4. 官報決算公告 & AI BS診断 */}
         <section className="space-y-4 pt-4 border-t border-slate-200">
           <div className="flex items-center gap-2">
             <Scale className="w-5 h-5 text-teal-600" />
@@ -164,7 +177,7 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
           />
         </section>
 
-        {/* 4. 資本政策・資金調達＆減資タイムライン */}
+        {/* 5. 資本政策・資金調達＆減資タイムライン */}
         {company.capitalEvents.length > 0 && (
           <section className="space-y-4 pt-4 border-t border-slate-200">
             <div className="flex items-center gap-2">
