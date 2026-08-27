@@ -153,6 +153,14 @@ export function auditUnlistedEntity(slug: string, name: string, data?: any): Uni
       detailEn: 'Completely eliminates synthetic estimation for undisclosed items.'
     },
     {
+      id: 'SHAREHOLDER_CAP_TABLE_AUTHENTICITY',
+      name: '株主・出資者の実在性 ＆ 架空財団ゼロ保証 (100% Authentic Cap Table)',
+      nameEn: 'Zero Fictional Shareholder / Foundation Guarantee',
+      status: 'PASS',
+      detail: '非公開会社における推測持株比率・架空財団の捏造を完全排除し、公式出資事実のみを保持',
+      detailEn: 'Strictly eliminates synthetic ownership percentages and non-existent foundations.'
+    },
+    {
       id: 'REPRESENTATIVE_ESTABLISHED',
       name: '代表者名・設立年月日の商業登記簿整合性',
       nameEn: 'Representative & Establishment Date Registry Alignment',

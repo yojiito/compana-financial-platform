@@ -39,10 +39,9 @@ async function main() {
         { fiscalPeriod: 86, periodEnd: '2023-11-30', gazetteDate: '2024-02-27', gazetteIssue: '決算公告 (第86期 決算公告)', totalAssets: 265000.0, totalLiabilities: 96500.0, netAssets: 168500.0, capitalStock: 300.0, capitalSurplus: 15.0, retainedEarnings: 158200.0, netIncome: 14500.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '音羽グループ・創業家資産管理会社', shareholderType: 'founder', holdingRatio: 42.5, sharesHeld: 2550000 },
-        { rank: 2, shareholderName: '講談社 役員・従業員持株会', shareholderType: 'employee', holdingRatio: 18.2, sharesHeld: 1092000 },
-        { rank: 3, shareholderName: '野間文化財団 / 関連公益法人', shareholderType: 'corporate', holdingRatio: 15.0, sharesHeld: 900000 },
-        { rank: 4, shareholderName: '取引先・関連金融機関', shareholderType: 'corporate', holdingRatio: 12.3, sharesHeld: 738000 }
+        { rank: 1, shareholderName: '野間家（創業者一族）および音羽グループ関連企業', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '講談社 役員・従業員持株会', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '公益財団法人 野間文化財団', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null }
       ]
     },
 
@@ -79,9 +78,9 @@ async function main() {
         { fiscalPeriod: 82, periodEnd: '2023-05-31', gazetteDate: '2023-08-24', gazetteIssue: '決算公告 (第82期 決算公告)', totalAssets: 320000.0, totalLiabilities: 75000.0, netAssets: 245000.0, capitalStock: 108.0, capitalSurplus: 0.0, retainedEarnings: 236000.0, netIncome: 16200.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '株式会社小学館 (一ツ橋グループ親密)', shareholderType: 'corporate', holdingRatio: 46.8, sharesHeld: 1010880 },
-        { rank: 2, shareholderName: '集英社 従業員持株会', shareholderType: 'employee', holdingRatio: 24.5, sharesHeld: 529200 },
-        { rank: 3, shareholderName: '創業家・役員・親密取引先', shareholderType: 'founder', holdingRatio: 18.7, sharesHeld: 403920 }
+        { rank: 1, shareholderName: '株式会社小学館', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '集英社 役職員持株会', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '創業家・役員・親密取引先', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null }
       ]
     },
 
@@ -118,9 +117,9 @@ async function main() {
         { fiscalPeriod: 85, periodEnd: '2023-02-28', gazetteDate: '2023-05-26', gazetteIssue: '決算公告 (第85期 決算公告)', totalAssets: 182000.0, totalLiabilities: 54000.0, netAssets: 128000.0, capitalStock: 147.0, capitalSurplus: 0.0, retainedEarnings: 122000.0, netIncome: 6800.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '相賀家・一ツ橋グループ資産管理会社', shareholderType: 'founder', holdingRatio: 52.0, sharesHeld: 1528800 },
-        { rank: 2, shareholderName: '小学館 従業員持株会', shareholderType: 'employee', holdingRatio: 22.0, sharesHeld: 646800 },
-        { rank: 3, shareholderName: '公益財団法人 相賀文化財団', shareholderType: 'corporate', holdingRatio: 14.0, sharesHeld: 411600 }
+        { rank: 1, shareholderName: '相賀家（創業者一族）および一ツ橋グループ親密企業', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '小学館 役職員持株会', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '一ツ橋グループ関連会社・親密取引先', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null }
       ]
     },
 
@@ -157,9 +156,9 @@ async function main() {
         { fiscalPeriod: 152, periodEnd: '2023-12-31', gazetteDate: '2024-03-28', gazetteIssue: '決算公告 (第152期 決算公告)', totalAssets: 485000.0, totalLiabilities: 200000.0, netAssets: 285000.0, capitalStock: 2500.0, capitalSurplus: 120.0, retainedEarnings: 272000.0, netIncome: 16500.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '日本経済新聞社 社員持株会 (日経持株会)', shareholderType: 'employee', holdingRatio: 52.8, sharesHeld: 2640000 },
-        { rank: 2, shareholderName: '公益財団法人 日本経済研究センター / 文化財団', shareholderType: 'corporate', holdingRatio: 18.5, sharesHeld: 925000 },
-        { rank: 3, shareholderName: '日経役員・OB株主', shareholderType: 'founder', holdingRatio: 16.2, sharesHeld: 810000 }
+        { rank: 1, shareholderName: '日本経済新聞社 社員持株会（日経持株会）', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '公益財団法人 日本経済研究センター / 日経関連法人', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '日経役員・OB株主', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null }
       ]
     },
 
@@ -196,9 +195,9 @@ async function main() {
         { fiscalPeriod: 22, periodEnd: '2023-03-31', gazetteDate: '2023-06-27', gazetteIssue: '決算公告 (第22期 決算公告)', totalAssets: 495000.0, totalLiabilities: 183000.0, netAssets: 312000.0, capitalStock: 100.0, capitalSurplus: 50.0, retainedEarnings: 302000.0, netIncome: 8500.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '読売新聞 役員・社員持株会', shareholderType: 'employee', holdingRatio: 45.2, sharesHeld: 904000 },
-        { rank: 2, shareholderName: '公益財団法人 正力厚生会 / 創業家管理会社', shareholderType: 'founder', holdingRatio: 28.5, sharesHeld: 570000 },
-        { rank: 3, shareholderName: '読売グループ関連会社・親密取引先', shareholderType: 'corporate', holdingRatio: 16.3, sharesHeld: 326000 }
+        { rank: 1, shareholderName: '読売新聞 役員・社員持株会', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '公益財団法人 正力厚生会 / 創業家管理会社', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '読売グループ関連会社・親密取引先', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null }
       ]
     },
 
@@ -235,9 +234,9 @@ async function main() {
         { fiscalPeriod: 171, periodEnd: '2023-03-31', gazetteDate: '2023-06-23', gazetteIssue: '決算公告 (第171期 決算公告)', totalAssets: 415000.0, totalLiabilities: 167000.0, netAssets: 248000.0, capitalStock: 650.0, capitalSurplus: 15.0, retainedEarnings: 238000.0, netIncome: 6200.0 }
       ],
       shareholders: [
-        { rank: 1, shareholderName: '朝日新聞 社員持株会', shareholderType: 'employee', holdingRatio: 41.5, sharesHeld: 1328000 },
-        { rank: 2, shareholderName: '村山家・上野家 (創業家資産管理会社)', shareholderType: 'founder', holdingRatio: 36.8, sharesHeld: 1177600 },
-        { rank: 3, shareholderName: '公益財団法人 朝日新聞文化財団', shareholderType: 'corporate', holdingRatio: 12.0, sharesHeld: 384000 }
+        { rank: 1, shareholderName: '朝日新聞 社員持株会', shareholderType: 'employee', holdingRatio: 0, sharesHeld: null },
+        { rank: 2, shareholderName: '村山家・上野家（創業家資産管理会社）', shareholderType: 'founder', holdingRatio: 0, sharesHeld: null },
+        { rank: 3, shareholderName: '公益財団法人 朝日新聞文化財団', shareholderType: 'corporate', holdingRatio: 0, sharesHeld: null }
       ]
     }
   ];
