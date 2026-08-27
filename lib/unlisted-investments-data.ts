@@ -161,6 +161,24 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
       enStrategicSynergy: 'Combined global digital subscribers exceed 2.5 million, forming one of the largest financial news platforms globally.'
     },
     {
+      id: 'nikkei-note',
+      targetName: 'note株式会社 (5243)',
+      targetEnName: 'note inc. (5243)',
+      tickerCode: '5243',
+      category: 'listed_strategic',
+      categoryLabel: '上場クリエイターPF (資本業務提携・主要株主)',
+      enCategoryLabel: 'Listed Creator Platform (Strategic Equity Partner)',
+      purpose: '2018年資本業務提携 ＆「日経COMEMO」共同運営・クリエイター連携',
+      enPurpose: 'Strategic capital alliance since 2018; co-operation of NIKKEI COMEMO',
+      holdingRatioPct: 3.97,
+      sharesHeld: '約600,000株',
+      estimatedValueOku: 18,
+      officialSource: 'note株式会社 有価証券報告書 (EDINET: E38144) / 大量保有開示',
+      enOfficialSource: 'note inc. Securities Report (EDINET: E38144) / Major Shareholder Filings',
+      strategicSynergy: 'ビジネスリーダー向けコラムプラットフォーム「COMEMO by NIKKEI」の運営や日経電子版とのアライアンスを推進。',
+      enStrategicSynergy: 'Strategic partner co-operating the opinion network "COMEMO by NIKKEI" alongside Nikkei Digital.'
+    },
+    {
       id: 'nikkei-kepple',
       targetName: '株式会社ケップル (Kepple)',
       targetEnName: 'Kepple Inc.',
