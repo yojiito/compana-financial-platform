@@ -1,0 +1,529 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// 🏢 1. 上場企業マスタ ＆ リアルタイム指標
+// ----------------------------------------------------
+model Company {
+  id                  String   @id @default(cuid())
+  tickerCode          String   @unique
+  name                String
+  shortName           String
+  englishName         String?
+  sector              String
+  englishSector       String?
+  market              String
+  description         String?
+  englishDescription  String?
+  establishedYear     Int?
+  listingDate         String?
+  fiscalYearEnd       String?
+  headquarters        String?
+  representative      String?
+  employeesCount      String?
+  avgAge              Float?
+  avgSalary           Float?
+  mainBanks           String?
+  
+  // 四季報・定性情報
+  shikihoHeadline     String?
+  shikihoOutlook      String?
+  shikihoMaterial     String?
+  businessSegments    String?
+  overseasRatio       Float?
+  foreignHoldingRatio Float?
+  floatingSharesRatio Float?
+
+  // リアルタイム・市場指標
+  currentPrice        Float?
+  priceChange         Float?
+  priceChangePct      Float?
+  marketCap           Float?
+  trailingPE          Float?
+  forwardPE           Float?
+  priceToBook         Float?
+  roe                 Float?
+  roa                 Float?
+  dividendYield       Float?
+  equityRatio         Float?
+  sharesIssued        Float?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  stockPrices         StockPrice[]
+  financials          FinancialReport[]
+  shareholders        MajorShareholder[]
+  largeHoldings       LargeHoldingReport[]
+  fundraisings        Fundraising[]
+  disclosures         DisclosureDocument[]
+  irSummaries         IrDocumentSummary[]
+
+  @@index([tickerCode])
+  @@index([name])
+}
+
+// ----------------------------------------------------
+// 📈 2. 株価・日足・時系列チャートデータ
+// ----------------------------------------------------
+model StockPrice {
+  id            Int      @id @default(autoincrement())
+  tickerCode    String
+  date          String
+  open          Float
+  high          Float
+  low           Float
+  close         Float
+  volume        Float
+  adjustedClose Float?
+  company       Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@unique([tickerCode, date])
+  @@index([tickerCode, date])
+}
+
+// ----------------------------------------------------
+// 📊 3. 財務諸表 (有報・短信) ＆ 100%コスト解剖
+// ----------------------------------------------------
+model FinancialReport {
+  id                  Int      @id @default(autoincrement())
+  tickerCode          String
+  fiscalYear          Int
+  periodType          String   // "FY" | "Q1" | "Q2" | "Q3"
+  periodEnd           String
+  
+  // PL (損益計算書)
+  revenue             Float    // 売上高
+  cogs                Float?   // 売上原価
+  grossProfit         Float?   // 売上総利益
+  sga                 Float?   // 販管費
+  laborCost           Float?   // 人件費
+  rdExpenses          Float?   // 研究開発費
+  adExpenses          Float?   // 広告宣伝費
+  operatingIncome     Float    // 営業利益
+  ordinaryIncome      Float?   // 経常利益
+  netIncome           Float    // 当期純利益
+  eps                 Float?
+  operatingMargin     Float?
+  
+  // BS (貸借対照表)
+  totalAssets         Float
+  currentAssets       Float?
+  fixedAssets         Float?
+  totalLiabilities    Float?
+  currentLiabilities  Float?
+  longTermLiabilities Float?
+  interestBearingDebt Float?
+  netAssets           Float
+  equityRatio         Float?
+  bps                 Float?
+  
+  // CF (キャッシュフロー)
+  operatingCF         Float?
+  investingCF         Float?
+  financingCF         Float?
+  freeCF              Float?
+  capex               Float?
+  
+  // 還元指標
+  dividendPerShare    Float?
+  payoutRatio         Float?
+  doe                 Float?
+  
+  company             Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@unique([tickerCode, fiscalYear, periodType])
+  @@index([tickerCode, fiscalYear])
+}
+
+// ----------------------------------------------------
+// 👥 4. 大株主名簿 (有報第4提出書類)
+// ----------------------------------------------------
+model MajorShareholder {
+  id              Int      @id @default(autoincrement())
+  tickerCode      String
+  periodEnd       String
+  rank            Int
+  shareholderName String
+  sharesHeld      Float
+  holdingRatio    Float
+  changeNote      String?
+  company         Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@index([tickerCode, periodEnd])
+  @@index([shareholderName])
+}
+
+// ----------------------------------------------------
+// 🏛️ 5. 大量保有報告書 (5%ルール・EDINET)
+// ----------------------------------------------------
+model LargeHoldingReport {
+  id           Int      @id @default(autoincrement())
+  docId        String?
+  tickerCode   String
+  submitDate   String
+  filerName    String
+  holdingRatio Float
+  prevRatio    Float?
+  ratioChange  Float?
+  purpose      String?
+  jointHolders Int?     @default(0)
+  company      Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@index([tickerCode, submitDate])
+  @@index([filerName])
+}
+
+// ----------------------------------------------------
+// 💰 6. 資金調達・増資・新株予約権
+// ----------------------------------------------------
+model Fundraising {
+  id            Int      @id @default(autoincrement())
+  tickerCode    String
+  announceDate  String
+  fundingType   String
+  amountRaised  Float
+  issuePrice    Float?
+  dilutionRatio Float?
+  allottee      String?
+  useOfFunds    String?
+  company       Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@index([tickerCode, announceDate])
+}
+
+// ----------------------------------------------------
+// 📑 7. 適時開示・EDINET書類
+// ----------------------------------------------------
+model DisclosureDocument {
+  id         String   @id @default(cuid())
+  docId      String?
+  tickerCode String
+  discloseAt String
+  docType    String
+  title      String
+  url        String?
+  company    Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@index([tickerCode, discloseAt])
+}
+
+// ----------------------------------------------------
+// 🤖 8. AI要約・決算サマリー
+// ----------------------------------------------------
+model IrDocumentSummary {
+  id                Int      @id @default(autoincrement())
+  tickerCode        String
+  period            String
+  docType           String
+  discloseDate      String
+  executiveSummary  String
+  keyDrivers        String
+  futureOutlook     String
+  businessRisks     String?
+  capexAndGrowth    String?
+  rawUrl            String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  company           Company  @relation(fields: [tickerCode], references: [tickerCode], onDelete: Cascade)
+
+  @@index([tickerCode, discloseDate])
+}
+
+// ----------------------------------------------------
+// 📰 9. 未上場企業 ＆ 官報決算公告 (会社法第440条)
+// ----------------------------------------------------
+model UnlistedCompany {
+  id                  String   @id @default(cuid())
+  corporateNumber     String   @unique
+  slug                String   @unique
+  name                String
+  shortName           String
+  englishName         String?
+  industry            String
+  englishIndustry     String?
+  establishedYear     Int?
+  location            String?
+  representative      String?
+  englishRepresentative String?
+  capital             Float?
+  description         String?
+  englishDescription  String?
+  isStartup           Boolean  @default(false)
+  websiteUrl          String?
+  
+  employeesCount      String?
+  avgAge              Float?
+  avgSalary           Float?
+  mainBanks           String?
+  businessSegments    String?
+  shikihoHeadline     String?
+  shikihoOutlook      String?
+  shikihoMaterial     String?
+  
+  latestPeriodEnd     String?
+  latestNetAssets     Float?
+  latestNetIncome     Float?
+  latestTotalAssets   Float?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  gazetteReports      OfficialGazetteReport[]
+  capitalEvents       UnlistedCapitalEvent[]
+  shareholders        UnlistedShareholder[]
+
+  @@index([slug])
+  @@index([name])
+}
+
+model OfficialGazetteReport {
+  id                 Int             @id @default(autoincrement())
+  unlistedCompanyId  String
+  fiscalPeriod       Int
+  periodEnd          String
+  gazetteDate        String
+  gazetteIssue       String?
+  
+  totalAssets        Float
+  currentAssets      Float?
+  fixedAssets        Float?
+  totalLiabilities   Float?
+  currentLiabilities Float?
+  fixedLiabilities   Float?
+  
+  netAssets          Float
+  capitalStock       Float
+  capitalSurplus     Float?
+  retainedEarnings   Float
+  netIncome          Float
+  
+  rawGazetteText     String?
+  
+  company            UnlistedCompany @relation(fields: [unlistedCompanyId], references: [id], onDelete: Cascade)
+
+  @@unique([unlistedCompanyId, fiscalPeriod])
+  @@index([unlistedCompanyId, periodEnd])
+}
+
+model UnlistedCapitalEvent {
+  id                Int             @id @default(autoincrement())
+  unlistedCompanyId String
+  eventDate         String
+  eventType         String
+  category          String
+  amount            Float?
+  capitalAfter      Float?
+  investors         String?
+  purpose           String?
+  source            String?
+  
+  company           UnlistedCompany @relation(fields: [unlistedCompanyId], references: [id], onDelete: Cascade)
+
+  @@index([unlistedCompanyId, eventDate])
+}
+
+model UnlistedShareholder {
+  id                Int             @id @default(autoincrement())
+  unlistedCompanyId String
+  rank              Int
+  shareholderName   String
+  shareholderType   String
+  holdingRatio      Float
+  sharesHeld        Float?
+  note              String?
+  
+  company           UnlistedCompany @relation(fields: [unlistedCompanyId], references: [id], onDelete: Cascade)
+
+  @@index([unlistedCompanyId, rank])
+}
+
+// ----------------------------------------------------
+// 🏙️ 10. J-REIT 不動産投資信託 ＆ 物件ポートフォリオ
+// ----------------------------------------------------
+model Reit {
+  id                String         @id @default(cuid())
+  code              String         @unique
+  name              String
+  englishName       String
+  sponsor           String
+  sponsorRatio      Float?
+  type              String         // "Office" | "Logistics" | "Residential" | "Hotel" | "Commercial"
+  price             Float
+  priceChange       Float
+  priceChangePct    Float
+  distributionYield Float
+  navMultiplier     Float
+  propertiesCount   Int
+  occupancyRate     Float
+  ltv               Float
+  description       String
+  englishDescription String?
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  properties        ReitProperty[]
+
+  @@index([code])
+}
+
+model ReitProperty {
+  id                Int      @id @default(autoincrement())
+  reitCode          String
+  propertyId        String?
+  name              String
+  englishName       String?
+  category          String?
+  categoryLabel     String?
+  location          String
+  englishLocation   String?
+  areaRegion        String?
+  ownershipRatio    Float?
+  ownershipForm     String?
+  acquisitionDate   String?        // 取得日 (YYYY年MM月DD日)
+  acquisitionPriceMillion Float?   // 取得価格 (百万円)
+  appraisalValueOku Float          // 鑑定評価額 (億円)
+  appraisalValueMillion Float?     // 鑑定評価額 (百万円)
+  unrealizedGainOku Float?         // 含み損益 (億円)
+  unrealizedGainMillion Float?     // 含み損益 (百万円)
+  unrealizedGainRatio Float?       // 含み損益率 (%)
+  floorArea         String?
+  floorAreaSqm      Float?         // 延床面積 (㎡)
+  landAreaSqm       Float?         // 敷地面積 (㎡)
+  occupancyRate     Float?         // 稼働率 (%)
+  tenantsCount      Int?           // テナント数
+  builtDate         String?        // 竣工日 (YYYY年MM月DD日)
+  structure         String?        // 建物構造
+  keyTenant         String?        // 主要テナント
+  noiYield          Float?         // NOI利回り (%)
+  seller            String?        // 売主・取得先
+  
+  reit              Reit     @relation(fields: [reitCode], references: [code], onDelete: Cascade)
+
+  @@index([reitCode])
+  @@index([acquisitionDate])
+}
+
+// ----------------------------------------------------
+// 🤝 11. M&A ＆ 買収・資本提携ディール
+// ----------------------------------------------------
+model MaDeal {
+  id                     String            @id @default(cuid())
+  announceYear           String
+  closeDate              String?
+  exactAnnounceDate      String
+  exactCloseDate         String?
+  buyerName              String
+  buyerEnName            String
+  buyerCode              String?
+  buyerSector            String
+  buyerEnSector          String?
+  targetName             String
+  targetEnName           String
+  targetCountry          String
+  targetEnCountry        String
+  targetSector           String
+  targetEnSector         String
+  dealValueOku           Float
+  dealValueUsdBillion    Float?
+  scheme                 String
+  schemeLabel            String
+  enSchemeLabel          String
+  dealType               String            // "cross_border" | "domestic_mega" | "hostile_tob" | "startup_tech" | "small_deal"
+  dealTypeLabel          String
+  enDealTypeLabel        String
+  goodwillOku            Float?
+  premiumPct             Float?
+  stakeBefore            String?
+  stakeAfter             String?
+  considerationDetails   String
+  enConsiderationDetails String
+  financingMethod        String?
+  enFinancingMethod      String?
+  evEbitdaMultiple       String?
+  perMultiple            String?
+  pbrMultiple            String?
+  officialFilingNumber   String?
+  buyerFA                String?
+  targetFA               String?
+  buyerLegal             String?
+  targetLegal            String?
+  strategicObjective     String
+  enStrategicObjective   String
+  outcomeAndPmi          String
+  enOutcomeAndPmi        String
+  statusRating           String
+  statusRatingLabel      String
+  enStatusRatingLabel    String
+  officialSourceType     String
+  keyTags                String            // カンマ区切りタグ
+  
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+
+  timeline               MaTimelineEvent[]
+
+  @@index([dealType])
+}
+
+model MaTimelineEvent {
+  id        Int      @id @default(autoincrement())
+  dealId    String
+  date      String
+  enDate    String
+  event     String
+  enEvent   String
+  eventType String
+  
+  deal      MaDeal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId, date])
+}
+
+// ----------------------------------------------------
+// 🌐 12. 投資ファンド ＆ 保有ポートフォリオ
+// ----------------------------------------------------
+model Fund {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  name            String
+  englishName     String
+  type            String        // "mega_asset_manager" | "activist" | "value_investor" | "venture_capital"
+  aum             String
+  representative  String
+  strategySummary String
+  enStrategySummary String?
+  keyInvestments  String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  holdings        FundHolding[]
+
+  @@index([slug])
+}
+
+model FundHolding {
+  id           Int      @id @default(autoincrement())
+  fundSlug     String
+  tickerCode   String
+  companyName  String
+  holdingRatio Float
+  rank         Int?
+  valueOku     Float?
+  statusNote   String?
+  
+  fund         Fund     @relation(fields: [fundSlug], references: [slug], onDelete: Cascade)
+
+  @@index([fundSlug])
+  @@index([tickerCode])
+}
