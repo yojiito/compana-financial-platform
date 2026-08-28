@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { 
   NetworkNode, 
@@ -22,7 +22,9 @@ import {
   ArrowRight,
   ShieldCheck,
   ChevronRight,
-  Search
+  Search,
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 
 interface Props {
@@ -39,12 +41,51 @@ export default function RelationshipNetworkGraph({
   const [currentCenterId, setCurrentCenterId] = useState<string>(initialEntityId);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(initialEntityId);
   const [relationFilter, setRelationFilter] = useState<'all' | RelationType>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [dynamicGraph, setDynamicGraph] = useState<{ nodes: NetworkNode[]; edges: NetworkEdge[] } | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // 中心ノードに応じたサブグラフを取得
-  const graphData = useMemo(() => {
-    return getSubGraphForEntity(currentCenterId, 2);
+  // エンティティIDが変更されたらAPIから動的取得
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchDynamicNetwork() {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/network/${encodeURIComponent(currentCenterId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.nodes && data.nodes.length > 0) {
+            setDynamicGraph(data);
+            setSelectedNodeId(currentCenterId);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Error loading dynamic network:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+
+      // フォールバック: 静的マスターデータ
+      if (isMounted) {
+        const staticData = getSubGraphForEntity(currentCenterId, 2);
+        setDynamicGraph(staticData);
+        setSelectedNodeId(currentCenterId);
+      }
+    }
+
+    fetchDynamicNetwork();
+    return () => {
+      isMounted = false;
+    };
   }, [currentCenterId]);
+
+  // 現在の有効なグラフデータ
+  const graphData = useMemo(() => {
+    if (dynamicGraph && dynamicGraph.nodes.length > 0) {
+      return dynamicGraph;
+    }
+    return getSubGraphForEntity(currentCenterId, 2);
+  }, [dynamicGraph, currentCenterId]);
 
   // フィルタリングされたエッジとノード
   const filteredEdges = useMemo(() => {
@@ -68,18 +109,19 @@ export default function RelationshipNetworkGraph({
   // 選択中のノード
   const selectedNode = useMemo(() => {
     if (!selectedNodeId) return null;
-    return MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === selectedNodeId) || null;
-  }, [selectedNodeId]);
+    return graphData.nodes.find(n => n.id === selectedNodeId) || 
+           MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === selectedNodeId) || null;
+  }, [selectedNodeId, graphData]);
 
   // 選択ノードに関連するすべてのエッジ
   const selectedNodeEdges = useMemo(() => {
     if (!selectedNodeId) return [];
-    return MASTER_RELATIONSHIP_DATA.edges.filter(
+    return graphData.edges.filter(
       e => e.source === selectedNodeId || e.target === selectedNodeId
     );
-  }, [selectedNodeId]);
+  }, [selectedNodeId, graphData]);
 
-  // SVG Radial Layout の計算 (中心ノードを (400, 300) に配置し、周辺ノードを放射状に配置)
+  // SVG Radial Layout の計算
   const layoutNodes = useMemo(() => {
     const width = 800;
     const height = 600;
@@ -119,6 +161,8 @@ export default function RelationshipNetworkGraph({
         return <User className="w-4 h-4 text-amber-600" />;
       case 'foundation':
         return <Award className="w-4 h-4 text-purple-600" />;
+      default:
+        return <Building2 className="w-4 h-4 text-slate-600" />;
     }
   };
 
@@ -143,6 +187,8 @@ export default function RelationshipNetworkGraph({
         case 'foundation':
           base += 'bg-purple-50/70 border-purple-200 hover:border-purple-400 hover:shadow-purple-100 ';
           break;
+        default:
+          base += 'bg-white border-slate-200 hover:border-slate-400 ';
       }
     }
     return base;
@@ -158,6 +204,8 @@ export default function RelationshipNetworkGraph({
         return '#d97706'; // Amber
       case 'foundation':
         return '#9333ea'; // Purple
+      case 'keiretsu':
+        return '#dc2626'; // Red
       default:
         return '#64748b';
     }
@@ -169,18 +217,24 @@ export default function RelationshipNetworkGraph({
       {showControls && (
         <div className="p-5 border-b border-slate-100 bg-slate-50/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
               <Share2 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-slate-900 text-base">統合 資本・人的関係性ネットワーク</h3>
                 <span className="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-200">
-                  双方向ナレッジグラフ
+                  全社網羅ナレッジグラフ
                 </span>
+                {isLoading && (
+                  <span className="inline-flex items-center gap-1 text-[11px] text-indigo-600 font-bold font-mono">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    同期中...
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                法人 ⇄ 法人（親子・持合い・出資）、法人 ⇄ 個人（創業者・役員）、個人 ⇄ 個人（親族・共同創業者）をシームレスに紐付け
+                全上場企業・未上場企業・公式大株主・代表者・創業家・文化財団をシームレスに結合
               </p>
             </div>
           </div>
@@ -193,7 +247,7 @@ export default function RelationshipNetworkGraph({
                 relationFilter === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              すべて表示
+              すべて表示 ({graphData.edges.length})
             </button>
             <button
               onClick={() => setRelationFilter('capital')}
@@ -237,49 +291,6 @@ export default function RelationshipNetworkGraph({
         <div className="lg:col-span-8 relative bg-radial from-slate-50 to-slate-100/60 p-4 flex items-center justify-center overflow-hidden">
           {/* SVG エッジレイヤー */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 600">
-            <defs>
-              <marker
-                id="arrowhead-indigo"
-                markerWidth="8"
-                markerHeight="6"
-                refX="7"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#4f46e5" />
-              </marker>
-              <marker
-                id="arrowhead-cyan"
-                markerWidth="8"
-                markerHeight="6"
-                refX="7"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#0891b2" />
-              </marker>
-              <marker
-                id="arrowhead-amber"
-                markerWidth="8"
-                markerHeight="6"
-                refX="7"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#d97706" />
-              </marker>
-              <marker
-                id="arrowhead-purple"
-                markerWidth="8"
-                markerHeight="6"
-                refX="7"
-                refY="3"
-                orient="auto"
-              >
-                <polygon points="0 0, 8 3, 0 6" fill="#9333ea" />
-              </marker>
-            </defs>
-
             {filteredEdges.map((edge) => {
               const srcPos = layoutNodes[edge.source];
               const tgtPos = layoutNodes[edge.target];
@@ -374,7 +385,9 @@ export default function RelationshipNetworkGraph({
                           ? '未上場企業'
                           : node.type === 'person'
                           ? '個人・経営者'
-                          : '文化・公益財団'}
+                          : node.type === 'foundation'
+                          ? '文化・公益財団'
+                          : '系列グループ'}
                       </span>
                     </div>
 
@@ -414,8 +427,13 @@ export default function RelationshipNetworkGraph({
           </div>
 
           {/* 操作ガイダンス */}
-          <div className="absolute bottom-3 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 shadow-2xs">
-            💡 <strong>クリック</strong>で詳細確認 / <strong>ダブルクリック</strong>でネットワークの中心を切り替え
+          <div className="absolute bottom-3 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 shadow-2xs flex items-center gap-3">
+            <span>💡 <strong>クリック</strong>で詳細確認 / <strong>ダブルクリック</strong>でネットワークの中心を切り替え</span>
+            {filteredNodes.length > 0 && (
+              <span className="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                表示ノード: {filteredNodes.length} 件
+              </span>
+            )}
           </div>
         </div>
 
@@ -475,7 +493,8 @@ export default function RelationshipNetworkGraph({
                   {selectedNodeEdges.map((edge) => {
                     const isSource = edge.source === selectedNode.id;
                     const otherId = isSource ? edge.target : edge.source;
-                    const otherNode = MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === otherId);
+                    const otherNode = graphData.nodes.find(n => n.id === otherId) || 
+                                     MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === otherId);
                     if (!otherNode) return null;
 
                     return (

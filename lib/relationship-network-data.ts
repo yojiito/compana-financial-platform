@@ -1,7 +1,7 @@
-// 🌐 統合関係性ネットワークデータエンジン (法人⇄法人、法人⇄個人、個人⇄個人)
+// 🌐 統合関係性ネットワークデータエンジン (全社網羅 ＆ 資本・人的ネットワーク)
 
-export type NodeType = 'listed_corp' | 'unlisted_corp' | 'person' | 'foundation';
-export type RelationType = 'capital' | 'governance' | 'kinship' | 'foundation' | 'partnership';
+export type NodeType = 'listed_corp' | 'unlisted_corp' | 'person' | 'foundation' | 'group';
+export type RelationType = 'capital' | 'governance' | 'kinship' | 'foundation' | 'partnership' | 'keiretsu';
 
 export interface NetworkNode {
   id: string;
@@ -31,10 +31,10 @@ export interface NetworkGraphData {
   edges: NetworkEdge[];
 }
 
-// 🏛️ 公式ナレッジグラフ マスターデータ
+// 🏛️ 公式ナレッジグラフ マスターデータ (主要財閥・系列・創業家・テック・出版メディア・流通)
 export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
   nodes: [
-    // 🏢 1. トヨタ自動車グループ & 豊田家
+    // 🚘 1. トヨタ自動車グループ & 豊田家
     {
       id: 'corp-7203',
       label: 'トヨタ自動車株式会社',
@@ -113,7 +113,58 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       tags: ['トヨタグループ', '商社']
     },
 
-    // 📚 2. 出版メディア ＆ 創業家 ＆ 文学振興財団
+    // 🏢 2. 三菱グループ (金曜会) ＆ 三菱商事 ＆ 三菱重工 ＆ MUFG
+    {
+      id: 'corp-8058',
+      label: '三菱商事株式会社',
+      type: 'listed_corp',
+      subLabel: '東証プライム 8058 / 卸売業',
+      description: '総合商社トップ。天然ガス、金属資源、産業インフラ、自動車、食品等の世界的ポートフォリオ。時価総額約13.2兆円。',
+      linkUrl: '/stocks/8058',
+      badge: '総合商社トップ',
+      tags: ['三菱グループ', '総合商社', '金曜会']
+    },
+    {
+      id: 'corp-7011',
+      label: '三菱重工業株式会社',
+      type: 'listed_corp',
+      subLabel: '東証プライム 7011 / 機械',
+      description: '防衛・航空宇宙・エネルギープラント・原子力の中核。防衛省向け調達シェア首位。',
+      linkUrl: '/stocks/7011',
+      badge: '防衛・エネルギー中核',
+      tags: ['三菱グループ', '防衛', '重工']
+    },
+    {
+      id: 'corp-8306',
+      label: '株式会社三菱UFJフィナンシャル・グループ (MUFG)',
+      type: 'listed_corp',
+      subLabel: '東証プライム 8306 / 銀行業',
+      description: '国内最大の民間金融メガバンクグループ。モルガン・スタンレーの筆頭株主。時価総額約20兆円。',
+      linkUrl: '/stocks/8306',
+      badge: 'メガバンク首位',
+      tags: ['三菱グループ', 'メガバンク', '金融']
+    },
+    {
+      id: 'corp-8802',
+      label: '三菱地所株式会社',
+      type: 'listed_corp',
+      subLabel: '東証プライム 8802 / 不動産業',
+      description: '丸の内・大手町・有楽町の「大丸有」エリアを中核とする総合デベロッパー首位。',
+      linkUrl: '/stocks/8802',
+      badge: '丸の内デベロッパー',
+      tags: ['三菱グループ', '不動産', '丸の内']
+    },
+    {
+      id: 'person-iwasaki-yataro',
+      label: '岩崎 彌太郎',
+      type: 'person',
+      subLabel: '三菱財閥 創業者 (歴史的人物)',
+      description: '土佐藩出身。海運会社「九十九商会」「三菱商会」を興し、日本の近代産業の礎を築いた三菱グループ創始者。',
+      badge: '三菱グループ開祖',
+      tags: ['歴史的創業者', '岩崎家', '三菱']
+    },
+
+    // 📚 3. 出版メディア ＆ 創業家 ＆ 文学顕彰財団
     {
       id: 'unlisted-bungeishunju',
       label: '株式会社文藝春秋',
@@ -188,8 +239,37 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       badge: '三島賞・山本賞主宰',
       tags: ['文学賞', '公益財団']
     },
+    {
+      id: 'unlisted-shogakukan',
+      label: '株式会社小学館',
+      type: 'unlisted_corp',
+      subLabel: '未上場 / 出版・一ツ橋グループ',
+      description: '1922年創業。一ツ橋グループ（集英社、白泉社等）の創業母体。『少年サンデー』『CanCam』等。',
+      linkUrl: '/unlisted/shogakukan',
+      badge: '一ツ橋グループ創業母体',
+      tags: ['一ツ橋グループ', 'マンガ', '小学館']
+    },
+    {
+      id: 'unlisted-shueisha',
+      label: '株式会社集英社',
+      type: 'unlisted_corp',
+      subLabel: '未上場 / 出版・マンガ',
+      description: '1926年創業。『週刊少年ジャンプ』『ヤングジャンプ』『りぼん』『non-no』。世界最高峰のマンガIPを保有。',
+      linkUrl: '/unlisted/shueisha',
+      badge: 'ジャンプIP世界展開',
+      tags: ['一ツ橋グループ', 'ジャンプ', '集英社']
+    },
+    {
+      id: 'person-ohga-nobuhiro',
+      label: '相賀 信宏',
+      type: 'person',
+      subLabel: '小学館 代表取締役社長 / 相賀家第4代',
+      description: '小学館第4代代表取締役社長。創業者・相賀武夫の曾孫。一ツ橋グループの経営統括。',
+      badge: '代表取締役社長 (相賀家)',
+      tags: ['相賀家', '一ツ橋グループ', '創業家']
+    },
 
-    // 📱 3. パピレス ＆ 創業者 ＆ 経営陣 ＆ 主要出資企業
+    // 📱 4. パピレス ＆ 創業者 ＆ 経営陣 ＆ 主要出資企業
     {
       id: 'corp-3641',
       label: '株式会社パピレス',
@@ -238,7 +318,7 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       tags: ['出版取次', '流通']
     },
 
-    // 👕 4. ファーストリテイリング ＆ 柳井家
+    // 👕 5. ファーストリテイリング ＆ 柳井家
     {
       id: 'corp-9983',
       label: '株式会社ファーストリテイリング',
@@ -286,7 +366,7 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       tags: ['資産管理会社', '柳井家']
     },
 
-    // 💻 5. ソフトバンクグループ ＆ 孫正義氏
+    // 💻 6. ソフトバンクグループ ＆ 孫正義氏
     {
       id: 'corp-9984',
       label: 'ソフトバンクグループ株式会社',
@@ -324,11 +404,80 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       description: '世界中のスマートフォン・AIデータセンター向けプロセッサアーキテクチャの99%を独占する英国半導体設計大手。',
       badge: 'SBG保有比率約90%',
       tags: ['半導体', 'AI', 'NASDAQ']
+    },
+
+    // 🎮 7. ソニーグループ ＆ 創業者
+    {
+      id: 'corp-6758',
+      label: 'ソニーグループ株式会社',
+      type: 'listed_corp',
+      subLabel: '東証プライム 6758 / 電気機器',
+      description: 'ゲーム（PlayStation）、音楽（Sony Music）、映画（Columbia Pictures）、半導体（CMOSセンサー）、金融を擁する世界的エンタメコングロマリット。',
+      linkUrl: '/stocks/6758',
+      badge: '時価総額17.8兆円',
+      tags: ['ソニー', 'エンタメ', 'PlayStation', 'CMOS']
+    },
+    {
+      id: 'person-morita-akio',
+      label: '盛田 昭夫',
+      type: 'person',
+      subLabel: 'ソニー 共同創業者 (故人)',
+      description: '井深大と共に東京通信工業（現ソニー）を創業。ウォークマンを世界的大ヒットに導いた名経営者。',
+      badge: '歴史的共同創業者',
+      tags: ['歴史的創業者', '盛田家']
+    },
+    {
+      id: 'person-ibuka-masaru',
+      label: '井深 大',
+      type: 'person',
+      subLabel: 'ソニー 共同創業者 / 技術者 (故人)',
+      description: '東京通信工業創立の技術的支柱。「自由闊達にして愉快なる理想工場」の設立趣意書を起草。',
+      badge: '歴史的共同創業者・技術者',
+      tags: ['歴史的創業者', 'エンジニア']
+    },
+    {
+      id: 'person-totoki-hiroyuki',
+      label: '十時 裕樹',
+      type: 'person',
+      subLabel: '代表執行役 社長COO 兼 CFO',
+      description: 'ソニー銀行・ソニーネットワークコミュニケーションズ立ち上げを主導し、現ソニーグループ社長COO兼CFO。',
+      badge: '現社長COO兼CFO',
+      tags: ['経営トップ', 'CFO']
+    },
+
+    // 🔬 8. キーエンス ＆ 滝崎武光氏
+    {
+      id: 'corp-6861',
+      label: '株式会社キーエンス',
+      type: 'listed_corp',
+      subLabel: '東証プライム 6861 / 電気機器',
+      description: 'ファクトリーオートメーション用センサ・測定器の世界的超高収益企業。営業利益率約51%、自己資本比率94.2%。',
+      linkUrl: '/stocks/6861',
+      badge: '営業利益率51.4%',
+      tags: ['高収益', 'センサ', 'FA']
+    },
+    {
+      id: 'person-takizaki-takemitsu',
+      label: '滝崎 武光',
+      type: 'person',
+      subLabel: 'キーエンス 創業者 / 名誉会長 / 筆頭株主',
+      description: '1974年にリード電機（現キーエンス）を創業。「最小の資本と人で最大の付加価値を上げる」直販即日納入モデルを確立。',
+      badge: '創業者名誉会長 (筆頭株主)',
+      tags: ['創業者', '筆頭株主', '高収益']
+    },
+    {
+      id: 'corp-tt-asset',
+      label: '株式会社ティ・ティ',
+      type: 'unlisted_corp',
+      subLabel: '未上場 / 滝崎家 資産管理会社',
+      description: '滝崎武光氏および滝崎一族の資産管理法人。キーエンス株式の約14.8%を保有する筆頭株主法人。',
+      badge: '滝崎家資産管理会社 (14.8%)',
+      tags: ['資産管理会社', 'キーエンス']
     }
   ],
 
   edges: [
-    // 🚘 1. トヨタ自動車 ネットワークエッジ
+    // 🚘 1. トヨタ自動車 エッジ
     {
       id: 'e-toyoda-akio-7203',
       source: 'person-toyoda-akio',
@@ -398,7 +547,49 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       detail: '豊田通商の筆頭株主。完成車輸出およびグローバル素材・リチウム調達を担当。'
     },
 
-    // 📚 2. 出版メディア ＆ 創業家 ＆ 文学財団 エッジ
+    // 🏢 2. 三菱グループ エッジ
+    {
+      id: 'e-iwasaki-8058',
+      source: 'person-iwasaki-yataro',
+      target: 'corp-8058',
+      relationType: 'governance',
+      label: '三菱財閥 開祖',
+      detail: '岩崎彌太郎が興した三菱商会が、戦後の財閥解体を経て現在の三菱商事へ発展。'
+    },
+    {
+      id: 'e-iwasaki-7011',
+      source: 'person-iwasaki-yataro',
+      target: 'corp-7011',
+      relationType: 'governance',
+      label: '三菱重工 開祖',
+      detail: '長崎造船所を官営払い下げにより取得し、三菱の重工業・造船基盤を築く。'
+    },
+    {
+      id: 'e-8058-8306',
+      source: 'corp-8058',
+      target: 'corp-8306',
+      relationType: 'keiretsu',
+      label: '三菱金曜会 中核 (相互持合い)',
+      detail: '三菱グループ首脳会「金曜会」の筆頭幹事社同士として強力な資本・取引連携。'
+    },
+    {
+      id: 'e-8058-7011',
+      source: 'corp-8058',
+      target: 'corp-7011',
+      relationType: 'keiretsu',
+      label: '三菱金曜会 御三家 (プラント・防衛)',
+      detail: '三菱重工の発電プラント・防衛装備・LNG船のグローバル輸出を三菱商事が共同推進。'
+    },
+    {
+      id: 'e-8058-8802',
+      source: 'corp-8058',
+      target: 'corp-8802',
+      relationType: 'keiretsu',
+      label: '三菱金曜会 (丸の内都市開発)',
+      detail: '丸の内本拠地の開発および大型インフラファンド組成で三菱地所と密接連携。'
+    },
+
+    // 📚 3. 出版メディア ＆ 創業家 ＆ 文学財団 エッジ
     {
       id: 'e-kikuchi-kan-bungei',
       source: 'person-kikuchi-kan',
@@ -463,8 +654,24 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       label: '設立支援・顕彰母体 (三島賞・山本賞)',
       detail: '新潮社創立90周年記念事業として設立。三島由紀夫賞・山本周五郎賞を主宰。'
     },
+    {
+      id: 'e-shogakukan-shueisha',
+      source: 'unlisted-shogakukan',
+      target: 'unlisted-shueisha',
+      relationType: 'capital',
+      label: '一ツ橋グループ母体 (共同出資)',
+      detail: '1926年に小学館の娯楽出版部門が独立して集英社が誕生。一ツ橋グループとして強固に提携。'
+    },
+    {
+      id: 'e-ohga-shogakukan',
+      source: 'person-ohga-nobuhiro',
+      target: 'unlisted-shogakukan',
+      relationType: 'governance',
+      label: '代表取締役社長 (相賀家第4代)',
+      detail: '創業家相賀家の直系として小学館の経営およびグループ統括を牽引。'
+    },
 
-    // 📱 3. パピレス ＆ 創業者 ＆ 経営陣 エッジ
+    // 📱 4. パピレス エッジ
     {
       id: 'e-amaya-papyless',
       source: 'person-amaya-mikio',
@@ -510,7 +717,7 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       detail: '出版取次大手の日販がパピレス株式の4.80%（48.0万株）を保有。'
     },
 
-    // 👕 4. ファーストリテイリング ＆ 柳井家 エッジ
+    // 👕 5. ファーストリテイリング エッジ
     {
       id: 'e-yanai-tadashi-9983',
       source: 'person-yanai-tadashi',
@@ -572,7 +779,7 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       detail: '柳井正氏および親族が100%所有するファミリー・オフィス。'
     },
 
-    // 💻 5. ソフトバンクグループ エッジ
+    // 💻 6. ソフトバンクグループ エッジ
     {
       id: 'e-son-9984',
       source: 'person-son-masayoshi',
@@ -599,6 +806,67 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
       label: '親会社 (約90%保有)',
       ratio: 90.0,
       detail: '2016年に約3.3兆円で買収。NASDAQ上場後もSBGが約90%の株式を保有する超中核AI資産。'
+    },
+
+    // 🎮 7. ソニーグループ エッジ
+    {
+      id: 'e-morita-ibuka',
+      source: 'person-morita-akio',
+      target: 'person-ibuka-masaru',
+      relationType: 'governance',
+      label: '伝説の共同創業者ペア (経営 ⇄ 技術)',
+      detail: '戦後焼け跡の東京で出会い、世界的イノベーション企業ソニーを共に創り上げた名コンビ。'
+    },
+    {
+      id: 'e-morita-6758',
+      source: 'person-morita-akio',
+      target: 'corp-6758',
+      relationType: 'governance',
+      label: '共同創業者・名誉会長',
+      detail: 'グローバルブランド「SONY」の確立と海外進出を主導。'
+    },
+    {
+      id: 'e-ibuka-6758',
+      source: 'person-ibuka-masaru',
+      target: 'corp-6758',
+      relationType: 'governance',
+      label: '共同創業者・名誉会長',
+      detail: 'トランジスタラジオ、トリニトロンカラーテレビなど画期的製品開発を指揮。'
+    },
+    {
+      id: 'e-totoki-6758',
+      source: 'person-totoki-hiroyuki',
+      target: 'corp-6758',
+      relationType: 'governance',
+      label: '代表執行役 社長COO 兼 CFO',
+      detail: 'ゲーム・音楽・映画・半導体・金融の5大ポートフォリオのキャピタルアロケーションを統括。'
+    },
+
+    // 🔬 8. キーエンス エッジ
+    {
+      id: 'e-takizaki-6861',
+      source: 'person-takizaki-takemitsu',
+      target: 'corp-6861',
+      relationType: 'governance',
+      label: '創業者 / 取締役名誉会長',
+      detail: '時価総額約17.2兆円、営業利益率50%超の超高収益モデルを創出。個人および資産管理会社で筆頭支配。'
+    },
+    {
+      id: 'e-tt-6861',
+      source: 'corp-tt-asset',
+      target: 'corp-6861',
+      relationType: 'capital',
+      label: '筆頭株主法人 (14.8%保有)',
+      ratio: 14.8,
+      detail: '滝崎家の資産管理法人ティ・ティがキーエンス株式の14.8%（3,600万株）を保有。'
+    },
+    {
+      id: 'e-takizaki-tt',
+      source: 'person-takizaki-takemitsu',
+      target: 'corp-tt-asset',
+      relationType: 'governance',
+      label: '代表者 / ファミリーオフィス',
+      detail: '滝崎武光氏および親族が100%管理するファミリーアセット持株会社。'
     }
   ]
 };
