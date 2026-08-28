@@ -562,19 +562,18 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
   // ⑮ 株式会社新潮社 (Shinchosha)
   'shinchosha': [
     {
-      id: 'shinchosha-papyless',
-      targetName: '株式会社パピレス (3641)',
-      targetEnName: 'PAPYLESS CO., LTD. (3641)',
-      tickerCode: '3641',
-      category: 'listed_strategic',
-      categoryLabel: '上場電子書籍レンタルPF (主要取引先・資本提携)',
-      enCategoryLabel: 'Listed E-Book Rental Platform (Strategic Equity Partner)',
-      purpose: '電子書籍レンタルサイト「Renta!」等を通じた新潮文庫・コミックス配信提携',
-      enPurpose: 'Digital distribution alliance for Shincho Bunko and manga via Renta!',
-      officialSource: 'パピレス 有価証券報告書 / 主要取引先開示',
-      enOfficialSource: 'Papyless Securities Report (EDINET) / Primary Partners',
-      strategicSynergy: '電子書籍・コミックレンタルの黎明期からの強固なコンテンツ流通アライアンス。',
-      enStrategicSynergy: 'Longstanding content wholesale distribution partnership since early days of digital reading.'
+      id: 'shincho-bungei-shinko',
+      targetName: '公益財団法人 新潮文芸振興会',
+      targetEnName: 'Shinchosha Foundation for the Promotion of Literature',
+      category: 'group_subsidiary',
+      categoryLabel: '文化事業母体 (三島由紀夫賞・山本周五郎賞・小林秀雄賞)',
+      enCategoryLabel: 'Cultural Foundation (Mishima & Yamamoto Prize Organizer)',
+      purpose: '日本文学・文芸ドキュメンタリーの顕彰および三島由紀夫賞・山本周五郎賞の選考運営',
+      enPurpose: 'Administration of prestigious literary accolades (Mishima Yukio & Yamamoto Shugoro Prizes)',
+      officialSource: '新潮文芸振興会 公式法人登記 / 新潮社公式開示',
+      enOfficialSource: 'Official Corporate Registry & Shinchosha Disclosures',
+      strategicSynergy: '新鋭作家・純文学・大衆小説の最高峰文学賞を主宰し、新潮社の出版ブランドと名作IP創出を牽引。',
+      enStrategicSynergy: 'Administers pinnacle literary awards driving Shinchosha’s literary prestige and long-tail IP catalog.'
     }
   ],
 
@@ -599,19 +598,18 @@ export const UNLISTED_INVESTMENTS_DATA: Record<string, UnlistedHoldingItem[]> = 
   // ⑰ 株式会社秋田書店 (Akita Shoten)
   'akitashoten': [
     {
-      id: 'akita-media-do',
-      targetName: '株式会社メディアドゥ (3678)',
-      targetEnName: 'MEDIA DO Co., Ltd. (3678)',
-      tickerCode: '3678',
-      category: 'listed_strategic',
-      categoryLabel: '上場電子書籍流通・取次 (主要流通パートナー)',
-      enCategoryLabel: 'Listed E-Book Wholesaler (Strategic Distribution Partner)',
-      purpose: 'チャンピオンコミックスの全国電子書店向け取次流通 ＆ 電子配信',
-      enPurpose: 'Wholesale distribution and e-book delivery of Champion comics',
-      officialSource: 'メディアドゥ 有価証券報告書 / 取引先開示',
-      enOfficialSource: 'MEDIA DO Securities Report (EDINET)',
-      strategicSynergy: '少年チャンピオン・ヤングチャンピオン作品のデジタルストア取次を全面推進。',
-      enStrategicSynergy: 'Full-scale wholesale distribution partner for Champion digital comic titles.'
+      id: 'akita-champion-ip',
+      targetName: '秋田書店 コミック・アニメIP製作委員会出資',
+      targetEnName: 'Akita Shoten Anime IP Production Consortia',
+      category: 'group_subsidiary',
+      categoryLabel: '自社出版・アニメ製作委員会出資 (刃牙・弱虫ペダル・魔入間)',
+      enCategoryLabel: 'Anime IP Production Committee Investments (Baki, Yowamushi Pedal, Iruma-kun)',
+      purpose: '『刃牙シリーズ』『弱虫ペダル』『魔入りました！入間くん』等のアニメ製作出資 ＆ 映像化',
+      enPurpose: 'Anime production committee equity & global multi-media adaptation of flagship manga',
+      officialSource: '秋田書店公式開示・アニメ製作委員会クレジット',
+      enOfficialSource: 'Official Corporate Disclosures & Anime Production Committee Filings',
+      strategicSynergy: '週刊少年チャンピオン発のメガヒットIPを自社出資でアニメ化し、グローバル配信・商品化権収益を最大化。',
+      enStrategicSynergy: 'Drives global broadcast streaming and licensing revenue through direct production committee equity.'
     }
   ],
 
