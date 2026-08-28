@@ -464,24 +464,32 @@ export default function CompanyShikihoProfile({ company, financials = [] }: Comp
       <QuarterlyProgressTracker
         tickerCode={company.tickerCode}
         companyName={company.name}
+        financials={financials}
+        company={company}
       />
 
       {/* 5. 🔬 儲けのカラクリ ＆ コスト・利益構造の解剖 */}
       <ProfitAnatomyBreakdown
         tickerCode={company.tickerCode}
         companyName={company.name}
+        financials={financials}
+        company={company}
       />
 
       {/* 6. 💰 10年配当推移 ＆ 自社株買い・総還元性向 */}
       <DividendRepurchaseAnalysis
         tickerCode={company.tickerCode}
         companyName={company.name}
+        financials={financials}
+        company={company}
       />
 
       {/* 7. 💎 保有資産ポートフォリオ（現預金・有価証券・不動産） */}
       <CompanyAssetPortfolioView
         tickerCode={company.tickerCode}
         companyName={company.name}
+        financials={financials}
+        company={company}
       />
     </div>
   );

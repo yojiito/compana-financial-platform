@@ -224,6 +224,8 @@ export default function StockDetailTabs({
           <QuarterlyProgressTracker
             tickerCode={company.tickerCode}
             companyName={company.name}
+            financials={financials}
+            company={company}
           />
         )}
 
@@ -231,6 +233,8 @@ export default function StockDetailTabs({
           <DividendRepurchaseAnalysis
             tickerCode={company.tickerCode}
             companyName={company.name}
+            financials={financials}
+            company={company}
           />
         )}
 
