@@ -215,22 +215,36 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
     }
   };
 
-  // 金額フォーマッター
-  const formatAmount = (val: number | null | undefined) => {
+  // 時価総額フォーマッター (円単位)
+  const formatMarketCap = (val: number | null | undefined) => {
     if (val === null || val === undefined) return '-';
     const isNegative = val < 0;
     const absVal = Math.abs(val);
 
-    // 1兆円以上
     if (absVal >= 1000000000000) {
       return `${isNegative ? '-' : ''}¥${(absVal / 1000000000000).toFixed(2)}${isEn ? 'T' : '兆'}`;
     }
-    // 1億円以上 (百万単位で入っている場合は100で割る)
     if (absVal >= 100000000) {
       return `${isNegative ? '-' : ''}¥${Math.round(absVal / 100000000).toLocaleString()}${isEn ? 'B' : '億'}`;
     }
-    if (absVal >= 100) {
-      return `${isNegative ? '-' : ''}¥${(absVal / 100).toFixed(1)}${isEn ? 'B' : '億'}`;
+    return `${isNegative ? '-' : ''}¥${(absVal / 10000).toFixed(1)}万`;
+  };
+
+  // 財務諸表フォーマッター (百万円単位)
+  const formatMillion = (val: number | null | undefined) => {
+    if (val === null || val === undefined) return '-';
+    const isNegative = val < 0;
+    const absVal = Math.abs(val);
+
+    const oku = absVal / 100;
+    if (oku >= 10000) {
+      return `${isNegative ? '-' : ''}¥${(oku / 10000).toFixed(2)}${isEn ? 'T' : '兆'}`;
+    }
+    if (oku >= 10) {
+      return `${isNegative ? '-' : ''}¥${Math.round(oku).toLocaleString()}${isEn ? 'B' : '億'}`;
+    }
+    if (oku >= 1) {
+      return `${isNegative ? '-' : ''}¥${oku.toFixed(1)}${isEn ? 'B' : '億'}`;
     }
     return `${isNegative ? '-' : ''}¥${absVal.toLocaleString()}${isEn ? 'M' : '百万'}`;
   };
@@ -641,13 +655,13 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
                       {displaySector}
                     </td>
                     <td className="p-3.5 text-right font-bold text-slate-900">
-                      {formatAmount(c.marketCap)}
+                      {formatMarketCap(c.marketCap)}
                     </td>
                     <td className="p-3.5 text-right text-slate-700">
-                      {formatAmount(c.revenue)}
+                      {formatMillion(c.revenue)}
                     </td>
                     <td className="p-3.5 text-right font-bold text-emerald-600">
-                      {formatAmount(c.operatingIncome)}
+                      {formatMillion(c.operatingIncome)}
                     </td>
                     <td className="p-3.5 text-right font-bold text-teal-600">
                       {c.operatingMargin !== null ? `${c.operatingMargin}%` : '-'}

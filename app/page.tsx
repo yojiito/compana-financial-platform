@@ -8,6 +8,13 @@ export default async function HomePage() {
     prisma.company.findMany({
       orderBy: { marketCap: 'desc' },
       take: 9,
+      include: {
+        financials: {
+          where: { periodType: 'FY' },
+          orderBy: { fiscalYear: 'desc' },
+          take: 1,
+        },
+      },
     }),
     prisma.unlistedCompany.findMany({
       orderBy: { latestNetAssets: 'desc' },

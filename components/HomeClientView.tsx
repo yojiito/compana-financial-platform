@@ -182,21 +182,33 @@ export default function HomeClientView({
 
                   <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-xs">
                     <div className="bg-slate-50 p-2 rounded-lg text-center">
-                      <div className="text-slate-500 text-[10px]">{t('metric.revenue', '売上高')}</div>
+                      <div className="text-slate-500 text-[10px]">{t('metric.revenue', '売上高 (年商)')}</div>
                       <div className="font-bold font-mono text-slate-800 mt-0.5">
-                        {company.latestRevenue ? `¥${(company.latestRevenue / 1000000000000).toFixed(1)}兆` : '-'}
+                        {(() => {
+                          const rev = company.financials?.[0]?.revenue;
+                          if (!rev) return '-';
+                          const oku = rev / 100;
+                          if (oku >= 10000) return `¥${(oku / 10000).toFixed(1)}兆`;
+                          return `¥${Math.round(oku).toLocaleString()}億`;
+                        })()}
                       </div>
                     </div>
                     <div className="bg-slate-50 p-2 rounded-lg text-center">
                       <div className="text-slate-500 text-[10px]">{t('metric.operating_income', '営業利益')}</div>
                       <div className="font-bold font-mono text-emerald-600 mt-0.5">
-                        {company.latestOperatingIncome ? `¥${(company.latestOperatingIncome / 100000000).toLocaleString()}億` : '-'}
+                        {(() => {
+                          const op = company.financials?.[0]?.operatingIncome;
+                          if (op === undefined || op === null) return '-';
+                          const oku = op / 100;
+                          if (Math.abs(oku) >= 10000) return `¥${(oku / 10000).toFixed(2)}兆`;
+                          return `¥${Math.round(oku).toLocaleString()}億`;
+                        })()}
                       </div>
                     </div>
                     <div className="bg-slate-50 p-2 rounded-lg text-center">
                       <div className="text-slate-500 text-[10px]">{t('metric.equity_ratio', '自己資本比率')}</div>
                       <div className="font-bold font-mono text-slate-800 mt-0.5">
-                        {company.latestEquityRatio ? `${company.latestEquityRatio}%` : '-'}
+                        {company.equityRatio ? `${company.equityRatio}%` : (company.financials?.[0]?.totalAssets && company.financials?.[0]?.netAssets ? `${((company.financials[0].netAssets / company.financials[0].totalAssets) * 100).toFixed(1)}%` : '-')}
                       </div>
                     </div>
                   </div>
