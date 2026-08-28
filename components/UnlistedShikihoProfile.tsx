@@ -177,6 +177,12 @@ export default function UnlistedShikihoProfile({ company }: UnlistedOverviewProf
                   })}
                 </div>
               </div>
+            ) : company.businessSegments ? (
+              <div className="space-y-2">
+                <p className="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                  {company.businessSegments}
+                </p>
+              </div>
             ) : (
               <div className="text-xs text-slate-400 py-3 text-center">セグメント情報なし</div>
             )}

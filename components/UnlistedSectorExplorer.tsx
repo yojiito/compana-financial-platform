@@ -313,6 +313,12 @@ export default function UnlistedSectorExplorer({ companies }: Props) {
                       {isEn ? 'CEO / Rep:' : '代表:'} {displayRep}
                     </span>
                   )}
+                  {c.employeesCount && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mt-1">
+                      <Users className="w-3 h-3 text-teal-600 shrink-0" />
+                      <span>{c.employeesCount}</span>
+                    </div>
+                  )}
                 </div>
 
                 {displayDesc && (
