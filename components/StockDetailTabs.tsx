@@ -215,6 +215,8 @@ export default function StockDetailTabs({
           <ProfitAnatomyBreakdown
             tickerCode={company.tickerCode}
             companyName={company.name}
+            financials={financials}
+            company={company}
           />
         )}
 
@@ -259,6 +261,8 @@ export default function StockDetailTabs({
           <CompanyAssetPortfolioView
             tickerCode={company.tickerCode}
             companyName={company.name}
+            financials={financials}
+            company={company}
           />
         )}
 

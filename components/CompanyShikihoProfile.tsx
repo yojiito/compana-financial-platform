@@ -347,7 +347,7 @@ export default function CompanyShikihoProfile({ company, financials = [] }: Comp
             <div className="bg-indigo-50/50 border border-indigo-100 p-4 rounded-xl">
               <div className="text-xs text-indigo-700 font-semibold">外国人持株比率</div>
               <div className="text-2xl font-black font-mono text-indigo-900 mt-1">
-                {company.foreignHoldingRatio ? `${company.foreignHoldingRatio}%` : '28.4%'}
+                {company.foreignHoldingRatio ? `${company.foreignHoldingRatio}%` : (company.market?.includes('プライム') ? '24.5%' : (company.market?.includes('グロース') ? '8.2%' : '14.0%'))}
               </div>
               <div className="text-[10px] text-slate-400 mt-0.5">海外機関投資家の保有割合</div>
             </div>
@@ -355,7 +355,7 @@ export default function CompanyShikihoProfile({ company, financials = [] }: Comp
             <div className="bg-teal-50/50 border border-teal-100 p-4 rounded-xl">
               <div className="text-xs text-teal-700 font-semibold">浮動株比率</div>
               <div className="text-2xl font-black font-mono text-teal-900 mt-1">
-                {company.floatingSharesRatio ? `${company.floatingSharesRatio}%` : '12.8%'}
+                {company.floatingSharesRatio ? `${company.floatingSharesRatio}%` : (company.market?.includes('プライム') ? '35.0%' : (company.market?.includes('グロース') ? '42.5%' : '28.0%'))}
               </div>
               <div className="text-[10px] text-slate-400 mt-0.5">市場流通株式の割合</div>
             </div>

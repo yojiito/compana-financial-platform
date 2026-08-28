@@ -377,7 +377,7 @@ export default function TenYearPlOverview({
         <div className="flex items-start gap-1.5 text-[11px] text-slate-400 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
           <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           <span>
-            ※ 金額は有価証券報告書基準の<b>百万円単位</b>（右上のスイッチで兆・億円に切替可能）。EPSおよび1株配当は、2021年10月1日付の株式分割（1:5）を全期間に遡及反映した実質値です。
+            ※ 金額は有価証券報告書・決算短信基準の<b>百万円単位</b>（右上のスイッチで兆・億円に切替可能）。過年度の株式分割や決算期変更は公式開示に準拠して遡及反映されています。
           </span>
         </div>
       </div>
