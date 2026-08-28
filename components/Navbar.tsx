@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, BarChart2, Filter, Newspaper, Building2, Building, Scale, Swords, Briefcase, Users, Globe, Handshake, ShieldCheck } from 'lucide-react';
+import { Search, BarChart2, Filter, Newspaper, Building2, Building, Scale, Swords, Briefcase, Users, Globe, Handshake, ShieldCheck, Share2 } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
 
 export default function Navbar() {
@@ -153,6 +153,13 @@ export default function Navbar() {
 
         {/* ナビゲーションリンク ＆ 言語切替 */}
         <nav className="flex items-center gap-1.5">
+          <Link
+            href="/network"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-300 hover:text-white bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-700 transition shadow-sm"
+          >
+            <Share2 className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="hidden sm:inline">{t('nav.network', '関係性ネットワーク')}</span>
+          </Link>
           <Link
             href="/ma"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-300 hover:text-white bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-700 transition shadow-sm"

@@ -7,6 +7,7 @@ import CapitalEventTimeline from '@/components/CapitalEventTimeline';
 import UnlistedShareholderTracker from '@/components/UnlistedShareholderTracker';
 import UnlistedShikihoProfile from '@/components/UnlistedShikihoProfile';
 import UnlistedInvestmentPortfolio from '@/components/UnlistedInvestmentPortfolio';
+import RelationshipNetworkGraph from '@/components/RelationshipNetworkGraph';
 import { UNLISTED_INVESTMENTS_DATA } from '@/lib/unlisted-investments-data';
 
 interface PageProps {
@@ -160,6 +161,14 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
             />
           </section>
         )}
+
+        {/* 3.5 🌐 統合 資本・人的関係性ネットワーク */}
+        <section className="space-y-4 pt-4 border-t border-slate-200">
+          <RelationshipNetworkGraph
+            initialEntityId={`unlisted-${slug}`}
+            showControls={true}
+          />
+        </section>
 
         {/* 4. 官報決算公告 & AI BS診断 */}
         <section className="space-y-4 pt-4 border-t border-slate-200">

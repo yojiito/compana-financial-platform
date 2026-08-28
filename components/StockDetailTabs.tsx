@@ -13,6 +13,7 @@ import {
   Target,
   Calculator,
   Award,
+  Share2,
 } from 'lucide-react';
 import StockCandleChart from './StockCandleChart';
 import FinancialVisualizer from './FinancialVisualizer';
@@ -25,6 +26,7 @@ import CompanyAssetPortfolioView from './CompanyAssetPortfolio';
 import ProfitAnatomyBreakdown from './ProfitAnatomyBreakdown';
 import DividendRepurchaseAnalysis from './DividendRepurchaseAnalysis';
 import QuarterlyProgressTracker from './QuarterlyProgressTracker';
+import RelationshipNetworkGraph from './RelationshipNetworkGraph';
 import { useLanguage } from '@/lib/language-context';
 
 interface StockDetailTabsProps {
@@ -50,6 +52,7 @@ export default function StockDetailTabs({
 }: StockDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<
     | 'profile'
+    | 'network'
     | 'anatomy'
     | 'quarterly'
     | 'dividends'
@@ -81,6 +84,18 @@ export default function StockDetailTabs({
           >
             <BarChart2 className="w-4 h-4 text-teal-400" />
             <span>{isEn ? '📊 Profile & Highlights' : '📊 企業分析カルテ'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('network')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition whitespace-nowrap ${
+              activeTab === 'network'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-indigo-700 hover:bg-indigo-50 font-extrabold border border-indigo-200/80 bg-indigo-50/40'
+            }`}
+          >
+            <Share2 className="w-4 h-4 text-indigo-400" />
+            <span>{isEn ? '🌐 Relationship Network' : '🌐 資本・人的ネットワーク'}</span>
           </button>
 
           <button
@@ -209,6 +224,13 @@ export default function StockDetailTabs({
       <div>
         {activeTab === 'profile' && (
           <CompanyShikihoProfile company={company} financials={financials} />
+        )}
+
+        {activeTab === 'network' && (
+          <RelationshipNetworkGraph
+            initialEntityId={`corp-${company.tickerCode}`}
+            showControls={true}
+          />
         )}
 
         {activeTab === 'anatomy' && (
