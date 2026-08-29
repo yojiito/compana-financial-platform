@@ -162,11 +162,11 @@ export default async function UnlistedCompanyPage({ params }: PageProps) {
           </section>
         )}
 
-        {/* 3.5 🌐 統合 資本・人的関係性ネットワーク */}
+        {/* 3.5 🌐 資本・人的関係性ネットワーク */}
         <section className="space-y-4 pt-4 border-t border-slate-200">
           <RelationshipNetworkGraph
             initialEntityId={`unlisted-${slug}`}
-            showControls={true}
+            showControls={false}
           />
         </section>
 

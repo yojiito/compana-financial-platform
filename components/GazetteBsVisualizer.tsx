@@ -47,14 +47,18 @@ export default function GazetteBsVisualizer({ companyName, isStartup = true, rep
 
   // 百万円 → 億円 / 兆円の正確な換算 (100百万円 = 1億円)
   const formatMillionYen = (val: number) => {
-    const oku = val / 100;
-    if (Math.abs(oku) >= 10000) {
-      return `${(oku / 10000).toFixed(2)} 兆円`;
+    const isNeg = val < 0;
+    const absVal = Math.abs(val);
+    const absOku = absVal / 100;
+    const prefix = isNeg ? '▲' : '';
+
+    if (absOku >= 10000) {
+      return `${prefix}${(absOku / 10000).toFixed(2)} 兆円`;
     }
-    if (Math.abs(val) >= 100) {
-      return `${oku.toFixed(1)} 億円`;
+    if (absVal >= 100) {
+      return `${prefix}${absOku.toFixed(1)} 億円`;
     }
-    return `${val.toLocaleString()} 百万円`;
+    return `${prefix}${absVal.toLocaleString()} 百万円`;
   };
 
   const chartData = reports.map((r) => ({
@@ -159,10 +163,10 @@ export default function GazetteBsVisualizer({ companyName, isStartup = true, rep
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
           <div className="text-xs font-semibold text-slate-500">当期純損益</div>
           <div className={`text-xl font-black font-mono mt-1 ${isNetIncomePositive ? 'text-teal-600' : 'text-rose-600'}`}>
-            {isNetIncomePositive ? '+' : ''}{formatMillionYen(selectedReport.netIncome)}
+            {formatMillionYen(selectedReport.netIncome)}
           </div>
           <div className="text-[10px] text-slate-400 mt-0.5">
-            {isNetIncomePositive ? '黒字決算' : '先行投資による赤字'}
+            {isNetIncomePositive ? '当期純利益（黒字）' : '🚨 当期純損失（赤字）'}
           </div>
         </div>
 

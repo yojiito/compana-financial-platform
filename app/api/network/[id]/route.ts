@@ -34,7 +34,7 @@ export async function GET(
         where: { tickerCode },
         include: {
           shareholders: {
-            take: 8,
+            take: 10,
             orderBy: { rank: 'asc' }
           }
         }
@@ -78,18 +78,19 @@ export async function GET(
               source: personId,
               target: selfNodeId,
               relationType: 'governance',
-              label: '代表取締役 (経営ガバナンス)',
+              label: '代表取締役',
               detail: `${company.representative}氏が${company.name}の代表取締役として経営を統括。`
             });
           }
         }
 
-        // 大株主一覧
+        // 大株主一覧 ＆ 資本系列
         for (const sh of company.shareholders) {
           const shName = sh.shareholderName.trim();
-          const isIndividual = !shName.includes('株式会社') && !shName.includes('信託銀行') && !shName.includes('持株会') && !shName.includes('Bank') && !shName.includes('Trust');
           const isTrust = shName.includes('信託銀行') || shName.includes('カストディ') || shName.includes('Trust');
           const isEmployee = shName.includes('持株会');
+          const isAssetMgmt = shName.includes('資産管理') || shName.includes('事務所') || shName.includes('インターナショナル') || shName.includes('キャピタル');
+          const isIndividual = !shName.includes('株式会社') && !shName.includes('信託') && !shName.includes('持株会') && !shName.includes('Bank') && !shName.includes('Trust') && !shName.includes('有限会社') && !shName.includes('合同会社');
 
           const shNodeId = isIndividual 
             ? `person-sh-${company.tickerCode}-${sh.rank}`
@@ -100,7 +101,7 @@ export async function GET(
               id: shNodeId,
               label: shName,
               type: isIndividual ? 'person' : 'unlisted_corp',
-              subLabel: isTrust ? '機関投資家・信託口' : isEmployee ? '従業員・役員持株会' : isIndividual ? '大株主 / 創業者・個人' : '主要大株主・法人',
+              subLabel: isTrust ? '機関投資家・信託口' : isEmployee ? '従業員・役員持株会' : isAssetMgmt ? '創業家 資産管理会社' : isIndividual ? '大株主 / 創業者・個人' : '主要大株主・出資元法人',
               description: `${company.name}の大株主（第${sh.rank}位、持株比率: ${sh.holdingRatio}%、保有株数: ${(sh.sharesHeld || 0).toLocaleString()}株）。${sh.changeNote || ''}`,
               badge: `第${sh.rank}位大株主 (${sh.holdingRatio}%)`,
               tags: ['大株主', isIndividual ? '個人株主' : '法人株主']
@@ -113,7 +114,7 @@ export async function GET(
               id: edgeId,
               source: shNodeId,
               target: selfNodeId,
-              relationType: isIndividual ? 'governance' : 'capital',
+              relationType: isIndividual || isAssetMgmt ? 'governance' : 'capital',
               label: `第${sh.rank}位株主 (${sh.holdingRatio}%)`,
               ratio: sh.holdingRatio,
               detail: `${shName}が${company.name}株式の${sh.holdingRatio}%（${(sh.sharesHeld || 0).toLocaleString()}株）を保有。`
@@ -146,6 +147,33 @@ export async function GET(
             badge: unlisted.capital ? `資本金 ${unlisted.capital}百万円` : '未上場',
             tags: [unlisted.industry, '未上場']
           });
+        }
+
+        // 代表者・役員
+        if (unlisted.representative) {
+          const personId = `person-unlisted-${slug}-rep`;
+          if (!nodesMap.has(personId)) {
+            nodesMap.set(personId, {
+              id: personId,
+              label: unlisted.representative,
+              type: 'person',
+              subLabel: `代表取締役 / ${unlisted.name}`,
+              description: `${unlisted.name} 代表取締役。経営を統括。`,
+              badge: '代表取締役',
+              tags: ['経営陣', '代表取締役']
+            });
+          }
+          const edgeId = `e-${personId}-${selfNodeId}`;
+          if (!edgesMap.has(edgeId)) {
+            edgesMap.set(edgeId, {
+              id: edgeId,
+              source: personId,
+              target: selfNodeId,
+              relationType: 'governance',
+              label: '代表取締役',
+              detail: `${unlisted.representative}氏が${unlisted.name}の代表取締役として経営を統括。`
+            });
+          }
         }
 
         // 未上場企業の出資先ポートフォリオ

@@ -31,874 +31,254 @@ export interface NetworkGraphData {
   edges: NetworkEdge[];
 }
 
-// 🏛️ 公式ナレッジグラフ マスターデータ (主要財閥・系列・創業家・テック・出版メディア・流通)
+// 🏛️ 公式ナレッジグラフ マスターデータ (全主要メガキャップ・名門企業・創業家・子会社・関連会社・財団)
 export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
   nodes: [
+    // ==========================================
     // 🚘 1. トヨタ自動車グループ & 豊田家
-    {
-      id: 'corp-7203',
-      label: 'トヨタ自動車株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 7203 / 輸送用機器',
-      description: '世界首位の自動車メーカー。時価総額約41.5兆円。',
-      linkUrl: '/stocks/7203',
-      badge: '時価総額41.5兆円',
-      tags: ['トヨタグループ', '自動車', 'モビリティ']
-    },
-    {
-      id: 'person-toyoda-akio',
-      label: '豊田 章男',
-      type: 'person',
-      subLabel: '代表取締役会長 / 豊田家第4代',
-      description: 'トヨタ自動車創業者・豊田喜一郎の孫。日本自動車工業会元会長。マスタードライバー（モリゾウ）。',
-      badge: '代表取締役会長',
-      tags: ['豊田家', '経営者', '創業者一族']
-    },
-    {
-      id: 'person-sato-koji',
-      label: '佐藤 恒治',
-      type: 'person',
-      subLabel: '代表取締役社長 / CEO',
-      description: 'レクサス・GR事業プレジデントを経て2023年4月よりトヨタ自動車代表取締役社長CEO就任。',
-      badge: '代表取締役社長CEO',
-      tags: ['経営陣', 'エンジニア']
-    },
-    {
-      id: 'person-toyoda-kiichiro',
-      label: '豊田 喜一郎',
-      type: 'person',
-      subLabel: 'トヨタ自動車 創業者 (故人)',
-      description: '自動織機製造から国産自動車産業を興したトヨタ自動車創業者。豊田佐吉の長男。',
-      badge: '歴史的創業者',
-      tags: ['歴史的創業者', '豊田家']
-    },
-    {
-      id: 'corp-6201',
-      label: '株式会社豊田自動織機',
-      type: 'listed_corp',
-      subLabel: '東証プライム 6201 / 機械',
-      description: 'トヨタグループの本家・発祥企業。フォークリフト世界首位。トヨタ株を約8.4%保有する大株主。',
-      linkUrl: '/stocks/6201',
-      badge: 'グループ発祥母体',
-      tags: ['トヨタグループ', '発祥企業']
-    },
-    {
-      id: 'corp-6902',
-      label: '株式会社デンソー',
-      type: 'listed_corp',
-      subLabel: '東証プライム 6902 / 電気機器',
-      description: '世界トップクラスの自動車部品メガサプライヤー。CASE・半導体・電動化の中核。',
-      linkUrl: '/stocks/6902',
-      badge: '部品メガサプライヤー',
-      tags: ['トヨタグループ', 'CASE']
-    },
-    {
-      id: 'corp-7259',
-      label: '株式会社アイシン',
-      type: 'listed_corp',
-      subLabel: '東証プライム 7259 / 輸送用機器',
-      description: '世界トップシェアのトランスミッション・eAxle（電動駆動）メーカー。',
-      linkUrl: '/stocks/7259',
-      badge: '駆動系世界首位',
-      tags: ['トヨタグループ', 'EV']
-    },
-    {
-      id: 'corp-8015',
-      label: '豊田通商株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 8015 / 卸売業',
-      description: 'トヨタグループ中核の総合商社。アフリカ市場およびリチウム・蓄電池サプライチェーンに強み。',
-      linkUrl: '/stocks/8015',
-      badge: 'グループ総合商社',
-      tags: ['トヨタグループ', '商社']
-    },
+    // ==========================================
+    { id: 'corp-7203', label: 'トヨタ自動車株式会社', type: 'listed_corp', subLabel: '7203 / 東証プライム', description: '日本最大のグローバル自動車メーカー。', linkUrl: '/stocks/7203', tags: ['自動車', '系列', '愛知'] },
+    { id: 'corp-6902', label: '株式会社デンソー', type: 'listed_corp', subLabel: '6902 / 東証プライム', description: '世界屈指の総合自動車電装・半導体部品メガサプライヤー。', linkUrl: '/stocks/6902', tags: ['系列', '電装部品'] },
+    { id: 'corp-7259', label: '株式会社アイシン', type: 'listed_corp', subLabel: '7259 / 東証プライム', description: '世界トップのオートマチックトランスミッション・電動アクスルメーカー。', linkUrl: '/stocks/7259', tags: ['系列', '駆動系'] },
+    { id: 'corp-6201', label: '株式会社豊田自動織機', type: 'listed_corp', subLabel: '6201 / 東証プライム', description: 'トヨタグループの本家・源流企業。産業車両・エンジン・フォークリフト世界一。', linkUrl: '/stocks/6201', tags: ['本家', '源流'] },
+    { id: 'corp-8015', label: '豊田通商株式会社', type: 'listed_corp', subLabel: '8015 / 東証プライム', description: 'トヨタグループの総合商社。アフリカ事業・車載電池リチウム資源開発。', linkUrl: '/stocks/8015', tags: ['商社', '系列'] },
+    { id: 'corp-7270', label: '株式会社SUBARU', type: 'listed_corp', subLabel: '7270 / 東証プライム', description: '水平対向エンジン・AWD技術に強み。トヨタ持分法適用関連会社。', linkUrl: '/stocks/7270', tags: ['自動車', '資本提携'] },
+    { id: 'corp-7205', label: '日野自動車株式会社', type: 'listed_corp', subLabel: '7205 / 東証プライム', description: '商用トラック・バス大手。トヨタ連結子会社。', linkUrl: '/stocks/7205', tags: ['トラック', '子会社'] },
+    { id: 'corp-daihatsu', label: 'ダイハツ工業株式会社', type: 'unlisted_corp', subLabel: 'トヨタ完全子会社', description: '軽自動車・小型車専業メーカー。トヨタ100%子会社。', tags: ['軽自動車', '完全子会社'] },
+    { id: 'corp-toyota-body', label: 'トヨタ車体株式会社', type: 'unlisted_corp', subLabel: 'トヨタ完全子会社', description: 'アルファード・ヴェルファイア・ランドクルーザー等の完成車開発・生産。', tags: ['完成車', '完全子会社'] },
+    { id: 'person-akio-toyoda', label: '豊田章男', type: 'person', subLabel: '代表取締役会長 / マスタードライバー', description: '豊田家4代目トップ。GAZOO Racing創設、モビリティカンパニーへの変革を牽引。', tags: ['創業家', '会長'] },
+    { id: 'person-shoichiro-toyoda', label: '豊田章一郎', type: 'person', subLabel: '元社長・名誉会長', description: 'トヨタ自動車第5代社長、経団連会長。章男氏の父。', tags: ['創業家', '歴代トップ'] },
+    { id: 'person-kiichiro-toyoda', label: '豊田喜一郎', type: 'person', subLabel: 'トヨタ自動車創業者', description: '国産乗用車の父。自動織機の技術を応用しトヨタ自動車工業を創業。', tags: ['創業者'] },
+    { id: 'person-koji-sato', label: '佐藤恒治', type: 'person', subLabel: '代表取締役社長', description: 'Lexus・GRブランドプレジデントを経て2023年社長就任。', tags: ['代表取締役'] },
+    { id: 'foundation-toyota', label: '公益財団法人トヨタ財団', type: 'foundation', subLabel: '創業家設立助成財団', description: '豊田喜一郎氏の理念に基づき研究助成・社会課題解決を推進。', tags: ['財団', '文化振興'] },
 
-    // 🏢 2. 三菱グループ (金曜会) ＆ 三菱商事 ＆ 三菱重工 ＆ MUFG
-    {
-      id: 'corp-8058',
-      label: '三菱商事株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 8058 / 卸売業',
-      description: '総合商社トップ。天然ガス、金属資源、産業インフラ、自動車、食品等の世界的ポートフォリオ。時価総額約13.2兆円。',
-      linkUrl: '/stocks/8058',
-      badge: '総合商社トップ',
-      tags: ['三菱グループ', '総合商社', '金曜会']
-    },
-    {
-      id: 'corp-7011',
-      label: '三菱重工業株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 7011 / 機械',
-      description: '防衛・航空宇宙・エネルギープラント・原子力の中核。防衛省向け調達シェア首位。',
-      linkUrl: '/stocks/7011',
-      badge: '防衛・エネルギー中核',
-      tags: ['三菱グループ', '防衛', '重工']
-    },
-    {
-      id: 'corp-8306',
-      label: '株式会社三菱UFJフィナンシャル・グループ (MUFG)',
-      type: 'listed_corp',
-      subLabel: '東証プライム 8306 / 銀行業',
-      description: '国内最大の民間金融メガバンクグループ。モルガン・スタンレーの筆頭株主。時価総額約20兆円。',
-      linkUrl: '/stocks/8306',
-      badge: 'メガバンク首位',
-      tags: ['三菱グループ', 'メガバンク', '金融']
-    },
-    {
-      id: 'corp-8802',
-      label: '三菱地所株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 8802 / 不動産業',
-      description: '丸の内・大手町・有楽町の「大丸有」エリアを中核とする総合デベロッパー首位。',
-      linkUrl: '/stocks/8802',
-      badge: '丸の内デベロッパー',
-      tags: ['三菱グループ', '不動産', '丸の内']
-    },
-    {
-      id: 'person-iwasaki-yataro',
-      label: '岩崎 彌太郎',
-      type: 'person',
-      subLabel: '三菱財閥 創業者 (歴史的人物)',
-      description: '土佐藩出身。海運会社「九十九商会」「三菱商会」を興し、日本の近代産業の礎を築いた三菱グループ創始者。',
-      badge: '三菱グループ開祖',
-      tags: ['歴史的創業者', '岩崎家', '三菱']
-    },
+    // ==========================================
+    // 🎮 2. 任天堂 (7974) & 山内家・子会社
+    // ==========================================
+    { id: 'corp-7974', label: '任天堂株式会社', type: 'listed_corp', subLabel: '7974 / 東証プライム', description: '世界最高峰のゲーム機・IPコンテンツ開発企業。', linkUrl: '/stocks/7974', tags: ['ゲーム', 'IP', '京都'] },
+    { id: 'corp-pokemon', label: '株式会社ポケモン', type: 'unlisted_corp', subLabel: '任天堂出資 (32.0%)', description: '世界的人気キャラクター「ポケットモンスター」のIPブランドマネジメント。', tags: ['IP', '関連会社'] },
+    { id: 'corp-monolith', label: '株式会社モノリスソフト', type: 'unlisted_corp', subLabel: '任天堂完全子会社 (100%)', description: '「ゼノブレイド」シリーズ開発、ゼルダの伝説開発協力。', tags: ['開発子会社'] },
+    { id: 'corp-nintendo-sys', label: 'ニンテンドーシステムズ株式会社', type: 'unlisted_corp', subLabel: '任天堂 (80%) × DeNA (20%)', description: '任天堂のネットワークサービス・デジタルインフラ開発運営。', tags: ['システム子会社'] },
+    { id: 'person-hiroshi-yamauchi', label: '山内溥', type: 'person', subLabel: '任天堂第3代社長 (中興の祖)', description: '花札・トランプ企業から世界的ゲームコンソール企業へ大転換させた伝説の経営者。', tags: ['創業家', '中興の祖'] },
+    { id: 'person-shuntaro-furukawa', label: '古川俊太郎', type: 'person', subLabel: '代表取締役社長', description: 'グローバルマーケティング・経営企画を経て現社長。Nintendo Switchの世界的展開を統括。', tags: ['代表取締役'] },
+    { id: 'person-shigeru-miyamoto', label: '宮本茂', type: 'person', subLabel: '代表取締役フェロー', description: '「マリオ」「ゼルダの伝説」「ドンキーコング」の生みの親。文化功労者。', tags: ['クリエイター', '取締役'] },
 
-    // 📚 3. 出版メディア ＆ 創業家 ＆ 文学顕彰財団
-    {
-      id: 'unlisted-bungeishunju',
-      label: '株式会社文藝春秋',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 出版・メディア',
-      description: '1923年創業。『週刊文春』『文春オンライン』『文藝春秋』『Number』を発行する総合出版社。',
-      linkUrl: '/unlisted/bungeishunju',
-      badge: '売上約190億円',
-      tags: ['総合出版', '週刊誌', '文藝春秋']
-    },
-    {
-      id: 'person-kikuchi-kan',
-      label: '菊池 寛',
-      type: 'person',
-      subLabel: '文藝春秋 創業者 / 作家 (故人)',
-      description: '大正・昭和期の文豪。1923年に文藝春秋社を創立し、芥川賞・直木賞を創設。',
-      badge: '創業者・文豪',
-      tags: ['歴史的創業者', '芥川賞創設者']
-    },
-    {
-      id: 'person-iikubo-shigeyuki',
-      label: '飯窪 成幸',
-      type: 'person',
-      subLabel: '代表取締役社長 (文藝春秋)',
-      description: '文藝春秋代表取締役社長。『週刊文春』編集長を経て経営トップに就任。構造改革を推進。',
-      badge: '代表取締役社長',
-      tags: ['経営トップ', '編集長出身']
-    },
-    {
-      id: 'foundation-nihon-bungaku',
-      label: '公益財団法人 日本文学振興会',
-      type: 'foundation',
-      subLabel: '公益財団法人 / 文化顕彰母体',
-      description: '菊池寛の遺志に基づき設立。芥川龍之介賞・直木三十五賞・大宅壮一ノンフィクション賞の選考・授賞を主宰。',
-      badge: '芥川賞・直木賞主宰',
-      tags: ['文学賞', '公益財団']
-    },
-    {
-      id: 'unlisted-shinchosha',
-      label: '株式会社新潮社',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 出版・メディア',
-      description: '1896年創業。『新潮文庫』『週刊新潮』『波』やWebマンガ『くらげバンチ』を展開する名門出版社。',
-      linkUrl: '/unlisted/shinchosha',
-      badge: '自己資本比率80.8%',
-      tags: ['名門出版', '文庫', '新潮社']
-    },
-    {
-      id: 'person-sato-takanobu',
-      label: '佐藤 隆信',
-      type: 'person',
-      subLabel: '代表取締役社長 / 佐藤家第4代',
-      description: '新潮社代表取締役社長。創業者・佐藤義亮の曾孫。日本書籍出版協会元理事。',
-      badge: '代表取締役社長',
-      tags: ['佐藤家', '経営トップ', '創業家']
-    },
-    {
-      id: 'person-sato-giryo',
-      label: '佐藤 義亮',
-      type: 'person',
-      subLabel: '新潮社 創業者 (故人)',
-      description: '1896年に新潮社の前身「新声社」を創業。夏目漱石や島崎藤村等の文学全集・文庫を刊行。',
-      badge: '歴史的創業者',
-      tags: ['歴史的創業者', '佐藤家']
-    },
-    {
-      id: 'foundation-shincho-bungei',
-      label: '公益財団法人 新潮文芸振興会',
-      type: 'foundation',
-      subLabel: '公益財団法人 / 文化顕彰母体',
-      description: '新潮社が支援する文化財団。三島由紀夫賞・山本周五郎賞・小林秀雄賞・新潮ドキュメント賞の選考・顕彰を運営。',
-      badge: '三島賞・山本賞主宰',
-      tags: ['文学賞', '公益財団']
-    },
-    {
-      id: 'unlisted-shogakukan',
-      label: '株式会社小学館',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 出版・一ツ橋グループ',
-      description: '1922年創業。一ツ橋グループ（集英社、白泉社等）の創業母体。『少年サンデー』『CanCam』等。',
-      linkUrl: '/unlisted/shogakukan',
-      badge: '一ツ橋グループ創業母体',
-      tags: ['一ツ橋グループ', 'マンガ', '小学館']
-    },
-    {
-      id: 'unlisted-shueisha',
-      label: '株式会社集英社',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 出版・マンガ',
-      description: '1926年創業。『週刊少年ジャンプ』『ヤングジャンプ』『りぼん』『non-no』。世界最高峰のマンガIPを保有。',
-      linkUrl: '/unlisted/shueisha',
-      badge: 'ジャンプIP世界展開',
-      tags: ['一ツ橋グループ', 'ジャンプ', '集英社']
-    },
-    {
-      id: 'person-ohga-nobuhiro',
-      label: '相賀 信宏',
-      type: 'person',
-      subLabel: '小学館 代表取締役社長 / 相賀家第4代',
-      description: '小学館第4代代表取締役社長。創業者・相賀武夫の曾孫。一ツ橋グループの経営統括。',
-      badge: '代表取締役社長 (相賀家)',
-      tags: ['相賀家', '一ツ橋グループ', '創業家']
-    },
+    // ==========================================
+    // 👕 3. ファーストリテイリング (9983) & 柳井家
+    // ==========================================
+    { id: 'corp-9983', label: '株式会社ファーストリテイリング', type: 'listed_corp', subLabel: '9983 / 東証プライム', description: 'ユニクロ、GU、Theory等を展開する世界大手アパレルSPA。', linkUrl: '/stocks/9983', tags: ['アパレル', 'SPA', 'グローバル'] },
+    { id: 'corp-gu', label: '株式会社ジーユー (GU)', type: 'unlisted_corp', subLabel: 'ファーストリテイリング完全子会社', description: '低価格・トレンドファッションブランドの企画開発・販売。', tags: ['アパレル子会社'] },
+    { id: 'corp-theory', label: 'Theory LLC (リンク・セオリー・ジャパン)', type: 'unlisted_corp', subLabel: 'ファーストリテイリング完全子会社', description: 'ニューヨーク発のコンテンポラリー高級ファッションブランド。', tags: ['海外ブランド子会社'] },
+    { id: 'corp-tty', label: '有限会社ティーティワイ (TTY)', type: 'unlisted_corp', subLabel: '柳井家 資産管理会社 (5.31%)', description: '柳井正氏および一族のプライベート資産管理会社。', tags: ['資産管理会社', '創業家'] },
+    { id: 'person-tadashi-yanai', label: '柳井正', type: 'person', subLabel: '代表取締役会長兼社長 (21.6%)', description: 'ファーストリテイリング創業者。山口県宇部市の個人紳士服店から世界的アパレル帝国を築く。', tags: ['創業者', '筆頭株主'] },
+    { id: 'person-kazumi-yanai', label: '柳井一海', type: 'person', subLabel: '取締役 (4.51%)', description: '柳井正氏の長男。グループ取締役、ボストン大学MBA。', tags: ['創業家', '取締役'] },
+    { id: 'person-koji-yanai', label: '柳井康治', type: 'person', subLabel: 'グループ上席執行役員 (4.51%)', description: '柳井正氏の次男。THE TOKYO TOILETプロジェクト等ブランディング統括。', tags: ['創業家', '執行役員'] },
 
-    // 📱 4. パピレス ＆ 創業者 ＆ 経営陣 ＆ 主要出資企業
-    {
-      id: 'corp-3641',
-      label: '株式会社パピレス',
-      type: 'listed_corp',
-      subLabel: '東証スタンダード 3641 / 情報・通信業',
-      description: '日本初の電子書籍レンタルPF「Renta!」を運営。電子コミック黎明期からのパイオニア。',
-      linkUrl: '/stocks/3641',
-      badge: '電子書籍パイオニア',
-      tags: ['電子書籍', 'Renta!']
-    },
-    {
-      id: 'person-amaya-mikio',
-      label: '天谷 幹夫',
-      type: 'person',
-      subLabel: '創業者 / 取締役会長 / 筆頭株主 (34.50%)',
-      description: '富士通出身。1995年に日本初の電子書籍配信会社としてパピレスを創業。発行済株式の34.50%を保有する筆頭株主。',
-      badge: '創業者・筆頭株主 (34.5%)',
-      tags: ['創業者', '筆頭株主', '富士通出身']
-    },
-    {
-      id: 'person-matsui-yasuko',
-      label: '松井 康子',
-      type: 'person',
-      subLabel: '代表取締役社長 / 第2位個人株主 (5.80%)',
-      description: '創業期から天谷氏と共に事業を立ち上げ、2010年より代表取締役社長に就任。「Renta!」のメガヒットを牽引。',
-      badge: '代表取締役社長 (5.8%)',
-      tags: ['代表取締役社長', '共同経営者']
-    },
-    {
-      id: 'corp-6460',
-      label: 'セガサミーホールディングス株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 6460 / その他製品',
-      description: '総合エンタテインメント大手。パピレス株の5.12%を保有する第3位主要大株主。',
-      linkUrl: '/stocks/6460',
-      badge: '大株主 (5.12%)',
-      tags: ['エンタメ', 'ゲーム']
-    },
-    {
-      id: 'corp-nippan',
-      label: '日本出版販売株式会社 (日販)',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 出版取次大手',
-      description: '国内最大の出版取次・書店流通ネットワーク。パピレス株の4.80%を保有する第4位株主。',
-      badge: '出版取次大手 (4.8%)',
-      tags: ['出版取次', '流通']
-    },
+    // ==========================================
+    // 🔬 4. キーエンス (6861) & 滝崎家
+    // ==========================================
+    { id: 'corp-6861', label: '株式会社キーエンス', type: 'listed_corp', subLabel: '6861 / 東証プライム', description: 'ファクトリーオートメーション用センサ・測定器・画像処理機器。営業利益率50%超。', linkUrl: '/stocks/6861', tags: ['FAセンサ', '超高収益', '大阪'] },
+    { id: 'corp-keyence-eng', label: '株式会社キーエンスエンジニアリング', type: 'unlisted_corp', subLabel: 'キーエンス完全子会社', description: 'キーエンス製品のアフターサービス・技術サポート・品質保証。', tags: ['子会社'] },
+    { id: 'corp-apiste', label: '株式会社アピステ', type: 'unlisted_corp', subLabel: 'キーエンス完全子会社', description: '産業用環境改善機器・精密温調機器の開発販売。', tags: ['環境機器子会社'] },
+    { id: 'corp-tt', label: '株式会社ティ・ティ', type: 'unlisted_corp', subLabel: '滝崎家 資産管理会社 (14.8%)', description: '滝崎武光氏の資産管理会社でありキーエンスの筆頭大株主。', tags: ['資産管理会社', '筆頭株主'] },
+    { id: 'person-takemitsu-takizaki', label: '滝崎武光', type: 'person', subLabel: '名誉会長・創業者 (7.7%)', description: 'キーエンス創業者。ダイレクトセールスとファブレス生産で世界的超高収益モデルを創出。', tags: ['創業者', '創業家'] },
+    { id: 'person-yu-nakata', label: '中田有', type: 'person', subLabel: '代表取締役社長', description: '営業部門出身、キーエンス代表取締役社長。', tags: ['代表取締役'] },
 
-    // 👕 5. ファーストリテイリング ＆ 柳井家
-    {
-      id: 'corp-9983',
-      label: '株式会社ファーストリテイリング',
-      type: 'listed_corp',
-      subLabel: '東証プライム 9983 / 小売業',
-      description: '「ユニクロ」「GU」を展開する世界時価総額首位級のアパレルコングロマリット。時価総額約14.8兆円。',
-      linkUrl: '/stocks/9983',
-      badge: '時価総額14.8兆円',
-      tags: ['アパレル', 'ユニクロ', '世界首位級']
-    },
-    {
-      id: 'person-yanai-tadashi',
-      label: '柳井 正',
-      type: 'person',
-      subLabel: '代表取締役会長兼社長 / 創業者 / 筆頭株主',
-      description: '山口県宇部市の個人商店「メンズショップOS」から一代で世界最大級のアパレル帝国を築いた創業者。保有比率約21.6%。',
-      badge: '創業者会長兼社長 (21.6%)',
-      tags: ['創業者', '筆頭株主', '柳井家']
-    },
-    {
-      id: 'person-yanai-kazumi',
-      label: '柳井 一海',
-      type: 'person',
-      subLabel: '取締役グループ上席執行役員 / 柳井家長男',
-      description: '柳井正氏の長男。ボストン大学MBA、ゴールドマン・サックス出身。Link Theory Japan会長等を歴任。',
-      badge: '取締役 / 主要株主 (4.5%)',
-      tags: ['柳井家', '後継陣', '主要株主']
-    },
-    {
-      id: 'person-yanai-koji',
-      label: '柳井 康治',
-      type: 'person',
-      subLabel: 'グループ上席執行役員 / 柳井家次男',
-      description: '柳井正氏の次男。三菱商事出身。グローバルマーケティングおよび「THE TOKYO TOILET」プロジェクト等を主導。',
-      badge: '上席執行役員 / 主要株主 (4.5%)',
-      tags: ['柳井家', '主要株主']
-    },
-    {
-      id: 'corp-tty-management',
-      label: '有限会社ティー・ティー・ワイ',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 柳井家 資産管理会社',
-      description: '柳井正氏および柳井家一族の資産管理法人。ファーストリテイリング株式の約5.3%を保有。',
-      badge: '創業家資産管理会社 (5.3%)',
-      tags: ['資産管理会社', '柳井家']
-    },
+    // ==========================================
+    // 💻 5. ソフトバンクグループ (9984) & 孫正義
+    // ==========================================
+    { id: 'corp-9984', label: 'ソフトバンクグループ株式会社', type: 'listed_corp', subLabel: '9984 / 東証プライム', description: 'AI・半導体・先端テクノロジーに特化した世界的投資持株会社。', linkUrl: '/stocks/9984', tags: ['投資会社', 'AI', 'グローバル'] },
+    { id: 'corp-arm', label: 'Arm Holdings plc', type: 'listed_corp', subLabel: 'NASDAQ: ARM / SBG (90.0%)', description: '世界中のスマートフォン・AIチップ設計を独占する英国半導体IP大手。', tags: ['半導体', '中核子会社'] },
+    { id: 'corp-9434', label: 'ソフトバンク株式会社 (通信)', type: 'listed_corp', subLabel: '9434 / 東証プライム', description: '国内通信メガキャリア。PayPay、LINEヤフーを傘下に収める。', linkUrl: '/stocks/9434', tags: ['通信', '上場子会社'] },
+    { id: 'corp-4689', label: 'LINEヤフー株式会社', type: 'listed_corp', subLabel: '4689 / 東証プライム', description: '国内最大のポータルサイトYahoo! JAPANとメッセンジャーLINEを運営。', linkUrl: '/stocks/4689', tags: ['ネット', '孫会社'] },
+    { id: 'corp-paypay', label: 'PayPay株式会社', type: 'unlisted_corp', subLabel: 'SB通信 × LINEヤフー × SBG', description: '国内登録者数6,500万人超のQRコード決済プラットフォーム。', tags: ['フィンテック', '関連会社'] },
+    { id: 'person-masayoshi-son', label: '孫正義', type: 'person', subLabel: '代表取締役会長兼社長 (29.0%)', description: 'ソフトバンクグループ創業者。Alibaba、Arm、OpenAI等への先見的メガ投資で知られる。', tags: ['創業者', '筆頭株主'] },
 
-    // 💻 6. ソフトバンクグループ ＆ 孫正義氏
-    {
-      id: 'corp-9984',
-      label: 'ソフトバンクグループ株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 9984 / 情報・通信業',
-      description: '世界最大のテック特化型投資持株会社（SoftBank Vision Fund / ARM親会社）。',
-      linkUrl: '/stocks/9984',
-      badge: 'グローバルAI投資持株会社',
-      tags: ['AI', 'ビジョンファンド', 'ARM']
-    },
-    {
-      id: 'person-son-masayoshi',
-      label: '孫 正義',
-      type: 'person',
-      subLabel: '代表取締役 会長兼社長執行役員 / 創業者',
-      description: '1981年に日本ソフトバンクを創業。ヤフー、アリババ、ARMへの巨額投資を成功させた世界的投資家・起業家。',
-      badge: '創業者兼CEO (約29%保有)',
-      tags: ['創業者', '筆頭株主', '世界的投資家']
-    },
-    {
-      id: 'corp-9434',
-      label: 'ソフトバンク株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 9434 / 情報・通信業',
-      description: '国内通信メガキャリア（SoftBank, Y!mobile, LINEヤフー親会社）。配当利回り約4.5%のキャッシュカウ。',
-      linkUrl: '/stocks/9434',
-      badge: '国内通信中核子会社',
-      tags: ['通信', '配当', 'LINEヤフー']
-    },
-    {
-      id: 'corp-arm',
-      label: 'Arm Holdings plc (NASDAQ: ARM)',
-      type: 'listed_corp',
-      subLabel: '米国NASDAQ上場 / 半導体IP首位',
-      description: '世界中のスマートフォン・AIデータセンター向けプロセッサアーキテクチャの99%を独占する英国半導体設計大手。',
-      badge: 'SBG保有比率約90%',
-      tags: ['半導体', 'AI', 'NASDAQ']
-    },
+    // ==========================================
+    // 🎮 6. ソニーグループ (6758) & 創業家
+    // ==========================================
+    { id: 'corp-6758', label: 'ソニーグループ株式会社', type: 'listed_corp', subLabel: '6758 / 東証プライム', description: 'ゲーム・音楽・映画・イメージセンサ・エンタメ金融の複合メガコングロマリット。', linkUrl: '/stocks/6758', tags: ['エンタメ', '半導体', '複合企業'] },
+    { id: 'corp-sie', label: 'Sony Interactive Entertainment LLC', type: 'unlisted_corp', subLabel: 'ソニー完全子会社 (100%)', description: 'PlayStationプラットフォーム、ゲームタイトルのグローバル開発販売。', tags: ['ゲーム子会社'] },
+    { id: 'corp-sme', label: '株式会社ソニー・ミュージックエンタテインメント', type: 'unlisted_corp', subLabel: 'ソニー完全子会社 (100%)', description: '音楽レーベル、アニメ（アニプレックス）、Fate/Grand Order等のIP企画。', tags: ['音楽アニメ子会社'] },
+    { id: 'corp-spe', label: 'Sony Pictures Entertainment Inc.', type: 'unlisted_corp', subLabel: 'ソニー完全子会社 (100%)', description: 'ハリウッドメジャースタジオ（スパイダーマン、コロンビア・ピクチャーズ等）。', tags: ['映画子会社'] },
+    { id: 'corp-sss', label: 'ソニーセミコンダクタソリューションズ株式会社', type: 'unlisted_corp', subLabel: 'ソニー完全子会社 (100%)', description: '世界シェア首位のCMOSイメージセンサの研究開発・量産。', tags: ['半導体子会社'] },
+    { id: 'person-akio-morita', label: '盛田昭夫', type: 'person', subLabel: 'ソニー共同創業者', description: 'ウォークマンを世界的大ヒットに導き、ソニーをグローバルブランドへ育てた名経営者。', tags: ['共同創業者'] },
+    { id: 'person-masaru-ibuka', label: '井深大', type: 'person', subLabel: 'ソニー共同創業者', description: '技術担当としてトリニトロンカラーテレビ等の革新的エレクトロニクスを発明。', tags: ['共同創業者', '技術者'] },
+    { id: 'person-hiroki-totoki', label: '十時裕樹', type: 'person', subLabel: '代表取締役社長兼COO兼CFO', description: 'ソニー銀行立ち上げからグループ財務構造改革を率い、2023年社長就任。', tags: ['代表取締役'] },
 
-    // 🎮 7. ソニーグループ ＆ 創業者
-    {
-      id: 'corp-6758',
-      label: 'ソニーグループ株式会社',
-      type: 'listed_corp',
-      subLabel: '東証プライム 6758 / 電気機器',
-      description: 'ゲーム（PlayStation）、音楽（Sony Music）、映画（Columbia Pictures）、半導体（CMOSセンサー）、金融を擁する世界的エンタメコングロマリット。',
-      linkUrl: '/stocks/6758',
-      badge: '時価総額17.8兆円',
-      tags: ['ソニー', 'エンタメ', 'PlayStation', 'CMOS']
-    },
-    {
-      id: 'person-morita-akio',
-      label: '盛田 昭夫',
-      type: 'person',
-      subLabel: 'ソニー 共同創業者 (故人)',
-      description: '井深大と共に東京通信工業（現ソニー）を創業。ウォークマンを世界的大ヒットに導いた名経営者。',
-      badge: '歴史的共同創業者',
-      tags: ['歴史的創業者', '盛田家']
-    },
-    {
-      id: 'person-ibuka-masaru',
-      label: '井深 大',
-      type: 'person',
-      subLabel: 'ソニー 共同創業者 / 技術者 (故人)',
-      description: '東京通信工業創立の技術的支柱。「自由闊達にして愉快なる理想工場」の設立趣意書を起草。',
-      badge: '歴史的共同創業者・技術者',
-      tags: ['歴史的創業者', 'エンジニア']
-    },
-    {
-      id: 'person-totoki-hiroyuki',
-      label: '十時 裕樹',
-      type: 'person',
-      subLabel: '代表執行役 社長COO 兼 CFO',
-      description: 'ソニー銀行・ソニーネットワークコミュニケーションズ立ち上げを主導し、現ソニーグループ社長COO兼CFO。',
-      badge: '現社長COO兼CFO',
-      tags: ['経営トップ', 'CFO']
-    },
+    // ==========================================
+    // 🏢 7. 三菱商事 (8058) & 三菱グループ
+    // ==========================================
+    { id: 'corp-8058', label: '三菱商事株式会社', type: 'listed_corp', subLabel: '8058 / 東証プライム', description: '日本最大の総合商社。資源、エネルギー、流通、インフラをグローバル展開。', linkUrl: '/stocks/8058', tags: ['総合商社', '三菱金曜会'] },
+    { id: 'corp-lawson', label: '株式会社ローソン', type: 'unlisted_corp', subLabel: '三菱商事 (50.0%) × KDDI (50.0%)', description: '大手コンビニエンスストアチェーン。2024年非公開化し共同経営へ。', tags: ['流通', '共同子会社'] },
+    { id: 'corp-7451', label: '三菱食品株式会社', type: 'listed_corp', subLabel: '7451 / 東証プライム', description: '日本最大の総合食品卸売企業。三菱商事連結子会社 (50.1%)。', linkUrl: '/stocks/7451', tags: ['食品卸', '上場子会社'] },
+    { id: 'corp-6366', label: '千代田化工建設株式会社', type: 'listed_corp', subLabel: '6366 / 東証スタンダード', description: '総合エンジニアリング大手。LNGプラント建設に強み。三菱商事持分法適用。', linkUrl: '/stocks/6366', tags: ['プラント', '持分法適用'] },
+    { id: 'corp-8306', label: '株式会社三菱UFJフィナンシャル・グループ', type: 'listed_corp', subLabel: '8306 / 東証プライム', description: '日本最大の総合メガバンク金融グループ。', linkUrl: '/stocks/8306', tags: ['メガバンク', '三菱金曜会'] },
+    { id: 'person-yataro-iwasaki', label: '岩崎彌太郎', type: 'person', subLabel: '三菱グループ創業者', description: '土佐藩九十九商会から三菱商会を創業し、海運・炭鉱・商社を開拓。', tags: ['開祖', '創業者'] },
 
-    // 🔬 8. キーエンス ＆ 滝崎武光氏
-    {
-      id: 'corp-6861',
-      label: '株式会社キーエンス',
-      type: 'listed_corp',
-      subLabel: '東証プライム 6861 / 電気機器',
-      description: 'ファクトリーオートメーション用センサ・測定器の世界的超高収益企業。営業利益率約51%、自己資本比率94.2%。',
-      linkUrl: '/stocks/6861',
-      badge: '営業利益率51.4%',
-      tags: ['高収益', 'センサ', 'FA']
-    },
-    {
-      id: 'person-takizaki-takemitsu',
-      label: '滝崎 武光',
-      type: 'person',
-      subLabel: 'キーエンス 創業者 / 名誉会長 / 筆頭株主',
-      description: '1974年にリード電機（現キーエンス）を創業。「最小の資本と人で最大の付加価値を上げる」直販即日納入モデルを確立。',
-      badge: '創業者名誉会長 (筆頭株主)',
-      tags: ['創業者', '筆頭株主', '高収益']
-    },
-    {
-      id: 'corp-tt-asset',
-      label: '株式会社ティ・ティ',
-      type: 'unlisted_corp',
-      subLabel: '未上場 / 滝崎家 資産管理会社',
-      description: '滝崎武光氏および滝崎一族の資産管理法人。キーエンス株式の約14.8%を保有する筆頭株主法人。',
-      badge: '滝崎家資産管理会社 (14.8%)',
-      tags: ['資産管理会社', 'キーエンス']
-    }
+    // ==========================================
+    // 🏢 8. 伊藤忠商事 (8001) & ファミマ・CTC
+    // ==========================================
+    { id: 'corp-8001', label: '伊藤忠商事株式会社', type: 'listed_corp', subLabel: '8001 / 東証プライム', description: '非資源分野ナンバーワン総合商社。生活消費・情報通信・繊維に圧倒的強み。', linkUrl: '/stocks/8001', tags: ['総合商社', '非資源'] },
+    { id: 'corp-familymart', label: '株式会社ファミリーマート', type: 'unlisted_corp', subLabel: '伊藤忠商事完全子会社 (100%)', description: '国内第2位のコンビニエンスストアチェーン。', tags: ['流通', '完全子会社'] },
+    { id: 'corp-ctc', label: '伊藤忠テクノソリューションズ (CTC)', type: 'unlisted_corp', subLabel: '伊藤忠商事完全子会社 (100%)', description: '国内屈指のシステムインテグレーター・クラウド基盤構築大手。2023年非公開化。', tags: ['IT', '完全子会社'] },
+    { id: 'corp-8133', label: '伊藤忠エネクス株式会社', type: 'listed_corp', subLabel: '8133 / 東証プライム', description: '石油製品・ガス・エネルギー卸小売大手。伊藤忠子会社 (54.0%)。', linkUrl: '/stocks/8133', tags: ['エネルギー', '上場子会社'] },
+    { id: 'person-chubei-ito', label: '初代 伊藤忠兵衛', type: 'person', subLabel: '伊藤忠商事・丸紅 創業者', description: '近江麻布の行商から身を起こし、伊藤忠・丸紅の源流を築く。', tags: ['創業者'] },
+
+    // ==========================================
+    // 📚 9. 出版・メディア (新潮社・講談社・集英社・小学館・文藝春秋)
+    // ==========================================
+    { id: 'unlisted-shinchosha', label: '株式会社新潮社', type: 'unlisted_corp', subLabel: '未上場・名門出版社 (第80期)', description: '文芸書、新潮文庫、週刊新潮、波を発行。創業家（佐藤家）が経営統括。', linkUrl: '/unlisted/shinchosha', tags: ['出版', '創業家経営', '東京'] },
+    { id: 'person-takanobu-sato', label: '佐藤隆信', type: 'person', subLabel: '代表取締役社長 (佐藤家4代目)', description: '新潮社代表取締役社長。日本書籍出版協会副理事長等を歴任。', tags: ['代表取締役', '創業家'] },
+    { id: 'person-giyou-sato', label: '佐藤義亮', type: 'person', subLabel: '新潮社創業者', description: '1896年新潮社を創業。日本文学史を彩る文芸出版の礎を築く。', tags: ['創業者'] },
+    { id: 'foundation-shincho', label: '公益財団法人新潮文芸振興会', type: 'foundation', subLabel: '文学顕彰機関', description: '三島由紀夫賞、山本周五郎賞、小林秀雄賞、新潮ドキュメント賞の主宰運営母体。', tags: ['文学賞', '財団'] },
+
+    { id: 'unlisted-kodansha', label: '株式会社講談社', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第86期)', description: 'コミック、文芸、学術、デジタル出版最大手。創業家（野間家）統括。', linkUrl: '/unlisted/kodansha', tags: ['出版', '創業家経営'] },
+    { id: 'corp-king-records', label: 'キングレコード株式会社', type: 'unlisted_corp', subLabel: '講談社子会社', description: '大手レコード会社・アニメ音楽製作レーベル（KING AMUSEMENT CREATIVE）。', tags: ['音楽子会社'] },
+    { id: 'person-yoshifumi-noma', label: '野間省伸', type: 'person', subLabel: '代表取締役社長 (野間家)', description: '講談社第7代社長。デジタルグローバル戦略「Inspire Impossible Stories」を牽引。', tags: ['代表取締役', '創業家'] },
+    { id: 'person-seiji-noma', label: '野間清治', type: 'person', subLabel: '講談社創業者', description: '「キング」「少年倶楽部」等を発行し大衆雑誌出版の父と呼ばれる。', tags: ['創業者'] },
+    { id: 'foundation-noma', label: '公益財団法人野間文化財団', type: 'foundation', subLabel: '文化顕彰財団', description: '野間文芸賞、野間児童文芸賞、野間出版文化賞を主宰運営。', tags: ['文学賞', '財団'] },
+
+    { id: 'unlisted-bungeishunju', label: '株式会社文藝春秋', type: 'unlisted_corp', subLabel: '未上場・名門総合出版社 (第97期)', description: '「文藝春秋」「週刊文春」「Number」を発行。', linkUrl: '/unlisted/bungeishunju', tags: ['出版', '言論'] },
+    { id: 'person-narihiko-iikubo', label: '飯窪成彦', type: 'person', subLabel: '代表取締役社長', description: '「週刊文春」編集長等を経て文藝春秋代表取締役社長。', tags: ['代表取締役'] },
+    { id: 'person-kan-kikuchi', label: '菊池寛', type: 'person', subLabel: '文藝春秋創業者・文豪', description: '小説家・劇作家。芥川龍之介賞・直木三十五賞を創設。', tags: ['創業者', '文豪'] },
+    { id: 'foundation-bungaku', label: '公益財団法人日本文学振興会', type: 'foundation', subLabel: '文藝春秋内 顕彰母体', description: '芥川賞・直木賞・大宅壮一ノンフィクション賞・菊池寛賞を主宰。', tags: ['芥川賞', '直木賞'] },
+
+    // ==========================================
+    // 🍺 10. サントリーホールディングス & 創業家
+    // ==========================================
+    { id: 'unlisted-suntory', label: 'サントリーホールディングス株式会社', type: 'unlisted_corp', subLabel: '未上場・グローバル酒類飲料大手', description: 'ウイスキー、ビール、清涼飲料、健康食品を世界展開。創業家（鳥井・佐治家）経営。', linkUrl: '/unlisted/suntory', tags: ['飲料', '酒類', '未上場名門'] },
+    { id: 'corp-2587', label: 'サントリー食品インターナショナル株式会社', type: 'listed_corp', subLabel: '2587 / 東証プライム', description: 'サントリーHD傘下の清涼飲料事業会社 (60.1%)。サントリー天然水・BOSS。', linkUrl: '/stocks/2587', tags: ['清涼飲料', '上場子会社'] },
+    { id: 'corp-beam-suntory', label: 'Beam Suntory Inc. (Suntory Global Spirits)', type: 'unlisted_corp', subLabel: 'サントリー完全子会社 (100%)', description: '米名門ウイスキー「ジムビーム」等を傘下に収める世界第3位のプレミアムスピリッツ企業。', tags: ['海外酒類子会社'] },
+    { id: 'corp-kotobuki', label: '寿不動産株式会社', type: 'unlisted_corp', subLabel: '創業家 資産管理会社 (サントリーHD 89.3%)', description: '鳥井・佐治家のプライベート資産管理会社でありサントリーHDの筆頭支配株主。', tags: ['資産管理会社', '支配株主'] },
+    { id: 'person-shinjiro-torii', label: '鳥井信治郎', type: 'person', subLabel: 'サントリー創業者', description: '「やってみなはれ」精神で日本初の本格国産ウイスキー山崎蒸溜所を建設。', tags: ['創業者'] },
+    { id: 'person-nobutada-saji', label: '佐治信忠', type: 'person', subLabel: '代表取締役会長 (佐治家)', description: 'サントリーHD代表取締役会長。ビーム社買収等グローバル展開を断行。', tags: ['創業家', '会長'] },
+    { id: 'person-shingo-torii', label: '鳥井信吾', type: 'person', subLabel: '代表取締役副会長 (鳥井家)', description: '鳥井家3代目。サントリーHD副会長、大阪商工会議所会頭。', tags: ['創業家', '副会長'] },
+    { id: 'foundation-suntory', label: '公益財団法人サントリー文化財団', type: 'foundation', subLabel: '文化学術振興財団', description: 'サントリー学芸賞の主宰、サントリーホール運営を通じた芸術振興。', tags: ['文化財団', '学芸賞'] }
   ],
 
   edges: [
-    // 🚘 1. トヨタ自動車 エッジ
-    {
-      id: 'e-toyoda-akio-7203',
-      source: 'person-toyoda-akio',
-      target: 'corp-7203',
-      relationType: 'governance',
-      label: '代表取締役会長',
-      detail: '経営の最高責任者・マスタードライバーとしてグループ全体のモビリティ変革を指揮。'
-    },
-    {
-      id: 'e-sato-koji-7203',
-      source: 'person-sato-koji',
-      target: 'corp-7203',
-      relationType: 'governance',
-      label: '代表取締役社長CEO',
-      detail: 'EV・知能化・多様なパワートレイン戦略の執行統括。'
-    },
-    {
-      id: 'e-toyoda-akio-sato-koji',
-      source: 'person-toyoda-akio',
-      target: 'person-sato-koji',
-      relationType: 'governance',
-      label: '会長 ⇄ 社長 (経営バディ)',
-      detail: '章男会長が指名・禅譲し、二人三脚で次世代トヨタの経営を推進。'
-    },
-    {
-      id: 'e-toyoda-kiichiro-toyoda-akio',
-      source: 'person-toyoda-kiichiro',
-      target: 'person-toyoda-akio',
-      relationType: 'kinship',
-      label: '祖父 ⇄ 孫 (創業家承継)',
-      detail: '喜一郎の次男・豊田章一郎名誉会長の長男が豊田章男会長。'
-    },
-    {
-      id: 'e-6201-7203',
-      source: 'corp-6201',
-      target: 'corp-7203',
-      relationType: 'capital',
-      label: '大株主 (8.4%) / 発祥母体',
-      ratio: 8.4,
-      detail: '豊田自動織機自動車部門が独立してトヨタ自動車が誕生。現在も相互保有関係を維持。'
-    },
-    {
-      id: 'e-7203-6902',
-      source: 'corp-7203',
-      target: 'corp-6902',
-      relationType: 'capital',
-      label: '筆頭株主 (24.2%) / 資本提携',
-      ratio: 24.2,
-      detail: 'デンソーの筆頭株主であり、車載半導体・電動化コンポーネントを共同開発。'
-    },
-    {
-      id: 'e-7203-7259',
-      source: 'corp-7203',
-      target: 'corp-7259',
-      relationType: 'capital',
-      label: '筆頭株主 (24.8%) / 系列中核',
-      ratio: 24.8,
-      detail: 'アイシンの筆頭株主。トランスミッションおよびeAxleの基幹供給先。'
-    },
-    {
-      id: 'e-7203-8015',
-      source: 'corp-7203',
-      target: 'corp-8015',
-      relationType: 'capital',
-      label: '筆頭株主 (21.7%) / 商社機能',
-      ratio: 21.7,
-      detail: '豊田通商の筆頭株主。完成車輸出およびグローバル素材・リチウム調達を担当。'
-    },
+    // トヨタグループ
+    { id: 'e-ty-denso', source: 'corp-7203', target: 'corp-6902', relationType: 'capital', label: '出資比率 24.2%', detail: '持分法適用関連会社・基幹電装品共同開発', ratio: 24.2 },
+    { id: 'e-ty-aishin', source: 'corp-7203', target: 'corp-7259', relationType: 'capital', label: '出資比率 24.8%', detail: '持分法適用関連会社・トランスミッション供給', ratio: 24.8 },
+    { id: 'e-ty-shokki', source: 'corp-7203', target: 'corp-6201', relationType: 'capital', label: '出資比率 24.7%', detail: 'トヨタグループ本家・相互持合い (織機側もトヨタ株7.4%保有)', ratio: 24.7 },
+    { id: 'e-ty-tsusho', source: 'corp-7203', target: 'corp-8015', relationType: 'capital', label: '出資比率 21.7%', detail: '持分法適用関連会社・グループ専任総合商社', ratio: 21.7 },
+    { id: 'e-ty-subaru', source: 'corp-7203', target: 'corp-7270', relationType: 'capital', label: '出資比率 20.0%', detail: '持分法適用関連会社・86/BRZ共同開発アライアンス', ratio: 20.0 },
+    { id: 'e-ty-hino', source: 'corp-7203', target: 'corp-7205', relationType: 'capital', label: '連結子会社 50.1%', detail: '大型商用車部門', ratio: 50.1 },
+    { id: 'e-ty-daihatsu', source: 'corp-7203', target: 'corp-daihatsu', relationType: 'capital', label: '完全子会社 100%', detail: '軽自動車・小型車部門統括', ratio: 100.0 },
+    { id: 'e-ty-body', source: 'corp-7203', target: 'corp-toyota-body', relationType: 'capital', label: '完全子会社 100%', detail: 'アルファード・ランクル完成車生産', ratio: 100.0 },
+    { id: 'e-ty-akio', source: 'person-akio-toyoda', target: 'corp-7203', relationType: 'governance', label: '代表取締役会長', detail: '豊田家4代目トップ' },
+    { id: 'e-ty-sato', source: 'person-koji-sato', target: 'corp-7203', relationType: 'governance', label: '代表取締役社長', detail: '業務執行統括' },
+    { id: 'e-ty-kiichiro', source: 'person-kiichiro-toyoda', target: 'corp-7203', relationType: 'governance', label: '創業者', detail: 'トヨタ自動車工業設立' },
+    { id: 'e-ty-shoichiro', source: 'person-shoichiro-toyoda', target: 'person-akio-toyoda', relationType: 'kinship', label: '父子直系', detail: '豊田家直系承継' },
+    { id: 'e-ty-fnd', source: 'corp-7203', target: 'foundation-toyota', relationType: 'foundation', label: '設立母体', detail: '研究助成・社会貢献' },
 
-    // 🏢 2. 三菱グループ エッジ
-    {
-      id: 'e-iwasaki-8058',
-      source: 'person-iwasaki-yataro',
-      target: 'corp-8058',
-      relationType: 'governance',
-      label: '三菱財閥 開祖',
-      detail: '岩崎彌太郎が興した三菱商会が、戦後の財閥解体を経て現在の三菱商事へ発展。'
-    },
-    {
-      id: 'e-iwasaki-7011',
-      source: 'person-iwasaki-yataro',
-      target: 'corp-7011',
-      relationType: 'governance',
-      label: '三菱重工 開祖',
-      detail: '長崎造船所を官営払い下げにより取得し、三菱の重工業・造船基盤を築く。'
-    },
-    {
-      id: 'e-8058-8306',
-      source: 'corp-8058',
-      target: 'corp-8306',
-      relationType: 'keiretsu',
-      label: '三菱金曜会 中核 (相互持合い)',
-      detail: '三菱グループ首脳会「金曜会」の筆頭幹事社同士として強力な資本・取引連携。'
-    },
-    {
-      id: 'e-8058-7011',
-      source: 'corp-8058',
-      target: 'corp-7011',
-      relationType: 'keiretsu',
-      label: '三菱金曜会 御三家 (プラント・防衛)',
-      detail: '三菱重工の発電プラント・防衛装備・LNG船のグローバル輸出を三菱商事が共同推進。'
-    },
-    {
-      id: 'e-8058-8802',
-      source: 'corp-8058',
-      target: 'corp-8802',
-      relationType: 'keiretsu',
-      label: '三菱金曜会 (丸の内都市開発)',
-      detail: '丸の内本拠地の開発および大型インフラファンド組成で三菱地所と密接連携。'
-    },
+    // 任天堂
+    { id: 'e-nin-poke', source: 'corp-7974', target: 'corp-pokemon', relationType: 'capital', label: '出資比率 32.0%', detail: 'ポケモンIP共同ライセンス管理', ratio: 32.0 },
+    { id: 'e-nin-mono', source: 'corp-7974', target: 'corp-monolith', relationType: 'capital', label: '完全子会社 100%', detail: 'ゼノブレイド・ゼルダ開発', ratio: 100.0 },
+    { id: 'e-nin-sys', source: 'corp-7974', target: 'corp-nintendo-sys', relationType: 'capital', label: '子会社 80.0%', detail: '任天堂アカウント・クラウドインフラ', ratio: 80.0 },
+    { id: 'e-nin-yamauchi', source: 'person-hiroshi-yamauchi', target: 'corp-7974', relationType: 'governance', label: '元社長・中興の祖', detail: 'ファミコン・ゲームボーイを生み出した伝説のトップ' },
+    { id: 'e-nin-furukawa', source: 'person-shuntaro-furukawa', target: 'corp-7974', relationType: 'governance', label: '代表取締役社長', detail: 'Switchグローバル統括' },
+    { id: 'e-nin-miyamoto', source: 'person-shigeru-miyamoto', target: 'corp-7974', relationType: 'governance', label: '代表取締役フェロー', detail: 'マリオ・ゼルダ生みの親' },
 
-    // 📚 3. 出版メディア ＆ 創業家 ＆ 文学財団 エッジ
-    {
-      id: 'e-kikuchi-kan-bungei',
-      source: 'person-kikuchi-kan',
-      target: 'unlisted-bungeishunju',
-      relationType: 'governance',
-      label: '1923年 創業者',
-      detail: '作家・菊池寛が私費を投じて創刊・創立した総合出版社。'
-    },
-    {
-      id: 'e-iikubo-bungei',
-      source: 'person-iikubo-shigeyuki',
-      target: 'unlisted-bungeishunju',
-      relationType: 'governance',
-      label: '代表取締役社長',
-      detail: '代表取締役社長として出版事業の構造改革・デジタル課金シフトを推進。'
-    },
-    {
-      id: 'e-bungei-nihon-bungaku',
-      source: 'unlisted-bungeishunju',
-      target: 'foundation-nihon-bungaku',
-      relationType: 'foundation',
-      label: '設立支援・運営母体 (芥川賞・直木賞)',
-      detail: '文藝春秋本社内に事務局を置き、日本最高峰の純文学・大衆文学賞の選考・顕彰を全面バックアップ。'
-    },
-    {
-      id: 'e-kikuchi-kan-nihon-bungaku',
-      source: 'person-kikuchi-kan',
-      target: 'foundation-nihon-bungaku',
-      relationType: 'foundation',
-      label: '芥川賞・直木賞 創設者',
-      detail: '友人の芥川龍之介・直木三十五の業績を記念して菊池寛が文学賞を創設。'
-    },
-    {
-      id: 'e-sato-giryo-shincho',
-      source: 'person-sato-giryo',
-      target: 'unlisted-shinchosha',
-      relationType: 'governance',
-      label: '1896年 創業者',
-      detail: '秋田県出身の佐藤義亮が上京して創業。「新潮」「新潮文庫」の礎を築く。'
-    },
-    {
-      id: 'e-sato-takanobu-shincho',
-      source: 'person-sato-takanobu',
-      target: 'unlisted-shinchosha',
-      relationType: 'governance',
-      label: '代表取締役社長 (創業家第4代)',
-      detail: '佐藤義亮の曾孫として新潮社代表取締役社長に就任。'
-    },
-    {
-      id: 'e-sato-giryo-sato-takanobu',
-      source: 'person-sato-giryo',
-      target: 'person-sato-takanobu',
-      relationType: 'kinship',
-      label: '曾祖父 ⇄ 曾孫 (佐藤家直系)',
-      detail: '創業家佐藤家による一貫した同族オーナー経営を継承。'
-    },
-    {
-      id: 'e-shincho-shincho-bungei',
-      source: 'unlisted-shinchosha',
-      target: 'foundation-shincho-bungei',
-      relationType: 'foundation',
-      label: '設立支援・顕彰母体 (三島賞・山本賞)',
-      detail: '新潮社創立90周年記念事業として設立。三島由紀夫賞・山本周五郎賞を主宰。'
-    },
-    {
-      id: 'e-shogakukan-shueisha',
-      source: 'unlisted-shogakukan',
-      target: 'unlisted-shueisha',
-      relationType: 'capital',
-      label: '一ツ橋グループ母体 (共同出資)',
-      detail: '1926年に小学館の娯楽出版部門が独立して集英社が誕生。一ツ橋グループとして強固に提携。'
-    },
-    {
-      id: 'e-ohga-shogakukan',
-      source: 'person-ohga-nobuhiro',
-      target: 'unlisted-shogakukan',
-      relationType: 'governance',
-      label: '代表取締役社長 (相賀家第4代)',
-      detail: '創業家相賀家の直系として小学館の経営およびグループ統括を牽引。'
-    },
+    // ファーストリテイリング
+    { id: 'e-fr-gu', source: 'corp-9983', target: 'corp-gu', relationType: 'capital', label: '完全子会社 100%', detail: '低価格カジュアルGU事業', ratio: 100.0 },
+    { id: 'e-fr-theory', source: 'corp-9983', target: 'corp-theory', relationType: 'capital', label: '完全子会社 100%', detail: 'ニューヨーク高級コンテンポラリー', ratio: 100.0 },
+    { id: 'e-fr-tty', source: 'corp-tty', target: 'corp-9983', relationType: 'capital', label: '株主 5.31%', detail: '柳井家資産管理会社', ratio: 5.31 },
+    { id: 'e-fr-tadashi', source: 'person-tadashi-yanai', target: 'corp-9983', relationType: 'governance', label: '会長兼社長 (21.6%)', detail: '創業者・筆頭大株主' },
+    { id: 'e-fr-kazumi', source: 'person-kazumi-yanai', target: 'corp-9983', relationType: 'governance', label: '取締役 (4.51%)', detail: '柳井家長男' },
+    { id: 'e-fr-koji', source: 'person-koji-yanai', target: 'corp-9983', relationType: 'governance', label: '執行役員 (4.51%)', detail: '柳井家次男' },
+    { id: 'e-fr-family', source: 'person-tadashi-yanai', target: 'person-kazumi-yanai', relationType: 'kinship', label: '父子直系', detail: '創業家ガバナンス' },
 
-    // 📱 4. パピレス エッジ
-    {
-      id: 'e-amaya-papyless',
-      source: 'person-amaya-mikio',
-      target: 'corp-3641',
-      relationType: 'governance',
-      label: '創業者 / 取締役会長 / 筆頭株主 (34.50%)',
-      ratio: 34.5,
-      detail: '1995年創業。現在も34.50%の議決権を保有する筆頭株主かつ取締役会長。'
-    },
-    {
-      id: 'e-matsui-papyless',
-      source: 'person-matsui-yasuko',
-      target: 'corp-3641',
-      relationType: 'governance',
-      label: '代表取締役社長 / 第2位個人株主 (5.80%)',
-      ratio: 5.8,
-      detail: '創業期から天谷氏と二人三脚で事業を成長させ、2010年より代表取締役社長。5.80%保有。'
-    },
-    {
-      id: 'e-amaya-matsui',
-      source: 'person-amaya-mikio',
-      target: 'person-matsui-yasuko',
-      relationType: 'governance',
-      label: '共同創業者 ⇄ 後継社長 (経営パートナー)',
-      detail: '30年近くにわたり電子書籍プラットフォームを二人三脚で切り拓いてきた強固な共同経営関係。'
-    },
-    {
-      id: 'e-segasammy-papyless',
-      source: 'corp-6460',
-      target: 'corp-3641',
-      relationType: 'capital',
-      label: '第3位主要大株主 (5.12%)',
-      ratio: 5.12,
-      detail: 'セガサミーHDが戦略的提携先としてパピレス株式の5.12%（51.2万株）を保有。'
-    },
-    {
-      id: 'e-nippan-papyless',
-      source: 'corp-nippan',
-      target: 'corp-3641',
-      relationType: 'capital',
-      label: '第4位主要株主 (4.80%) / 出版取次提携',
-      ratio: 4.8,
-      detail: '出版取次大手の日販がパピレス株式の4.80%（48.0万株）を保有。'
-    },
+    // キーエンス
+    { id: 'e-key-eng', source: 'corp-6861', target: 'corp-keyence-eng', relationType: 'capital', label: '完全子会社 100%', detail: '技術サポート・品質保証', ratio: 100.0 },
+    { id: 'e-key-apiste', source: 'corp-6861', target: 'corp-apiste', relationType: 'capital', label: '完全子会社 100%', detail: '精密環境温調機器', ratio: 100.0 },
+    { id: 'e-key-tt', source: 'corp-tt', target: 'corp-6861', relationType: 'capital', label: '筆頭株主 14.8%', detail: '滝崎家資産管理会社', ratio: 14.8 },
+    { id: 'e-key-takizaki', source: 'person-takemitsu-takizaki', target: 'corp-6861', relationType: 'governance', label: '名誉会長・創業者 (7.7%)', detail: '超高収益ビジネスモデル創出' },
+    { id: 'e-key-nakata', source: 'person-yu-nakata', target: 'corp-6861', relationType: 'governance', label: '代表取締役社長', detail: '業務統括' },
 
-    // 👕 5. ファーストリテイリング エッジ
-    {
-      id: 'e-yanai-tadashi-9983',
-      source: 'person-yanai-tadashi',
-      target: 'corp-9983',
-      relationType: 'governance',
-      label: '創業者 会長兼社長 / 筆頭株主 (21.6%)',
-      ratio: 21.6,
-      detail: 'ユニクロを世界トップに育てた創業者。個人で約21.6%（6,800万株）を直接保有。'
-    },
-    {
-      id: 'e-yanai-kazumi-9983',
-      source: 'person-yanai-kazumi',
-      target: 'corp-9983',
-      relationType: 'governance',
-      label: '取締役 上席執行役員 (4.5%保有)',
-      ratio: 4.5,
-      detail: '長男・一海氏がグループ取締役として参画。個人で約4.5%（1,400万株）を保有。'
-    },
-    {
-      id: 'e-yanai-koji-9983',
-      source: 'person-yanai-koji',
-      target: 'corp-9983',
-      relationType: 'governance',
-      label: 'グループ上席執行役員 (4.5%保有)',
-      ratio: 4.5,
-      detail: '次男・康治氏がマーケティング・文化事業を統括。個人で約4.5%（1,400万株）を保有。'
-    },
-    {
-      id: 'e-yanai-tadashi-kazumi',
-      source: 'person-yanai-tadashi',
-      target: 'person-yanai-kazumi',
-      relationType: 'kinship',
-      label: '父 ⇄ 長男 (柳井家後継)',
-      detail: '世界屈指のアパレルコングロマリットにおける創業家ガバナンスと次世代承継。'
-    },
-    {
-      id: 'e-yanai-tadashi-koji',
-      source: 'person-yanai-tadashi',
-      target: 'person-yanai-koji',
-      relationType: 'kinship',
-      label: '父 ⇄ 次男 (柳井家後継)',
-      detail: 'ブランド戦略とグローバルクリエイティブを率いる次男・康治氏との家族・経営連携。'
-    },
-    {
-      id: 'e-tty-9983',
-      source: 'corp-tty-management',
-      target: 'corp-9983',
-      relationType: 'capital',
-      label: '創業家資産管理会社 (5.3%保有)',
-      ratio: 5.3,
-      detail: '柳井家のプライベートアセット会社「TTY」がファストリ株を約5.3%（1,600万株）保有。'
-    },
-    {
-      id: 'e-yanai-tadashi-tty',
-      source: 'person-yanai-tadashi',
-      target: 'corp-tty-management',
-      relationType: 'governance',
-      label: '代表者 / 実質支配',
-      detail: '柳井正氏および親族が100%所有するファミリー・オフィス。'
-    },
+    // ソフトバンクグループ
+    { id: 'e-sbg-arm', source: 'corp-9984', target: 'corp-arm', relationType: 'capital', label: '中核子会社 90.0%', detail: 'AI半導体IP独占設計', ratio: 90.0 },
+    { id: 'e-sbg-telecom', source: 'corp-9984', target: 'corp-9434', relationType: 'capital', label: '上場子会社 40.5%', detail: '国内通信事業', ratio: 40.5 },
+    { id: 'e-sbg-lineya', source: 'corp-9434', target: 'corp-4689', relationType: 'capital', label: '連結子会社 64.8%', detail: 'Aホールディングス経由支配', ratio: 64.8 },
+    { id: 'e-sbg-paypay', source: 'corp-9434', target: 'corp-paypay', relationType: 'capital', label: '持分比率 34.9%', detail: 'QR決済メガプラットフォーム', ratio: 34.9 },
+    { id: 'e-sbg-son', source: 'person-masayoshi-son', target: 'corp-9984', relationType: 'governance', label: '代表取締役会長兼社長 (29.0%)', detail: '創業者・筆頭大株主' },
 
-    // 💻 6. ソフトバンクグループ エッジ
-    {
-      id: 'e-son-9984',
-      source: 'person-son-masayoshi',
-      target: 'corp-9984',
-      relationType: 'governance',
-      label: '創業者 会長兼社長 (29%保有)',
-      ratio: 29.0,
-      detail: 'ソフトバンクグループ創業者。個人および資産管理会社を通じて約29%の議決権を掌握。'
-    },
-    {
-      id: 'e-9984-9434',
-      source: 'corp-9984',
-      target: 'corp-9434',
-      relationType: 'capital',
-      label: '親会社 (40.5%保有・連結)',
-      ratio: 40.5,
-      detail: '国内通信事業を手がけるソフトバンク株式会社の親会社（40.5%保有）。'
-    },
-    {
-      id: 'e-9984-arm',
-      source: 'corp-9984',
-      target: 'corp-arm',
-      relationType: 'capital',
-      label: '親会社 (約90%保有)',
-      ratio: 90.0,
-      detail: '2016年に約3.3兆円で買収。NASDAQ上場後もSBGが約90%の株式を保有する超中核AI資産。'
-    },
+    // ソニーグループ
+    { id: 'e-sn-sie', source: 'corp-6758', target: 'corp-sie', relationType: 'capital', label: '完全子会社 100%', detail: 'PlayStation事業', ratio: 100.0 },
+    { id: 'e-sn-sme', source: 'corp-6758', target: 'corp-sme', relationType: 'capital', label: '完全子会社 100%', detail: '音楽レーベル・アニプレックス', ratio: 100.0 },
+    { id: 'e-sn-spe', source: 'corp-6758', target: 'corp-spe', relationType: 'capital', label: '完全子会社 100%', detail: 'ハリウッド映画スタジオ', ratio: 100.0 },
+    { id: 'e-sn-sss', source: 'corp-6758', target: 'corp-sss', relationType: 'capital', label: '完全子会社 100%', detail: 'CMOSイメージセンサ半導体', ratio: 100.0 },
+    { id: 'e-sn-morita', source: 'person-akio-morita', target: 'corp-6758', relationType: 'governance', label: '共同創業者', detail: 'グローバル展開を主導' },
+    { id: 'e-sn-ibuka', source: 'person-masaru-ibuka', target: 'corp-6758', relationType: 'governance', label: '共同創業者', detail: '技術開発の祖' },
+    { id: 'e-sn-totoki', source: 'person-hiroki-totoki', target: 'corp-6758', relationType: 'governance', label: '代表取締役社長兼COO', detail: '経営執行統括' },
 
-    // 🎮 7. ソニーグループ エッジ
-    {
-      id: 'e-morita-ibuka',
-      source: 'person-morita-akio',
-      target: 'person-ibuka-masaru',
-      relationType: 'governance',
-      label: '伝説の共同創業者ペア (経営 ⇄ 技術)',
-      detail: '戦後焼け跡の東京で出会い、世界的イノベーション企業ソニーを共に創り上げた名コンビ。'
-    },
-    {
-      id: 'e-morita-6758',
-      source: 'person-morita-akio',
-      target: 'corp-6758',
-      relationType: 'governance',
-      label: '共同創業者・名誉会長',
-      detail: 'グローバルブランド「SONY」の確立と海外進出を主導。'
-    },
-    {
-      id: 'e-ibuka-6758',
-      source: 'person-ibuka-masaru',
-      target: 'corp-6758',
-      relationType: 'governance',
-      label: '共同創業者・名誉会長',
-      detail: 'トランジスタラジオ、トリニトロンカラーテレビなど画期的製品開発を指揮。'
-    },
-    {
-      id: 'e-totoki-6758',
-      source: 'person-totoki-hiroyuki',
-      target: 'corp-6758',
-      relationType: 'governance',
-      label: '代表執行役 社長COO 兼 CFO',
-      detail: 'ゲーム・音楽・映画・半導体・金融の5大ポートフォリオのキャピタルアロケーションを統括。'
-    },
+    // 三菱商事 & 三菱グループ
+    { id: 'e-mc-lawson', source: 'corp-8058', target: 'corp-lawson', relationType: 'capital', label: '共同親会社 50.0%', detail: 'KDDIとのコンビニ共同経営', ratio: 50.0 },
+    { id: 'e-mc-food', source: 'corp-8058', target: 'corp-7451', relationType: 'capital', label: '連結子会社 50.1%', detail: '総合食品卸売最大手', ratio: 50.1 },
+    { id: 'e-mc-chiyoda', source: 'corp-8058', target: 'corp-6366', relationType: 'capital', label: '持分法適用 33.6%', detail: 'LNGプラントエンジニアリング', ratio: 33.6 },
+    { id: 'e-mc-mufg', source: 'corp-8058', target: 'corp-8306', relationType: 'keiretsu', label: '三菱金曜会 (相互持合)', detail: '三菱グループ中核金融' },
+    { id: 'e-mc-yataro', source: 'person-yataro-iwasaki', target: 'corp-8058', relationType: 'governance', label: '三菱グループ開祖', detail: '九十九商会・三菱商会設立' },
 
-    // 🔬 8. キーエンス エッジ
-    {
-      id: 'e-takizaki-6861',
-      source: 'person-takizaki-takemitsu',
-      target: 'corp-6861',
-      relationType: 'governance',
-      label: '創業者 / 取締役名誉会長',
-      detail: '時価総額約17.2兆円、営業利益率50%超の超高収益モデルを創出。個人および資産管理会社で筆頭支配。'
-    },
-    {
-      id: 'e-tt-6861',
-      source: 'corp-tt-asset',
-      target: 'corp-6861',
-      relationType: 'capital',
-      label: '筆頭株主法人 (14.8%保有)',
-      ratio: 14.8,
-      detail: '滝崎家の資産管理法人ティ・ティがキーエンス株式の14.8%（3,600万株）を保有。'
-    },
-    {
-      id: 'e-takizaki-tt',
-      source: 'person-takizaki-takemitsu',
-      target: 'corp-tt-asset',
-      relationType: 'governance',
-      label: '代表者 / ファミリーオフィス',
-      detail: '滝崎武光氏および親族が100%管理するファミリーアセット持株会社。'
-    }
+    // 伊藤忠商事
+    { id: 'e-ito-famima', source: 'corp-8001', target: 'corp-familymart', relationType: 'capital', label: '完全子会社 100%', detail: 'コンビニエンスストア事業', ratio: 100.0 },
+    { id: 'e-ito-ctc', source: 'corp-8001', target: 'corp-ctc', relationType: 'capital', label: '完全子会社 100%', detail: 'SI・クラウドIT中核', ratio: 100.0 },
+    { id: 'e-ito-enex', source: 'corp-8001', target: 'corp-8133', relationType: 'capital', label: '連結子会社 54.0%', detail: '石油・ガスエネルギー販売', ratio: 54.0 },
+    { id: 'e-ito-chubei', source: 'person-chubei-ito', target: 'corp-8001', relationType: 'governance', label: '創業者', detail: '近江商人・伊藤忠丸紅開祖' },
+
+    // 新潮社
+    { id: 'e-sc-takanobu', source: 'person-takanobu-sato', target: 'unlisted-shinchosha', relationType: 'governance', label: '代表取締役社長', detail: '佐藤家4代目経営統括' },
+    { id: 'e-sc-giyou', source: 'person-giyou-sato', target: 'unlisted-shinchosha', relationType: 'governance', label: '創業者', detail: '1896年新潮社設立' },
+    { id: 'e-sc-fnd', source: 'unlisted-shinchosha', target: 'foundation-shincho', relationType: 'foundation', label: '主宰設立母体', detail: '三島賞・山本賞運営' },
+
+    // 講談社
+    { id: 'e-kd-king', source: 'unlisted-kodansha', target: 'corp-king-records', relationType: 'capital', label: '子会社 100%', detail: '音楽・映像レーベル', ratio: 100.0 },
+    { id: 'e-kd-noma', source: 'person-yoshifumi-noma', target: 'unlisted-kodansha', relationType: 'governance', label: '代表取締役社長', detail: '野間家第7代社長' },
+    { id: 'e-kd-seiji', source: 'person-seiji-noma', target: 'unlisted-kodansha', relationType: 'governance', label: '創業者', detail: '大衆雑誌出版の祖' },
+    { id: 'e-kd-fnd', source: 'unlisted-kodansha', target: 'foundation-noma', relationType: 'foundation', label: '主宰設立母体', detail: '野間文芸賞運営' },
+
+    // 文藝春秋
+    { id: 'e-bc-iikubo', source: 'person-narihiko-iikubo', target: 'unlisted-bungeishunju', relationType: 'governance', label: '代表取締役社長', detail: '経営統括' },
+    { id: 'e-bc-kikuchi', source: 'person-kan-kikuchi', target: 'unlisted-bungeishunju', relationType: 'governance', label: '創業者・文豪', detail: '文藝春秋・芥川賞創設' },
+    { id: 'e-bc-fnd', source: 'unlisted-bungeishunju', target: 'foundation-bungaku', relationType: 'foundation', label: '主宰設立母体', detail: '芥川賞・直木賞運営' },
+
+    // サントリー
+    { id: 'e-st-2587', source: 'unlisted-suntory', target: 'corp-2587', relationType: 'capital', label: '上場子会社 60.1%', detail: '清涼飲料事業 (天然水・BOSS)', ratio: 60.1 },
+    { id: 'e-st-beam', source: 'unlisted-suntory', target: 'corp-beam-suntory', relationType: 'capital', label: '完全子会社 100%', detail: 'ジムビーム等グローバル蒸留酒事業', ratio: 100.0 },
+    { id: 'e-st-kotobuki', source: 'corp-kotobuki', target: 'unlisted-suntory', relationType: 'capital', label: '筆頭支配株主 89.3%', detail: '鳥井・佐治家 資産管理会社', ratio: 89.3 },
+    { id: 'e-st-nobutada', source: 'person-nobutada-saji', target: 'unlisted-suntory', relationType: 'governance', label: '代表取締役会長', detail: '佐治家トップ' },
+    { id: 'e-st-shingo', source: 'person-shingo-torii', target: 'unlisted-suntory', relationType: 'governance', label: '代表取締役副会長', detail: '鳥井家トップ' },
+    { id: 'e-st-shinjiro', source: 'person-shinjiro-torii', target: 'unlisted-suntory', relationType: 'governance', label: '創業者', detail: '国産ウイスキーの祖' },
+    { id: 'e-st-fnd', source: 'unlisted-suntory', target: 'foundation-suntory', relationType: 'foundation', label: '主宰設立母体', detail: 'サントリー学芸賞・ホール運営' }
   ]
 };
 
-// 🔍 ヘルパー関数: 特定のエンティティIDに関連するサブグラフ（1〜2ホップ）を取得
-export function getSubGraphForEntity(entityId: string, depth: number = 1): NetworkGraphData {
-  const connectedNodeIds = new Set<string>([entityId]);
-  const connectedEdges: NetworkEdge[] = [];
+/**
+ * 特定のエンティティを中心としたサブグラフを抽出する関数
+ */
+export function getSubGraphForEntity(entityId: string, maxHops: number = 2): NetworkGraphData {
+  const nodeSet = new Set<string>([entityId]);
+  let currentFrontier = new Set<string>([entityId]);
 
-  // 1ホップ目
-  for (const edge of MASTER_RELATIONSHIP_DATA.edges) {
-    if (edge.source === entityId || edge.target === entityId) {
-      connectedEdges.push(edge);
-      connectedNodeIds.add(edge.source);
-      connectedNodeIds.add(edge.target);
-    }
-  }
-
-  // 2ホップ目 (depth >= 2)
-  if (depth >= 2) {
-    const firstHopIds = new Set(connectedNodeIds);
+  for (let hop = 0; hop < maxHops; hop++) {
+    const nextFrontier = new Set<string>();
     for (const edge of MASTER_RELATIONSHIP_DATA.edges) {
-      if (firstHopIds.has(edge.source) || firstHopIds.has(edge.target)) {
-        if (!connectedEdges.some(e => e.id === edge.id)) {
-          connectedEdges.push(edge);
-        }
-        connectedNodeIds.add(edge.source);
-        connectedNodeIds.add(edge.target);
+      if (currentFrontier.has(edge.source)) {
+        nodeSet.add(edge.target);
+        nextFrontier.add(edge.target);
+      }
+      if (currentFrontier.has(edge.target)) {
+        nodeSet.add(edge.source);
+        nextFrontier.add(edge.source);
       }
     }
+    currentFrontier = nextFrontier;
   }
 
-  const nodes = MASTER_RELATIONSHIP_DATA.nodes.filter(n => connectedNodeIds.has(n.id));
-  return { nodes, edges: connectedEdges };
+  const nodes = MASTER_RELATIONSHIP_DATA.nodes.filter(n => nodeSet.has(n.id));
+  const edges = MASTER_RELATIONSHIP_DATA.edges.filter(
+    e => nodeSet.has(e.source) && nodeSet.has(e.target)
+  );
+
+  return { nodes, edges };
 }

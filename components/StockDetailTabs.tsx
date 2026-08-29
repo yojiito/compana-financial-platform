@@ -229,7 +229,7 @@ export default function StockDetailTabs({
         {activeTab === 'network' && (
           <RelationshipNetworkGraph
             initialEntityId={`corp-${company.tickerCode}`}
-            showControls={true}
+            showControls={false}
           />
         )}
 

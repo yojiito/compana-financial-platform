@@ -5,6 +5,8 @@ export interface DividendRecord {
   dividendYield: number; // 配当利回り (%)
   shareBuybackBillion: number; // 自社株買い総額 (億円)
   totalReturnRatio: number; // 総還元性向 (%) = (配当総額 + 自社株買い) / 純利益
+  eps?: number;
+  doeRatio?: number;
 }
 
 export interface CompanyDividendAnalysis {
