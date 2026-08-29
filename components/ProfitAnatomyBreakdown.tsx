@@ -42,7 +42,8 @@ export default function ProfitAnatomyBreakdown({
   const [activeTab, setActiveTab] = useState<'visual' | 'cost' | 'investment'>('visual');
   const { isEn, t } = useLanguage();
 
-  const latestFin = financials.length > 0 ? financials[financials.length - 1] : null;
+  const annualList = financials.filter(f => !f.periodType || f.periodType === 'FY');
+  const latestFin = annualList.length > 0 ? annualList[annualList.length - 1] : financials[financials.length - 1];
 
   // 定義済みの詳細分析データがある場合はそれを使い、ない場合は自社のFinancialReport実績値から完全動的算出
   let anatomy: ProfitAnatomy;

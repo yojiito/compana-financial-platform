@@ -27,8 +27,9 @@ import {
 } from 'lucide-react';
 
 interface FinancialRecord {
-  id: number;
+  id?: number;
   fiscalYear: number;
+  periodType?: string;
   periodEnd: string;
   revenue: number;
   operatingIncome: number;
@@ -53,10 +54,15 @@ export default function TenYearPlOverview({
   // 表示単位モード: 'million' (百万円: 四季報・有報標準) | 'smart' (兆・億円)
   const [unitMode, setUnitMode] = useState<'million' | 'smart'>('million');
 
-  if (!financials || financials.length === 0) {
+  // 通期レコード (FY) のみを年次10年推移として抽出
+  const annualFinancials = (financials || []).filter(f => !f.periodType || f.periodType === 'FY');
+  // 直近四半期レコード (Q1等) を抽出
+  const latestQuarter = (financials || []).find(f => f.periodType && f.periodType !== 'FY');
+
+  if (annualFinancials.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400 text-xs">
-        10年分のPLデータは準備中です
+        10年分の通期PLデータは準備中です
       </div>
     );
   }
@@ -96,16 +102,18 @@ export default function TenYearPlOverview({
     return `(約${absOku.toLocaleString()}億円)`;
   };
 
-  // チャート用データ加工 (億円換算)
-  const chartData = financials.map((f, idx) => {
-    const prev = idx > 0 ? financials[idx - 1] : null;
+  // チャート用データ加工 (通期年次データのみ、億円換算)
+  const chartData = annualFinancials.map((f, idx) => {
+    const prev = idx > 0 ? annualFinancials[idx - 1] : null;
     const revYoY = prev && prev.revenue > 0 ? ((f.revenue - prev.revenue) / prev.revenue) * 100 : null;
     const opYoY = prev && prev.operatingIncome > 0 ? ((f.operatingIncome - prev.operatingIncome) / prev.operatingIncome) * 100 : null;
     const margin = f.revenue > 0 ? Number(((f.operatingIncome / f.revenue) * 100).toFixed(2)) : (f.operatingMargin ?? 0);
+    const isForecast = f.fiscalYear === 2026;
 
     return {
-      year: `${f.fiscalYear}/3`,
+      year: `${f.fiscalYear}/3${isForecast ? '(予)' : ''}`,
       fiscalYear: f.fiscalYear,
+      isForecast,
       revenue: Math.round(f.revenue / 100), // 億円
       operatingIncome: Math.round(f.operatingIncome / 100), // 億円
       netIncome: Math.round(f.netIncome / 100), // 億円
@@ -122,9 +130,9 @@ export default function TenYearPlOverview({
   });
 
   // 10年統計サマリーの計算
-  const firstYear = financials[0];
-  const lastYear = financials[financials.length - 1];
-  const yearsCount = financials.length - 1;
+  const firstYear = annualFinancials[0];
+  const lastYear = annualFinancials[annualFinancials.length - 1];
+  const yearsCount = annualFinancials.length - 1;
 
   // 売上CAGR (年平均成長率)
   const revCagr = yearsCount > 0 && firstYear.revenue > 0 && lastYear.revenue > 0
@@ -132,10 +140,10 @@ export default function TenYearPlOverview({
     : 0;
 
   // 10年平均営業利益率
-  const avgMargin = financials.reduce((acc, f) => acc + (f.revenue > 0 ? (f.operatingIncome / f.revenue) * 100 : 0), 0) / financials.length;
+  const avgMargin = annualFinancials.reduce((acc, f) => acc + (f.revenue > 0 ? (f.operatingIncome / f.revenue) * 100 : 0), 0) / annualFinancials.length;
 
   // 過去10年の最高益年度
-  const bestYear = [...financials].sort((a, b) => b.operatingIncome - a.operatingIncome)[0];
+  const bestYear = [...annualFinancials].sort((a, b) => b.operatingIncome - a.operatingIncome)[0];
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-6 p-6 sm:p-8">
@@ -332,9 +340,14 @@ export default function TenYearPlOverview({
               {chartData.map((row) => {
                 const isRevPlus = (row.revYoY ?? 0) >= 0;
                 return (
-                  <tr key={row.fiscalYear} className="hover:bg-slate-50 transition">
-                    <td className="p-3 font-bold font-mono text-slate-900 whitespace-nowrap">
-                      {row.fiscalYear}年3月期
+                  <tr key={row.fiscalYear} className={`hover:bg-slate-50 transition ${row.isForecast ? 'bg-amber-50/30' : ''}`}>
+                    <td className="p-3 font-bold font-mono text-slate-900 whitespace-nowrap flex items-center gap-1.5">
+                      <span>{row.fiscalYear}年3月期</span>
+                      {row.isForecast && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                          会社予想
+                        </span>
+                      )}
                     </td>
                     <td className="p-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
                       {formatCellAmount(row.rawRevenue)}
@@ -372,6 +385,25 @@ export default function TenYearPlOverview({
             </tbody>
           </table>
         </div>
+
+        {/* 🎯 最新四半期 (1Q) 開示実績インフォカード */}
+        {latestQuarter && (
+          <div className="bg-gradient-to-r from-teal-500/10 via-indigo-500/10 to-teal-500/10 border border-teal-500/30 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded bg-teal-600 text-white font-bold font-mono text-[10px]">
+                {latestQuarter.fiscalYear}期 {latestQuarter.periodType}
+              </span>
+              <span className="font-bold text-slate-900">
+                最新四半期 決算実績（{latestQuarter.periodEnd} 開示）
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-slate-700 font-mono text-xs">
+              <div>売上高: <b className="text-slate-900">{formatCellAmount(latestQuarter.revenue)}</b></div>
+              <div>営業利益: <b className="text-teal-700">{formatCellAmount(latestQuarter.operatingIncome)}</b></div>
+              <div>純利益: <b className="text-slate-900">{formatCellAmount(latestQuarter.netIncome)}</b></div>
+            </div>
+          </div>
+        )}
 
         {/* 株式分割・会計基準に関する注記 */}
         <div className="flex items-start gap-1.5 text-[11px] text-slate-400 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
