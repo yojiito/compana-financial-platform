@@ -24,6 +24,15 @@ import {
   TrendingUp,
   Percent,
   Coins,
+  ShieldCheck,
+  ShieldAlert,
+  Zap,
+  Repeat,
+  Award,
+  Briefcase,
+  SlidersHorizontal,
+  ChevronDown,
+  Info
 } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
 import { getCompanyName, getSectorName } from '@/lib/company-english-names';
@@ -42,9 +51,15 @@ export interface CompanyItem {
   roe: number | null;
   dividendYield: number | null;
   equityRatio: number | null;
+  avgSalary: number | null; // 平均年間給与 (万円)
+  avgAge: number | null; // 平均年齢
+  employeesCount: string | null;
+  shikihoHeadline: string | null;
   revenue: number | null;
+  revenueYoY: number | null; // 売上高成長率 (YoY %)
   operatingIncome: number | null;
-  operatingMargin: number | null;
+  operatingIncomeYoY: number | null; // 営業利益成長率 (YoY %)
+  operatingMargin: number | null; // 営業利益率 (%)
   netIncome: number | null;
   dividendPerShare: number | null;
 }
@@ -56,13 +71,16 @@ interface ScreenerClientProps {
 export type SortField =
   | 'marketCap'
   | 'revenue'
+  | 'revenueYoY'
   | 'operatingIncome'
+  | 'operatingIncomeYoY'
   | 'operatingMargin'
-  | 'netIncome'
-  | 'dividendYield'
-  | 'dividendPerShare'
+  | 'avgSalary'
   | 'equityRatio'
   | 'roe'
+  | 'dividendYield'
+  | 'dividendPerShare'
+  | 'netIncome'
   | 'trailingPE'
   | 'priceToBook'
   | 'tickerCode'
@@ -73,12 +91,21 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
   const [selectedMarket, setSelectedMarket] = useState<string>('ALL');
   const [selectedSector, setSelectedSector] = useState<string>('ALL');
 
-  // スライダーフィルター
+  // 就職・転職・財務特化フィルター
+  const [minSalary, setMinSalary] = useState<number>(0); // 最低平均年収 (万円)
+  const [minGrowth, setMinGrowth] = useState<number>(-100); // 最低売上成長率 (YoY %)
+  const [minOpMargin, setMinOpMargin] = useState<number>(0); // 最低営業利益率 (%)
+  const [minEquity, setMinEquity] = useState<number>(0); // 最低自己資本比率 (%)
   const [minRoe, setMinRoe] = useState<number>(0);
   const [maxPer, setMaxPer] = useState<number>(100);
   const [maxPbr, setMaxPbr] = useState<number>(10);
   const [minYield, setMinYield] = useState<number>(0);
-  const [minEquity, setMinEquity] = useState<number>(0);
+
+  // アクティブなプリセット
+  const [activePreset, setActivePreset] = useState<string>('all');
+
+  // フィルター詳細開閉
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(true);
 
   // ソート
   const [sortField, setSortField] = useState<SortField>('marketCap');
@@ -96,7 +123,6 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
     { id: 'プライム', label: '東証プライム', enLabel: 'TSE Prime' },
     { id: 'スタンダード', label: '東証スタンダード', enLabel: 'TSE Standard' },
     { id: 'グロース', label: '東証グロース', enLabel: 'TSE Growth' },
-    { id: 'TOKYO PRO Market', label: 'TOKYO PRO Market', enLabel: 'TOKYO PRO Market' },
   ];
 
   // 全セクターリスト抽出
@@ -125,12 +151,15 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
         if (!codeMatch && !nameMatch && !shortNameMatch) return false;
       }
 
-      // 4. 指標フィルター
+      // 4. 就職・転職・財務健全性指標フィルター
+      if (minSalary > 0 && (c.avgSalary ?? 0) < minSalary) return false;
+      if (minGrowth > -100 && (c.revenueYoY ?? -999) < minGrowth) return false;
+      if (minOpMargin > 0 && (c.operatingMargin ?? 0) < minOpMargin) return false;
+      if (minEquity > 0 && (c.equityRatio ?? 0) < minEquity) return false;
       if (minRoe > 0 && (c.roe ?? 0) < minRoe) return false;
       if (maxPer < 100 && (c.trailingPE ?? 999) > maxPer) return false;
       if (maxPbr < 10 && (c.priceToBook ?? 999) > maxPbr) return false;
       if (minYield > 0 && (c.dividendYield ?? 0) < minYield) return false;
-      if (minEquity > 0 && (c.equityRatio ?? 0) < minEquity) return false;
 
       return true;
     });
@@ -139,11 +168,14 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
     selectedMarket,
     selectedSector,
     searchQuery,
+    minSalary,
+    minGrowth,
+    minOpMargin,
+    minEquity,
     minRoe,
     maxPer,
     maxPbr,
     minYield,
-    minEquity,
   ]);
 
   // ソート処理
@@ -183,35 +215,53 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
     setSearchQuery('');
     setSelectedMarket('ALL');
     setSelectedSector('ALL');
+    setMinSalary(0);
+    setMinGrowth(-100);
+    setMinOpMargin(0);
+    setMinEquity(0);
     setMinRoe(0);
     setMaxPer(100);
     setMaxPbr(10);
     setMinYield(0);
-    setMinEquity(0);
     setSortField('marketCap');
     setSortAsc(false);
+    setActivePreset('all');
     setCurrentPage(1);
   };
 
-  const applyPreset = (preset: 'value' | 'growth' | 'dividend' | 'compass' | 'large_cap') => {
+  // 🎯 就職・転職・財務特化 プリセット適用
+  const applyCareerPreset = (preset: 'fortress' | 'growth' | 'recurring' | 'high_salary' | 'high_margin' | 'dividend' | 'all') => {
     resetFilters();
-    if (preset === 'compass') {
-      setMinRoe(10);
-      setMinEquity(40);
-      setMaxPer(25);
-    } else if (preset === 'value') {
-      setMaxPbr(1.0);
-      setMaxPer(15);
-      setMinEquity(50);
+    setActivePreset(preset);
+
+    if (preset === 'fortress') {
+      // 🏰 そんじょそこらの赤字では倒産しない鉄壁企業 (自己資本比率 70%以上)
+      setMinEquity(70);
+      setSortField('equityRatio');
     } else if (preset === 'growth') {
-      setMinRoe(12);
+      // 🚀 高成長企業 (売上YoY +15%以上)
+      setMinGrowth(15);
+      setMinRoe(10);
+      setSortField('revenueYoY');
+    } else if (preset === 'recurring') {
+      // 🔄 着実ストック・高粗利・継続収益企業 (営業利益率 15%以上 & 自己資本比率 50%以上)
+      setMinOpMargin(15);
+      setMinEquity(50);
+      setSortField('operatingMargin');
+    } else if (preset === 'high_salary') {
+      // 💰 超高年収・高待遇企業 (平均年収 1,000万円以上)
+      setMinSalary(1000);
+      setSortField('avgSalary');
+    } else if (preset === 'high_margin') {
+      // 💎 超高収益・高ROE企業 (営業利益率 20%以上 & ROE 15%以上)
+      setMinOpMargin(20);
+      setMinRoe(15);
+      setSortField('operatingMargin');
     } else if (preset === 'dividend') {
+      // 🛡️ 安定配当・財務盤石 (利回り 3.0%以上 & 自己資本比率 50%以上)
       setMinYield(3.0);
-      setMinEquity(40);
+      setMinEquity(50);
       setSortField('dividendYield');
-    } else if (preset === 'large_cap') {
-      setSelectedMarket('プライム');
-      setSortField('marketCap');
     }
   };
 
@@ -251,81 +301,181 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
 
   return (
     <div className="space-y-6">
-      {/* 1. 市場区分クイック切り替えタブ */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-xs font-bold text-slate-400 pl-2 pr-1 flex items-center gap-1 shrink-0">
-            <Building2 className="w-3.5 h-3.5" />
-            {isEn ? 'Market:' : '市場:'}
-          </span>
-          {markets.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => {
-                setSelectedMarket(m.id);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                selectedMarket === m.id
-                  ? 'bg-teal-700 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {isEn ? m.enLabel : m.label}
-            </button>
-          ))}
+      {/* 🧭 1. ヘッダー ＆ 概要 */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-3xl text-white p-6 sm:p-8 shadow-xl border border-slate-700/60 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold">
+            <Briefcase className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Career & Financial Screener' : '就職・転職 ＆ 財務健全性スクリーナー'}</span>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
+                <span>{isEn ? 'TSE All-Company Financial Screener' : '全上場企業 財務・成長性 ＆ 倒産耐性スクリーナー'}</span>
+              </h1>
+              <p className="text-sm text-slate-300 max-w-3xl mt-2 leading-relaxed">
+                {isEn
+                  ? 'Screen 3,900+ Japanese listed corporations by YoY Revenue Growth, Bankruptcy-Proof Equity Ratios, Recurring Stock Profitability, and Official Average Salaries.'
+                  : '有報・決算短信の公式データに基づき、「高成長企業」「赤字でもびくともしない鉄壁財務」「着実なストック収入」「超高年収」などの切り口で全3,903社を自在にソート・抽出できます。'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-indigo-300">
+                {sorted.length.toLocaleString()} {isEn ? 'Companies' : '社 該当'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 2. 厳選プリセットボタン */}
-      <div className="flex items-center gap-2 flex-wrap text-xs">
-        <span className="font-bold text-slate-500 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-teal-500" />
-          {isEn ? 'Curated Presets:' : 'compana 厳選プリセット:'}
-        </span>
-        <button
-          onClick={() => applyPreset('compass')}
-          className="px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 font-semibold transition flex items-center gap-1"
-        >
-          <Compass className="w-3.5 h-3.5 text-teal-600" />
-          {isEn ? 'Quality Blue-Chips (ROE>10% & Equity>40%)' : 'クオリティ優良株 (ROE>10% & 自己資本>40%)'}
-        </button>
-        <button
-          onClick={() => applyPreset('value')}
-          className="px-3 py-1.5 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-200 hover:bg-cyan-100 font-semibold transition"
-        >
-          {isEn ? '💎 Deep Value (PBR<1.0x & PER<15x)' : '💎 ディープバリュー (PBR<1倍 & PER<15倍)'}
-        </button>
-        <button
-          onClick={() => applyPreset('dividend')}
-          className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 font-semibold transition"
-        >
-          {isEn ? '💰 High Dividend Yield (Yield>3% & Equity>40%)' : '💰 高配当利回り (配当>3% & 自己資本>40%)'}
-        </button>
-        <button
-          onClick={() => applyPreset('large_cap')}
-          className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 font-semibold transition"
-        >
-          {isEn ? '🏢 Prime Mega Caps' : '🏢 プライム大型主力株'}
-        </button>
-        <button
-          onClick={resetFilters}
-          className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium transition flex items-center gap-1"
-        >
-          <RotateCcw className="w-3 h-3" /> {isEn ? 'Reset All' : 'リセット'}
-        </button>
+      {/* 🎯 2. 就職・転職 ＆ 財務特化 6大クイックプリセットセレクター */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-extrabold text-slate-900 tracking-wider uppercase flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-indigo-600" />
+            <span>{isEn ? 'Quick Career & Financial Presets' : '🎯 目的別 クイックソート・スクリーニング'}</span>
+          </span>
+          <button
+            onClick={resetFilters}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 font-bold transition px-2.5 py-1 rounded-lg hover:bg-slate-100"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Reset All' : '条件リセット'}</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
+          <button
+            onClick={() => applyCareerPreset('fortress')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'fortress'
+                ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-indigo-500'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">🏰</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'fortress' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                自己資本 70%↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">倒産リスクゼロ</div>
+              <div className={`text-[10px] ${activePreset === 'fortress' ? 'text-slate-300' : 'text-slate-500'}`}>赤字耐性・鉄壁財務</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => applyCareerPreset('growth')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'growth'
+                ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-300'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">🚀</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'growth' ? 'bg-indigo-800 text-white' : 'bg-indigo-100 text-indigo-700'}`}>
+                売上YoY +15%↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">高成長・急伸</div>
+              <div className={`text-[10px] ${activePreset === 'growth' ? 'text-indigo-200' : 'text-slate-500'}`}>売上・利益拡大企業</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => applyCareerPreset('recurring')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'recurring'
+                ? 'bg-teal-700 text-white border-teal-700 shadow-md ring-2 ring-teal-300'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">🔄</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'recurring' ? 'bg-teal-900 text-white' : 'bg-teal-100 text-teal-700'}`}>
+                営業益率 15%↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">着実ストック収益</div>
+              <div className={`text-[10px] ${activePreset === 'recurring' ? 'text-teal-200' : 'text-slate-500'}`}>高粗利・参入障壁</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => applyCareerPreset('high_salary')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'high_salary'
+                ? 'bg-amber-600 text-white border-amber-600 shadow-md ring-2 ring-amber-300'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">💰</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'high_salary' ? 'bg-amber-800 text-white' : 'bg-amber-100 text-amber-800'}`}>
+                年収 1,000万↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">超高年収・好待遇</div>
+              <div className={`text-[10px] ${activePreset === 'high_salary' ? 'text-amber-200' : 'text-slate-500'}`}>有報開示 高額給与</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => applyCareerPreset('high_margin')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'high_margin'
+                ? 'bg-purple-700 text-white border-purple-700 shadow-md ring-2 ring-purple-300'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">💎</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'high_margin' ? 'bg-purple-900 text-white' : 'bg-purple-100 text-purple-700'}`}>
+                営業益率 20%↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">超高収益・高ROE</div>
+              <div className={`text-[10px] ${activePreset === 'high_margin' ? 'text-purple-200' : 'text-slate-500'}`}>資本効率・筋肉質</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => applyCareerPreset('dividend')}
+            className={`p-3 rounded-xl border text-left transition flex flex-col justify-between space-y-1.5 ${
+              activePreset === 'dividend'
+                ? 'bg-blue-700 text-white border-blue-700 shadow-md ring-2 ring-blue-300'
+                : 'bg-slate-50/70 hover:bg-slate-100/90 border-slate-200 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-base">🛡️</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activePreset === 'dividend' ? 'bg-blue-900 text-white' : 'bg-blue-100 text-blue-700'}`}>
+                利回り 3.0%↑
+              </span>
+            </div>
+            <div>
+              <div className="font-extrabold text-xs">安定配当・還元</div>
+              <div className={`text-[10px] ${activePreset === 'dividend' ? 'text-blue-200' : 'text-slate-500'}`}>連続増配・高還元</div>
+            </div>
+          </button>
+        </div>
       </div>
 
-      {/* 3. 検索・業種・多軸ソート・スライダーパネル */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-        {/* 検索バー ＆ 業種セクター ＆ ソート選択 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 社名・コード検索 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-              <Search className="w-3.5 h-3.5 text-slate-400" />
-              {isEn ? 'Search Name / Code' : '社名・銘柄コード検索'}
-            </label>
+      {/* 🔍 3. 検索バー ＆ 市場・セクター・詳細フィルター */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5">
+        <div className="flex flex-col lg:flex-row items-center gap-3">
+          {/* 検索入力 */}
+          <div className="relative flex-1 w-full">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
@@ -333,356 +483,424 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder={isEn ? 'e.g. 7203, Toyota, Nintendo...' : '例: 7203, トヨタ, 任天堂...'}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              placeholder={isEn ? 'Search ticker, company name, representative...' : '銘柄コード・社名・代表者名で検索 (例: 8031, トヨタ, キーエンス)...'}
+              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
             />
           </div>
 
-          {/* 東証33業種セクター */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              {isEn ? 'TSE 33 Sectors' : '東証33業種セクター'}
-            </label>
+          {/* 市場区分セレクター */}
+          <div className="flex items-center gap-1.5 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+            {markets.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => {
+                  setSelectedMarket(m.id);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+                  selectedMarket === m.id
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {isEn ? m.enLabel : m.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 業種セクターセレクター */}
+          <div className="w-full lg:w-52 shrink-0">
             <select
               value={selectedSector}
               onChange={(e) => {
                 setSelectedSector(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-bold text-slate-700"
             >
-              {sectors.map((s) => (
-                <option key={s} value={s}>
-                  {s === 'ALL' ? (isEn ? 'All 33 Sectors' : '東証全33業種') : getSectorName(s, isEn)}
+              {sectors.map((sec) => (
+                <option key={sec} value={sec}>
+                  {sec === 'ALL' ? (isEn ? 'All 33 Sectors' : '全33業種 (全セクター)') : sec}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* ソート項目選択 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-              {isEn ? 'Sort Metric' : '並び替え指標'}
-            </label>
+          {/* 詳細条件トグル */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 shrink-0"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-600" />
+            <span>{isEn ? 'Filter Sliders' : '詳細条件'}</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+
+        {/* 🎛️ 詳細スライダーフィルター領域 */}
+        {showAdvanced && (
+          <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* 1. 最低平均年収 */}
+            <div className="space-y-1.5 bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/70">
+              <div className="flex justify-between text-xs font-bold text-slate-800">
+                <span className="flex items-center gap-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-amber-600" />
+                  <span>最低 平均年収</span>
+                </span>
+                <span className="font-mono text-amber-700">{minSalary > 0 ? `${minSalary}万円以上` : '下限なし'}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1800"
+                step="50"
+                value={minSalary}
+                onChange={(e) => {
+                  setMinSalary(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="w-full accent-amber-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span>0万</span>
+                <span>800万</span>
+                <span>1,200万</span>
+                <span>1,800万</span>
+              </div>
+            </div>
+
+            {/* 2. 最低自己資本比率 (倒産耐性) */}
+            <div className="space-y-1.5 bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/70">
+              <div className="flex justify-between text-xs font-bold text-slate-800">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>自己資本比率 (倒産耐性)</span>
+                </span>
+                <span className="font-mono text-emerald-700">{minEquity > 0 ? `${minEquity}%以上` : '下限なし'}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="85"
+                step="5"
+                value={minEquity}
+                onChange={(e) => {
+                  setMinEquity(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="w-full accent-emerald-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span>0%</span>
+                <span>40%(普通)</span>
+                <span>70%(鉄壁)</span>
+                <span>85%</span>
+              </div>
+            </div>
+
+            {/* 3. 最低売上成長率 (YoY) */}
+            <div className="space-y-1.5 bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/70">
+              <div className="flex justify-between text-xs font-bold text-slate-800">
+                <span className="flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>売上成長率 (YoY)</span>
+                </span>
+                <span className="font-mono text-indigo-700">{minGrowth > -100 ? `+${minGrowth}%以上` : '下限なし'}</span>
+              </div>
+              <input
+                type="range"
+                min="-100"
+                max="50"
+                step="5"
+                value={minGrowth}
+                onChange={(e) => {
+                  setMinGrowth(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="w-full accent-indigo-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span>全件</span>
+                <span>+0%</span>
+                <span>+15%(高成長)</span>
+                <span>+50%</span>
+              </div>
+            </div>
+
+            {/* 4. 最低営業利益率 */}
+            <div className="space-y-1.5 bg-slate-50/70 p-3.5 rounded-xl border border-slate-200/70">
+              <div className="flex justify-between text-xs font-bold text-slate-800">
+                <span className="flex items-center gap-1.5">
+                  <Percent className="w-3.5 h-3.5 text-teal-600" />
+                  <span>営業利益率 (収益力)</span>
+                </span>
+                <span className="font-mono text-teal-700">{minOpMargin > 0 ? `${minOpMargin}%以上` : '下限なし'}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="40"
+                step="2"
+                value={minOpMargin}
+                onChange={(e) => {
+                  setMinOpMargin(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="w-full accent-teal-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span>0%</span>
+                <span>10%(優良)</span>
+                <span>20%(超高収益)</span>
+                <span>40%</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 📋 4. スクリーニング結果テーブル */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-base font-extrabold text-slate-900">
+              {isEn ? 'Screening Results' : 'スクリーニング結果一覧'}
+            </h3>
+            <span className="text-xs text-slate-400 font-mono">
+              ({sorted.length.toLocaleString()} 社)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-auto text-xs text-slate-500">
+            <span>表示件数:</span>
             <select
-              value={sortField}
+              value={pageSize}
               onChange={(e) => {
-                setSortField(e.target.value as SortField);
+                setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
             >
-              <option value="marketCap">{isEn ? 'Market Cap (Size)' : '時価総額（規模順）'}</option>
-              <option value="revenue">{isEn ? 'Revenue (Sales)' : '売上高（売上規模順）'}</option>
-              <option value="operatingIncome">{isEn ? 'Operating Income' : '営業利益（本業収益順）'}</option>
-              <option value="operatingMargin">{isEn ? 'Operating Margin (%)' : '営業利益率（高収益順）'}</option>
-              <option value="netIncome">{isEn ? 'Net Income' : '当期純利益（最終益順）'}</option>
-              <option value="dividendYield">{isEn ? 'Dividend Yield (%)' : '配当利回り（インカム順）'}</option>
-              <option value="roe">{isEn ? 'ROE (%)' : 'ROE（自己資本利益率順）'}</option>
-              <option value="equityRatio">{isEn ? 'Equity Ratio (%)' : '自己資本比率（財務健全順）'}</option>
-              <option value="trailingPE">{isEn ? 'PER (P/E)' : 'PER（株価収益率）'}</option>
-              <option value="priceToBook">{isEn ? 'PBR (P/B)' : 'PBR（純資産倍率）'}</option>
-              <option value="tickerCode">{isEn ? 'Ticker Code' : '証券コード順'}</option>
-              <option value="name">{isEn ? 'Company Name' : '企業名順'}</option>
+              <option value="25">25件</option>
+              <option value="50">50件</option>
+              <option value="100">100件</option>
             </select>
           </div>
-
-          {/* 昇順 / 降順 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
-              <Scale className="w-3.5 h-3.5 text-slate-400" />
-              {isEn ? 'Sort Order' : '順序'}
-            </label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setSortAsc(false)}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition ${
-                  !sortAsc ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {isEn ? 'High to Low (Desc)' : '降順 (大きい順)'}
-              </button>
-              <button
-                onClick={() => setSortAsc(true)}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition ${
-                  sortAsc ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {isEn ? 'Low to High (Asc)' : '昇順 (小さい順)'}
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* スライダー指標フィルター */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 pt-4 border-t border-slate-100">
-          {/* ROE */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-700">
-              <span>{isEn ? 'Min ROE' : 'ROE'}</span>
-              <span className="font-mono text-teal-600">{minRoe > 0 ? `${minRoe}% ${isEn ? 'or more' : '以上'}` : (isEn ? 'Any' : '指定なし')}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="25"
-              step="1"
-              value={minRoe}
-              onChange={(e) => {
-                setMinRoe(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full accent-teal-600"
-            />
-          </div>
-
-          {/* PER */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-700">
-              <span>{isEn ? 'Max P/E' : 'PER'}</span>
-              <span className="font-mono text-teal-600">{maxPer < 100 ? `${maxPer}x ${isEn ? 'or less' : '以下'}` : (isEn ? 'Any' : '指定なし')}</span>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="100"
-              step="5"
-              value={maxPer}
-              onChange={(e) => {
-                setMaxPer(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full accent-teal-600"
-            />
-          </div>
-
-          {/* PBR */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-700">
-              <span>{isEn ? 'Max P/B' : 'PBR'}</span>
-              <span className="font-mono text-teal-600">{maxPbr < 10 ? `${maxPbr}x ${isEn ? 'or less' : '以下'}` : (isEn ? 'Any' : '指定なし')}</span>
-            </div>
-            <input
-              type="range"
-              min="0.5"
-              max="10"
-              step="0.5"
-              value={maxPbr}
-              onChange={(e) => {
-                setMaxPbr(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full accent-teal-600"
-            />
-          </div>
-
-          {/* 配当利回り */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-700">
-              <span>{isEn ? 'Min Yield' : '配当利回り'}</span>
-              <span className="font-mono text-teal-600">{minYield > 0 ? `${minYield}% ${isEn ? 'or more' : '以上'}` : (isEn ? 'Any' : '指定なし')}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="8"
-              step="0.5"
-              value={minYield}
-              onChange={(e) => {
-                setMinYield(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full accent-teal-600"
-            />
-          </div>
-
-          {/* 自己資本比率 */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-700">
-              <span>{isEn ? 'Min Equity' : '自己資本比率'}</span>
-              <span className="font-mono text-teal-600">{minEquity > 0 ? `${minEquity}% ${isEn ? 'or more' : '以上'}` : (isEn ? 'Any' : '指定なし')}</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="80"
-              step="5"
-              value={minEquity}
-              onChange={(e) => {
-                setMinEquity(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="w-full accent-teal-600"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 4. 結果ヘッダー ＆ 表示件数セレクター */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-        <div className="text-xs font-bold text-slate-700">
-          {isEn ? (
-            <>
-              Matched:{' '}
-              <span className="text-teal-600 font-mono text-base font-black">
-                {sorted.length.toLocaleString()}
-              </span>{' '}
-              / {initialCompanies.length.toLocaleString()} companies
-            </>
-          ) : (
-            <>
-              該当件数:{' '}
-              <span className="text-teal-600 font-mono text-base font-black">
-                {sorted.length.toLocaleString()}
-              </span>{' '}
-              社 （全 {initialCompanies.length.toLocaleString()} 社中）
-            </>
-          )}
-        </div>
-
-        {/* 1ページ件数 */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-500 font-medium">{isEn ? 'Show:' : '表示件数:'}</span>
-          {[25, 50, 100].map((sz) => (
-            <button
-              key={sz}
-              onClick={() => {
-                setPageSize(sz);
-                setCurrentPage(1);
-              }}
-              className={`px-2.5 py-1 rounded-lg font-bold transition ${
-                pageSize === sz
-                  ? 'bg-teal-700 text-white'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-              }`}
-            >
-              {sz}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 5. スクリーニング結果テーブル */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold select-none">
-                <th onClick={() => handleSort('tickerCode')} className="p-3.5 cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    <span>{isEn ? 'Code' : 'コード'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                  </div>
-                </th>
-                <th onClick={() => handleSort('name')} className="p-3.5 cursor-pointer hover:bg-slate-100 transition min-w-[160px]">
-                  <div className="flex items-center gap-1">
-                    <span>{isEn ? 'Company Name' : '企業名'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
-                  </div>
-                </th>
-                <th className="p-3.5 whitespace-nowrap">{isEn ? 'Market' : '市場'}</th>
-                <th className="p-3.5 whitespace-nowrap">{isEn ? 'Sector' : '業種'}</th>
-                <th onClick={() => handleSort('marketCap')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+              <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-extrabold select-none">
+                <th className="py-3 px-3 w-16">コード</th>
+                <th className="py-3 px-3 min-w-[160px]">企業名 / 市場</th>
+                
+                {/* 💰 平均年収 */}
+                <th
+                  onClick={() => handleSort('avgSalary')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Market Cap' : '時価総額'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>平均年収</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'avgSalary' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('revenue')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* 🚀 売上成長率 (YoY) */}
+                <th
+                  onClick={() => handleSort('revenueYoY')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Revenue' : '売上高'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>売上成長 (YoY)</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'revenueYoY' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('operatingIncome')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* 🔄 営業利益率 */}
+                <th
+                  onClick={() => handleSort('operatingMargin')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Op. Income' : '営業利益'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>営業利益率</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'operatingMargin' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('operatingMargin')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* 🏰 自己資本比率 (倒産耐性) */}
+                <th
+                  onClick={() => handleSort('equityRatio')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Margin' : '営業利益率'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>自己資本比率</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'equityRatio' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('dividendYield')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* 時価総額 */}
+                <th
+                  onClick={() => handleSort('marketCap')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Yield' : '配当利回り'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>時価総額</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'marketCap' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('roe')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* 直近 売上高 */}
+                <th
+                  onClick={() => handleSort('revenue')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap hidden md:table-cell"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'ROE' : 'ROE'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>売上高</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'revenue' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th onClick={() => handleSort('equityRatio')} className="p-3.5 text-right cursor-pointer hover:bg-slate-100 transition whitespace-nowrap">
+
+                {/* ROE */}
+                <th
+                  onClick={() => handleSort('roe')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap hidden lg:table-cell"
+                >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{isEn ? 'Equity Ratio' : '自己資本比率'}</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <span>ROE</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'roe' ? 'text-indigo-600' : 'text-slate-300'}`} />
                   </div>
                 </th>
-                <th className="p-3.5 text-center whitespace-nowrap">{isEn ? 'Card' : 'カルテ'}</th>
+
+                {/* 配当利回り */}
+                <th
+                  onClick={() => handleSort('dividendYield')}
+                  className="py-3 px-3 cursor-pointer hover:text-indigo-600 text-right whitespace-nowrap hidden sm:table-cell"
+                >
+                  <div className="flex items-center justify-end gap-1">
+                    <span>利回り</span>
+                    <ArrowUpDown className={`w-3 h-3 ${sortField === 'dividendYield' ? 'text-indigo-600' : 'text-slate-300'}`} />
+                  </div>
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-mono text-slate-800">
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
               {paginatedCompanies.map((c) => {
-                const displayName = getCompanyName(c.tickerCode, c.name, isEn);
-                const displaySector = getSectorName(c.sector, isEn);
+                const isFortress = (c.equityRatio ?? 0) >= 70;
+                const isHighGrowth = (c.revenueYoY ?? 0) >= 15;
+                const isHighSalary = (c.avgSalary ?? 0) >= 1000;
+                const isHighMargin = (c.operatingMargin ?? 0) >= 15;
 
                 return (
-                  <tr key={c.tickerCode} className="hover:bg-slate-50/80 transition">
-                    <td className="p-3.5 font-bold text-slate-900">{c.tickerCode}</td>
-                    <td className="p-3.5 font-sans font-bold text-slate-900">
-                      <Link
-                        href={`/stocks/${c.tickerCode}`}
-                        className="hover:text-teal-600 transition block truncate max-w-[220px]"
-                        title={displayName}
-                      >
-                        {displayName}
+                  <tr key={c.tickerCode} className="hover:bg-indigo-50/30 transition group">
+                    {/* コード */}
+                    <td className="py-3 px-3 font-mono font-bold text-slate-500">
+                      <Link href={`/stocks/${c.tickerCode}`} className="text-indigo-600 hover:underline">
+                        {c.tickerCode}
                       </Link>
                     </td>
-                    <td className="p-3.5 font-sans text-[11px] text-slate-600 whitespace-nowrap">
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200">
-                        {c.market || '-'}
-                      </span>
+
+                    {/* 企業名 / 特徴バッジ */}
+                    <td className="py-3 px-3">
+                      <div className="space-y-1">
+                        <Link
+                          href={`/stocks/${c.tickerCode}`}
+                          className="font-bold text-slate-900 group-hover:text-indigo-600 transition flex items-center gap-1.5"
+                        >
+                          <span className="truncate max-w-[180px] sm:max-w-xs">{c.name}</span>
+                          <ArrowRight className="w-3 h-3 text-slate-300 group-hover:text-indigo-500 transition shrink-0 opacity-0 group-hover:opacity-100" />
+                        </Link>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] text-slate-500 font-mono bg-slate-100 px-1.5 py-0.5 rounded">
+                            {c.sector}
+                          </span>
+                          {isFortress && (
+                            <span className="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
+                              🏰 鉄壁
+                            </span>
+                          )}
+                          {isHighGrowth && (
+                            <span className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-200">
+                              🚀 成長
+                            </span>
+                          )}
+                          {isHighSalary && (
+                            <span className="text-[9px] font-bold bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">
+                              💰 高年収
+                            </span>
+                          )}
+                          {isHighMargin && (
+                            <span className="text-[9px] font-bold bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded border border-teal-200">
+                              🔄 高粗利
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </td>
-                    <td className="p-3.5 font-sans text-[11px] text-slate-500 whitespace-nowrap">
-                      {displaySector}
+
+                    {/* 平均年収 */}
+                    <td className="py-3 px-3 text-right font-mono font-bold">
+                      {c.avgSalary ? (
+                        <span className={c.avgSalary >= 1000 ? 'text-amber-700 font-black' : 'text-slate-800'}>
+                          {c.avgSalary.toLocaleString()} 万円
+                        </span>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
                     </td>
-                    <td className="p-3.5 text-right font-bold text-slate-900">
+
+                    {/* 売上成長率 (YoY) */}
+                    <td className="py-3 px-3 text-right font-mono font-bold">
+                      {c.revenueYoY !== null && c.revenueYoY !== undefined ? (
+                        <span className={c.revenueYoY > 0 ? 'text-indigo-600' : 'text-rose-600'}>
+                          {c.revenueYoY > 0 ? `+${c.revenueYoY}%` : `${c.revenueYoY}%`}
+                        </span>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
+                    </td>
+
+                    {/* 営業利益率 */}
+                    <td className="py-3 px-3 text-right font-mono font-bold">
+                      {c.operatingMargin !== null && c.operatingMargin !== undefined ? (
+                        <span className={c.operatingMargin >= 15 ? 'text-teal-700 font-black' : (c.operatingMargin < 0 ? 'text-rose-600' : 'text-slate-800')}>
+                          {c.operatingMargin}%
+                        </span>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
+                    </td>
+
+                    {/* 自己資本比率 (倒産耐性) */}
+                    <td className="py-3 px-3 text-right font-mono font-bold">
+                      {c.equityRatio !== null && c.equityRatio !== undefined ? (
+                        <span className={c.equityRatio >= 70 ? 'text-emerald-700 font-black' : (c.equityRatio < 30 ? 'text-amber-600' : 'text-slate-800')}>
+                          {c.equityRatio}%
+                        </span>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
+                    </td>
+
+                    {/* 時価総額 */}
+                    <td className="py-3 px-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
                       {formatMarketCap(c.marketCap)}
                     </td>
-                    <td className="p-3.5 text-right text-slate-700">
+
+                    {/* 直近 売上高 */}
+                    <td className="py-3 px-3 text-right font-mono text-slate-600 hidden md:table-cell whitespace-nowrap">
                       {formatMillion(c.revenue)}
                     </td>
-                    <td className="p-3.5 text-right font-bold text-emerald-600">
-                      {formatMillion(c.operatingIncome)}
+
+                    {/* ROE */}
+                    <td className="py-3 px-3 text-right font-mono text-slate-700 hidden lg:table-cell">
+                      {c.roe ? `${c.roe}%` : '-'}
                     </td>
-                    <td className="p-3.5 text-right font-bold text-teal-600">
-                      {c.operatingMargin !== null ? `${c.operatingMargin}%` : '-'}
-                    </td>
-                    <td className="p-3.5 text-right text-amber-600 font-bold">
-                      {c.dividendYield !== null ? `${c.dividendYield}%` : '-'}
-                    </td>
-                    <td className="p-3.5 text-right text-indigo-600 font-bold">
-                      {c.roe !== null ? `${c.roe}%` : '-'}
-                    </td>
-                    <td className="p-3.5 text-right text-slate-600">
-                      {c.equityRatio !== null ? `${c.equityRatio}%` : '-'}
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <Link
-                        href={`/stocks/${c.tickerCode}`}
-                        className="inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-sans font-bold hover:bg-teal-600 transition shadow-xs"
-                      >
-                        <span>{isEn ? 'View' : 'カルテ'}</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
+
+                    {/* 配当利回り */}
+                    <td className="py-3 px-3 text-right font-mono text-slate-700 hidden sm:table-cell">
+                      {c.dividendYield ? `${c.dividendYield}%` : '-'}
                     </td>
                   </tr>
                 );
@@ -691,65 +909,43 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
           </table>
         </div>
 
-        {/* 6. ページネーションコントロール */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="text-slate-500">
-            {isEn ? (
-              <>
-                Showing page <span className="font-bold font-mono text-slate-800">{currentPage}</span> of{' '}
-                <span className="font-bold font-mono text-slate-800">{totalPages}</span> (
-                {sorted.length.toLocaleString()} total)
-              </>
-            ) : (
-              <>
-                全 <span className="font-bold font-mono text-slate-800">{sorted.length.toLocaleString()}</span> 件中{' '}
-                <span className="font-bold font-mono text-slate-800">
-                  {Math.min((currentPage - 1) * pageSize + 1, sorted.length)} -{' '}
-                  {Math.min(currentPage * pageSize, sorted.length)}
-                </span>{' '}
-                件を表示中 （{currentPage} / {totalPages} ページ）
-              </>
-            )}
+        {/* ページネーション */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-slate-100 text-xs text-slate-500">
+          <div>
+            <span>
+              全 {sorted.length.toLocaleString()} 件中 {(currentPage - 1) * pageSize + 1} 〜 {Math.min(currentPage * pageSize, sorted.length)} 件を表示
+            </span>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 self-center sm:self-auto">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 disabled:opacity-30 hover:bg-slate-100 transition"
-              title={isEn ? 'First Page' : '最初のページ'}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
             >
               <ChevronsLeft className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 disabled:opacity-30 hover:bg-slate-100 transition"
-              title={isEn ? 'Previous Page' : '前のページ'}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-
-            {/* ページ番号ボタン */}
-            <div className="flex items-center gap-1 px-2 font-mono font-bold text-slate-700">
-              <span>{currentPage}</span>
-              <span className="text-slate-400 font-normal">/</span>
-              <span>{totalPages}</span>
-            </div>
-
+            <span className="px-3 py-1 font-mono font-bold text-slate-900 bg-slate-50 rounded-lg border border-slate-200">
+              {currentPage} / {totalPages}
+            </span>
             <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 disabled:opacity-30 hover:bg-slate-100 transition"
-              title={isEn ? 'Next Page' : '次のページ'}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 disabled:opacity-30 hover:bg-slate-100 transition"
-              title={isEn ? 'Last Page' : '最後のページ'}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
             >
               <ChevronsRight className="w-4 h-4" />
             </button>

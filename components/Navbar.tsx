@@ -89,15 +89,26 @@ export default function Navbar() {
     router.push(url);
   };
 
-  // ハンバーガーメニュー内に収納する9大機能リスト
+  // ハンバーガーメニュー内に収納する主要機能リスト
   const MENU_ITEMS = [
     {
-      href: '/network',
-      icon: <Share2 className="w-5 h-5 text-indigo-400" />,
+      href: '/screener',
+      icon: <SlidersHorizontal className="w-5 h-5 text-indigo-400" />,
       bg: 'bg-indigo-950/60 border-indigo-700/50 hover:border-indigo-500',
+      title: isEn ? 'Career & Financial Screener' : '就職・転職 ＆ 財務スクリーナー',
+      badge: isEn ? 'Growth & Safety' : '就職・転職特化',
+      badgeColor: 'bg-indigo-500 text-white',
+      desc: isEn 
+        ? 'Screen companies by YoY Growth, Fortress Balance Sheet, Recurring Revenue, and Salaries'
+        : '高成長企業・そんじょそこらの赤字では倒産しない鉄壁企業・着実ストック収益・超高年収ソート'
+    },
+    {
+      href: '/network',
+      icon: <Share2 className="w-5 h-5 text-teal-400" />,
+      bg: 'bg-teal-950/60 border-teal-700/50 hover:border-teal-500',
       title: isEn ? 'Relationship Network' : '関係性ネットワーク',
       badge: isEn ? 'Universal Graph' : '新機能',
-      badgeColor: 'bg-indigo-500 text-white',
+      badgeColor: 'bg-teal-500 text-slate-950',
       desc: isEn 
         ? 'Corporation-to-person & cross-corporate ownership graph'
         : '法人 ⇄ 個人 ⇄ 法人の双方向ナレッジグラフ・創業家＆資本提携網'
