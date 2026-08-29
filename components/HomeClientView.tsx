@@ -102,7 +102,7 @@ export default function HomeClientView({
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 border border-indigo-400 text-white text-sm font-bold transition group shadow-lg shadow-indigo-900/60 ring-2 ring-indigo-400/40"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>{isEn ? '🎯 Career & Financial Screener (High Growth & Fortress)' : '🎯 就職・転職 ＆ 財務スクリーナー (高成長・鉄壁財務・高年収)'}</span>
+              <span>{isEn ? '🎯 Career & Job-Change Analytics (High Growth & Fortress)' : '🎯 就職＆転職アナリティクス (高成長・鉄壁財務・高年収)'}</span>
               <ArrowRight className="w-3.5 h-3.5 text-white group-hover:translate-x-0.5 transition" />
             </Link>
             <Link

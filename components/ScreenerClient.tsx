@@ -307,18 +307,18 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
         <div className="relative z-10 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-bold">
             <Briefcase className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Career & Financial Screener' : '就職・転職 ＆ 財務健全性スクリーナー'}</span>
+            <span>{isEn ? 'Career & Job-Change Analytics' : '就職＆転職アナリティクス'}</span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
-                <span>{isEn ? 'TSE All-Company Financial Screener' : '全上場企業 財務・成長性 ＆ 倒産耐性スクリーナー'}</span>
+                <span>{isEn ? 'Career & Job-Change Financial Analytics' : '就職＆転職アナリティクス'}</span>
               </h1>
               <p className="text-sm text-slate-300 max-w-3xl mt-2 leading-relaxed">
                 {isEn
-                  ? 'Screen 3,900+ Japanese listed corporations by YoY Revenue Growth, Bankruptcy-Proof Equity Ratios, Recurring Stock Profitability, and Official Average Salaries.'
-                  : '有報・決算短信の公式データに基づき、「高成長企業」「赤字でもびくともしない鉄壁財務」「着実なストック収入」「超高年収」などの切り口で全3,903社を自在にソート・抽出できます。'}
+                  ? 'Screen and analyze 3,900+ Japanese listed corporations by YoY Growth, Fortress Balance Sheet, Recurring Stock Profitability, and Official Average Salaries.'
+                  : '有報・決算短信の公式データに基づき、「高成長企業」「赤字でもびくともしない鉄壁財務」「着実なストック収入」「超高年収」などの切り口で全3,903社を自在にソート・抽出・企業分析できます。'}
               </p>
             </div>
 

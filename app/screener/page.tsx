@@ -1,7 +1,13 @@
+import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import ScreenerClient from '@/components/ScreenerClient';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: '就職＆転職アナリティクス | compana 企業分析プラットフォーム',
+  description: '全上場3,900社の有価証券報告書・決算短信から、高成長企業・倒産リスクゼロの鉄壁企業・着実なストック収益企業・超高年収企業を自在にソート・分析。',
+};
 
 export default async function ScreenerPage() {
   const rawCompanies = await prisma.company.findMany({

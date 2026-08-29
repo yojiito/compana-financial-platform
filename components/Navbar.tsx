@@ -95,8 +95,8 @@ export default function Navbar() {
       href: '/screener',
       icon: <SlidersHorizontal className="w-5 h-5 text-indigo-400" />,
       bg: 'bg-indigo-950/60 border-indigo-700/50 hover:border-indigo-500',
-      title: isEn ? 'Career & Financial Screener' : '就職・転職 ＆ 財務スクリーナー',
-      badge: isEn ? 'Growth & Safety' : '就職・転職特化',
+      title: isEn ? 'Career & Job-Change Analytics' : '就職＆転職アナリティクス',
+      badge: isEn ? 'Career AI' : '就職・転職特化',
       badgeColor: 'bg-indigo-500 text-white',
       desc: isEn 
         ? 'Screen companies by YoY Growth, Fortress Balance Sheet, Recurring Revenue, and Salaries'
@@ -290,10 +290,10 @@ export default function Navbar() {
           {/* スクリーナー直行ボタン */}
           <Link
             href="/screener"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-teal-300 hover:text-white bg-teal-950/80 hover:bg-teal-900 border border-teal-700/80 transition shadow-xs"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-indigo-300 hover:text-white bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/80 transition shadow-xs"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-teal-400" />
-            <span>{isEn ? 'Screener' : 'スクリーナー'}</span>
+            <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{isEn ? 'Career Analytics' : '就職＆転職アナリティクス'}</span>
           </Link>
 
           {/* 🌐 言語切替トグル */}
