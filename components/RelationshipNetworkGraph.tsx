@@ -15,17 +15,15 @@ import {
   User, 
   Award, 
   ExternalLink, 
-  Filter, 
   Share2, 
   Sparkles, 
-  ZoomIn, 
-  ArrowRight,
-  ShieldCheck,
-  ChevronRight,
-  Search,
-  Loader2,
-  RefreshCw
+  ShieldCheck, 
+  CornerDownRight, 
+  Users, 
+  Coins, 
+  Loader2 
 } from 'lucide-react';
+import { useLanguage } from '@/lib/language-context';
 
 interface Props {
   initialEntityId?: string;
@@ -38,13 +36,12 @@ export default function RelationshipNetworkGraph({
   className = '',
   showControls = true
 }: Props) {
+  const { isEn } = useLanguage();
   const [currentCenterId, setCurrentCenterId] = useState<string>(initialEntityId);
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(initialEntityId);
-  const [relationFilter, setRelationFilter] = useState<'all' | RelationType>('all');
   const [dynamicGraph, setDynamicGraph] = useState<{ nodes: NetworkNode[]; edges: NetworkEdge[] } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // エンティティIDが変更されたらAPIから動的取得
+  // 親エンティティID変更時のフェッチ
   useEffect(() => {
     let isMounted = true;
     async function fetchDynamicNetwork() {
@@ -55,7 +52,6 @@ export default function RelationshipNetworkGraph({
           const data = await res.json();
           if (isMounted && data.nodes && data.nodes.length > 0) {
             setDynamicGraph(data);
-            setSelectedNodeId(currentCenterId);
             return;
           }
         }
@@ -65,11 +61,9 @@ export default function RelationshipNetworkGraph({
         if (isMounted) setIsLoading(false);
       }
 
-      // フォールバック: 静的マスターデータ
       if (isMounted) {
         const staticData = getSubGraphForEntity(currentCenterId, 2);
         setDynamicGraph(staticData);
-        setSelectedNodeId(currentCenterId);
       }
     }
 
@@ -79,7 +73,6 @@ export default function RelationshipNetworkGraph({
     };
   }, [currentCenterId]);
 
-  // 現在の有効なグラフデータ
   const graphData = useMemo(() => {
     if (dynamicGraph && dynamicGraph.nodes.length > 0) {
       return dynamicGraph;
@@ -87,464 +80,328 @@ export default function RelationshipNetworkGraph({
     return getSubGraphForEntity(currentCenterId, 2);
   }, [dynamicGraph, currentCenterId]);
 
-  // フィルタリングされたエッジとノード
-  const filteredEdges = useMemo(() => {
-    if (relationFilter === 'all') return graphData.edges;
-    return graphData.edges.filter(e => e.relationType === relationFilter);
-  }, [graphData, relationFilter]);
+  const centerNode = useMemo(() => {
+    return graphData.nodes.find(n => n.id === currentCenterId) || graphData.nodes[0] || {
+      id: currentCenterId,
+      label: '対象企業',
+      type: 'listed_corp' as NodeType,
+      subLabel: '企業'
+    };
+  }, [graphData, currentCenterId]);
 
-  const activeNodeIds = useMemo(() => {
-    const ids = new Set<string>([currentCenterId]);
-    for (const e of filteredEdges) {
-      ids.add(e.source);
-      ids.add(e.target);
-    }
-    return ids;
-  }, [currentCenterId, filteredEdges]);
-
-  const filteredNodes = useMemo(() => {
-    return graphData.nodes.filter(n => activeNodeIds.has(n.id));
-  }, [graphData, activeNodeIds]);
-
-  // 選択中のノード
-  const selectedNode = useMemo(() => {
-    if (!selectedNodeId) return null;
-    return graphData.nodes.find(n => n.id === selectedNodeId) || 
-           MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === selectedNodeId) || null;
-  }, [selectedNodeId, graphData]);
-
-  // 選択ノードに関連するすべてのエッジ
-  const selectedNodeEdges = useMemo(() => {
-    if (!selectedNodeId) return [];
-    return graphData.edges.filter(
-      e => e.source === selectedNodeId || e.target === selectedNodeId
+  // 中心企業に直結するエッジと関連ノードの分類
+  const relatedItems = useMemo(() => {
+    const directEdges = graphData.edges.filter(
+      e => e.source === currentCenterId || e.target === currentCenterId
     );
-  }, [selectedNodeId, graphData]);
 
-  // SVG Radial Layout の計算
-  const layoutNodes = useMemo(() => {
-    const width = 800;
-    const height = 600;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    const subsidiariesAndAffiliates: { edge: NetworkEdge; node: NetworkNode }[] = [];
+    const officersAndFounders: { edge: NetworkEdge; node: NetworkNode }[] = [];
+    const majorShareholders: { edge: NetworkEdge; node: NetworkNode }[] = [];
+    const foundationsAndCultural: { edge: NetworkEdge; node: NetworkNode }[] = [];
 
-    const center = filteredNodes.find(n => n.id === currentCenterId);
-    const others = filteredNodes.filter(n => n.id !== currentCenterId);
+    for (const edge of directEdges) {
+      const otherId = edge.source === currentCenterId ? edge.target : edge.source;
+      const node = graphData.nodes.find(n => n.id === otherId);
+      if (!node) continue;
 
-    const positions: Record<string, { x: number; y: number }> = {};
-
-    if (center) {
-      positions[center.id] = { x: centerX, y: centerY };
-    }
-
-    const radius = 220;
-    const totalOthers = others.length;
-
-    others.forEach((node, idx) => {
-      const angle = (idx / Math.max(1, totalOthers)) * 2 * Math.PI - Math.PI / 2;
-      positions[node.id] = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle)
-      };
-    });
-
-    return positions;
-  }, [filteredNodes, currentCenterId]);
-
-  const getNodeIcon = (type: NodeType) => {
-    switch (type) {
-      case 'listed_corp':
-        return <Building2 className="w-4 h-4 text-indigo-600" />;
-      case 'unlisted_corp':
-        return <Building2 className="w-4 h-4 text-emerald-600" />;
-      case 'person':
-        return <User className="w-4 h-4 text-amber-600" />;
-      case 'foundation':
-        return <Award className="w-4 h-4 text-purple-600" />;
-      default:
-        return <Building2 className="w-4 h-4 text-slate-600" />;
-    }
-  };
-
-  const getNodeStyle = (type: NodeType, isCenter: boolean, isSelected: boolean) => {
-    let base = 'transition-all duration-300 cursor-pointer shadow-md rounded-2xl p-3 border text-left ';
-    if (isSelected) {
-      base += 'ring-4 ring-indigo-500/30 scale-105 shadow-xl ';
-    }
-    if (isCenter) {
-      base += 'bg-slate-900 border-slate-700 text-white ';
-    } else {
-      switch (type) {
-        case 'listed_corp':
-          base += 'bg-white border-indigo-200 hover:border-indigo-400 hover:shadow-indigo-100 ';
-          break;
-        case 'unlisted_corp':
-          base += 'bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100 ';
-          break;
-        case 'person':
-          base += 'bg-amber-50/70 border-amber-200 hover:border-amber-400 hover:shadow-amber-100 ';
-          break;
-        case 'foundation':
-          base += 'bg-purple-50/70 border-purple-200 hover:border-purple-400 hover:shadow-purple-100 ';
-          break;
-        default:
-          base += 'bg-white border-slate-200 hover:border-slate-400 ';
+      if (node.type === 'person' || edge.relationType === 'governance' || edge.relationType === 'kinship') {
+        officersAndFounders.push({ edge, node });
+      } else if (node.type === 'foundation' || edge.relationType === 'foundation') {
+        foundationsAndCultural.push({ edge, node });
+      } else if (edge.relationType === 'capital' || edge.relationType === 'keiretsu' || edge.relationType === 'partnership') {
+        if (edge.label?.includes('株主') || edge.source === otherId) {
+          majorShareholders.push({ edge, node });
+        } else {
+          subsidiariesAndAffiliates.push({ edge, node });
+        }
+      } else {
+        subsidiariesAndAffiliates.push({ edge, node });
       }
     }
-    return base;
-  };
 
-  const getEdgeStroke = (relationType: RelationType) => {
-    switch (relationType) {
-      case 'capital':
-        return '#4f46e5'; // Indigo
-      case 'governance':
-        return '#0891b2'; // Cyan
-      case 'kinship':
-        return '#d97706'; // Amber
-      case 'foundation':
-        return '#9333ea'; // Purple
-      case 'keiretsu':
-        return '#dc2626'; // Red
-      default:
-        return '#64748b';
-    }
-  };
+    return {
+      subsidiariesAndAffiliates,
+      officersAndFounders,
+      majorShareholders,
+      foundationsAndCultural
+    };
+  }, [graphData, currentCenterId]);
+
+  // クイック切替プリセット
+  const quickPresets = [
+    { id: 'corp-7203', label: 'トヨタ自動車 (7203)', group: 'トヨタ' },
+    { id: 'corp-6758', label: 'ソニーグループ (6758)', group: 'ソニー' },
+    { id: 'corp-8058', label: '三菱商事 (8058)', group: '三菱' },
+    { id: 'corp-8306', label: '三菱UFJ FG (8306)', group: '三菱UFJ' },
+    { id: 'corp-9984', label: 'ソフトバンクG (9984)', group: 'SBG' },
+    { id: 'corp-9983', label: 'ファーストリテイリング (9983)', group: 'ファストリ' },
+    { id: 'corp-6861', label: 'キーエンス (6861)', group: 'キーエンス' },
+    { id: 'corp-7974', label: '任天堂 (7974)', group: '任天堂' },
+    { id: 'unlisted-shinchosha', label: '新潮社 (未上場)', group: '出版' },
+    { id: 'unlisted-kodansha', label: '講談社 (未上場)', group: '出版' },
+    { id: 'unlisted-suntory', label: 'サントリーHD (未上場)', group: '飲料' }
+  ];
 
   return (
-    <div className={`bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden ${className}`}>
-      {/* ヘッダー＆フィルターコントロール */}
-      {showControls && (
-        <div className="p-5 border-b border-slate-100 bg-slate-50/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
-              <Share2 className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-slate-900 text-base">統合 資本・人的関係性ネットワーク</h3>
-                <span className="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-200">
-                  全社網羅ナレッジグラフ
-                </span>
-                {isLoading && (
-                  <span className="inline-flex items-center gap-1 text-[11px] text-indigo-600 font-bold font-mono">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    同期中...
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                全上場企業・未上場企業・公式大株主・代表者・創業家・文化財団をシームレスに結合
-              </p>
-            </div>
+    <div className={`bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden space-y-6 p-5 sm:p-7 ${className}`}>
+      {/* 🧭 ヘッダー ＆ ナビゲーション */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold font-mono">
+            <Share2 className="w-3.5 h-3.5" />
+            <span>{isEn ? 'Universal Entity Relationship Directory' : '資本・人的関係性 リレーション一覧'}</span>
           </div>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>{centerNode.label}</span>
+            <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+              {centerNode.subLabel || '企業・組織'}
+            </span>
+          </h2>
+          <p className="text-xs text-slate-500">
+            {isEn 
+              ? 'Click on any linked entity or person below to explore their direct corporate affiliations, founders, major shareholders, and foundations.' 
+              : '下の各項目（出資先、役員・創業家、大株主、財団）をクリックすると、その対象を中心にした関連ネットワークへ瞬時に切り替わります。'}
+          </p>
+        </div>
 
-          {/* 関係性フィルター */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-2xs">
-            <button
-              onClick={() => setRelationFilter('all')}
-              className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                relationFilter === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
+        {/* 企業カルテへの直接ジャンプボタン */}
+        <div className="flex items-center gap-2">
+          {centerNode.linkUrl && (
+            <Link
+              href={centerNode.linkUrl}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition shadow-sm"
             >
-              すべて表示 ({graphData.edges.length})
-            </button>
-            <button
-              onClick={() => setRelationFilter('capital')}
-              className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                relationFilter === 'capital' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              💰 資本・持合い
-            </button>
-            <button
-              onClick={() => setRelationFilter('governance')}
-              className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                relationFilter === 'governance' ? 'bg-cyan-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              👔 創業者・役員
-            </button>
-            <button
-              onClick={() => setRelationFilter('kinship')}
-              className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                relationFilter === 'kinship' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              👨‍👩‍👧 創業家・親族
-            </button>
-            <button
-              onClick={() => setRelationFilter('foundation')}
-              className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                relationFilter === 'foundation' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              🏛️ 文化財団
-            </button>
+              <span>{isEn ? 'View Company Profile' : '企業分析カルテを開く'}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* 🏷️ 主要企業クイック選択タグ */}
+      {showControls && (
+        <div className="space-y-2">
+          <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider">
+            {isEn ? 'Quick Select Companies' : '主要企業・グループ クイック切替'}
+          </span>
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+            {quickPresets.map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => setCurrentCenterId(preset.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border ${
+                  currentCenterId === preset.id
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
           </div>
         </div>
       )}
 
-      {/* メイングラフ ＆ サイドインスペクター */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
-        {/* グラフ描画キャンバス */}
-        <div className="lg:col-span-8 relative bg-radial from-slate-50 to-slate-100/60 p-4 flex items-center justify-center overflow-hidden">
-          {/* SVG エッジレイヤー */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 600">
-            {filteredEdges.map((edge) => {
-              const srcPos = layoutNodes[edge.source];
-              const tgtPos = layoutNodes[edge.target];
-              if (!srcPos || !tgtPos) return null;
-
-              const isHighlighted =
-                selectedNodeId === edge.source || selectedNodeId === edge.target;
-              const strokeColor = getEdgeStroke(edge.relationType);
-
-              const midX = (srcPos.x + tgtPos.x) / 2;
-              const midY = (srcPos.y + tgtPos.y) / 2;
-
-              return (
-                <g key={edge.id} className="transition-all duration-300">
-                  <line
-                    x1={srcPos.x}
-                    y1={srcPos.y}
-                    x2={tgtPos.x}
-                    y2={tgtPos.y}
-                    stroke={strokeColor}
-                    strokeWidth={isHighlighted ? 2.8 : 1.4}
-                    strokeDasharray={edge.relationType === 'governance' ? '4 3' : undefined}
-                    opacity={isHighlighted ? 0.95 : 0.45}
-                  />
-                  {/* エッジラベル */}
-                  <rect
-                    x={midX - 45}
-                    y={midY - 10}
-                    width={90}
-                    height={20}
-                    rx={6}
-                    fill="white"
-                    stroke={strokeColor}
-                    strokeWidth={isHighlighted ? 1.5 : 0.8}
-                    opacity={0.92}
-                  />
-                  <text
-                    x={midX}
-                    y={midY + 3.5}
-                    textAnchor="middle"
-                    fill="#1e293b"
-                    fontSize="9"
-                    fontWeight="bold"
-                  >
-                    {edge.label.length > 12 ? edge.label.slice(0, 11) + '…' : edge.label}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* HTML ノードレイヤー */}
-          <div className="relative w-[800px] h-[600px]">
-            {filteredNodes.map((node) => {
-              const pos = layoutNodes[node.id];
-              if (!pos) return null;
-
-              const isCenter = node.id === currentCenterId;
-              const isSelected = node.id === selectedNodeId;
-
-              return (
-                <div
-                  key={node.id}
-                  style={{
-                    position: 'absolute',
-                    left: `${pos.x}px`,
-                    top: `${pos.y}px`,
-                    transform: 'translate(-50%, -50%)',
-                    width: isCenter ? '190px' : '165px',
-                    zIndex: isCenter ? 30 : isSelected ? 25 : 10
-                  }}
-                  onClick={() => {
-                    setSelectedNodeId(node.id);
-                  }}
-                  onDoubleClick={() => {
-                    setCurrentCenterId(node.id);
-                    setSelectedNodeId(node.id);
-                  }}
-                  className={getNodeStyle(node.type, isCenter, isSelected)}
-                >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <div className={`p-1 rounded-lg ${isCenter ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                        {getNodeIcon(node.type)}
-                      </div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                        isCenter ? 'text-indigo-400' : 'text-slate-500'
-                      }`}>
-                        {node.type === 'listed_corp'
-                          ? '上場企業'
-                          : node.type === 'unlisted_corp'
-                          ? '未上場企業'
-                          : node.type === 'person'
-                          ? '個人・経営者'
-                          : node.type === 'foundation'
-                          ? '文化・公益財団'
-                          : '系列グループ'}
-                      </span>
-                    </div>
-
-                    {isCenter && (
-                      <span className="bg-indigo-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
-                        中心
-                      </span>
-                    )}
-                  </div>
-
-                  <h4 className={`font-bold text-xs leading-snug line-clamp-1 ${
-                    isCenter ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    {node.label}
-                  </h4>
-
-                  <p className={`text-[10px] mt-0.5 line-clamp-1 ${
-                    isCenter ? 'text-slate-300' : 'text-slate-500'
-                  }`}>
-                    {node.subLabel}
-                  </p>
-
-                  {node.badge && (
-                    <div className="mt-1.5">
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md inline-block ${
-                        isCenter
-                          ? 'bg-slate-800 text-indigo-300 border border-slate-700'
-                          : 'bg-slate-100 text-slate-700 border border-slate-200'
-                      }`}>
-                        {node.badge}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* 操作ガイダンス */}
-          <div className="absolute bottom-3 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200 text-[11px] text-slate-600 shadow-2xs flex items-center gap-3">
-            <span>💡 <strong>クリック</strong>で詳細確認 / <strong>ダブルクリック</strong>でネットワークの中心を切り替え</span>
-            {filteredNodes.length > 0 && (
-              <span className="font-mono text-[10px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
-                表示ノード: {filteredNodes.length} 件
+      {/* ⏳ ローディング表示 */}
+      {isLoading ? (
+        <div className="py-16 text-center space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mx-auto" />
+          <p className="text-xs text-slate-500 font-medium">
+            {centerNode.label} の関連ネットワークを集計中...
+          </p>
+        </div>
+      ) : (
+        /* 📋 関連名の箇条書きリスト (4大カテゴリ展開) */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* ① 🏢 出資先・子会社・グループ企業 */}
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-indigo-100 text-indigo-700">
+                  <Building2 className="w-4 h-4" />
+                </span>
+                <h4 className="text-xs font-extrabold text-slate-900">
+                  {isEn ? 'Affiliates & Subsidiaries' : '🏢 出資先・グループ企業・系列'}
+                </h4>
+              </div>
+              <span className="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full">
+                {relatedItems.subsidiariesAndAffiliates.length} 件
               </span>
+            </div>
+
+            {relatedItems.subsidiariesAndAffiliates.length === 0 ? (
+              <p className="text-xs text-slate-400 py-3 italic text-center">該当する主要出資先データはありません</p>
+            ) : (
+              <ul className="space-y-2 text-xs divide-y divide-slate-100">
+                {relatedItems.subsidiariesAndAffiliates.map(({ node, edge }, idx) => (
+                  <li key={idx} className="pt-2 flex items-center justify-between hover:bg-white p-2 rounded-xl transition group">
+                    <button
+                      onClick={() => setCurrentCenterId(node.id)}
+                      className="flex items-center gap-2 text-left font-bold text-slate-800 group-hover:text-indigo-600 transition"
+                    >
+                      <CornerDownRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500" />
+                      <span>{node.label}</span>
+                      {node.subLabel && (
+                        <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-normal">
+                          {node.subLabel}
+                        </span>
+                      )}
+                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {edge.label && (
+                        <span className="text-[11px] font-mono font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-md">
+                          {edge.label}
+                        </span>
+                      )}
+                      {node.linkUrl && (
+                        <Link href={node.linkUrl} className="text-slate-400 hover:text-indigo-600">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-        </div>
 
-        {/* 右サイド：詳細インスペクターパネル */}
-        <div className="lg:col-span-4 p-6 bg-slate-50/50 border-l border-slate-100 flex flex-col justify-between">
-          {selectedNode ? (
-            <div className="space-y-5">
-              <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-200">
-                    {selectedNode.type === 'listed_corp'
-                      ? '上場企業'
-                      : selectedNode.type === 'unlisted_corp'
-                      ? '未上場企業'
-                      : selectedNode.type === 'person'
-                      ? '個人・経営陣'
-                      : '公益財団・文化法人'}
-                  </span>
-                  {selectedNode.badge && (
-                    <span className="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      {selectedNode.badge}
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-lg font-black text-slate-900 leading-tight">
-                  {selectedNode.label}
-                </h3>
-                <p className="text-xs text-slate-500 font-medium mt-1">
-                  {selectedNode.subLabel}
-                </p>
+          {/* ② 👥 創業家・代表者・人的ネットワーク */}
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
+                  <Users className="w-4 h-4" />
+                </span>
+                <h4 className="text-xs font-extrabold text-slate-900">
+                  {isEn ? 'Founders & Executive Officers' : '👥 創業家・役員・人的ネットワーク'}
+                </h4>
               </div>
-
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs space-y-2">
-                <h5 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">エンティティ概要</h5>
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  {selectedNode.description}
-                </p>
-              </div>
-
-              {/* 関連ネットワークリンク一覧 */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <h5 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    紐付け関係 ({selectedNodeEdges.length}件)
-                  </h5>
-                  <button
-                    onClick={() => {
-                      setCurrentCenterId(selectedNode.id);
-                    }}
-                    className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 hover:underline"
-                  >
-                    このノードを中心にする →
-                  </button>
-                </div>
-
-                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                  {selectedNodeEdges.map((edge) => {
-                    const isSource = edge.source === selectedNode.id;
-                    const otherId = isSource ? edge.target : edge.source;
-                    const otherNode = graphData.nodes.find(n => n.id === otherId) || 
-                                     MASTER_RELATIONSHIP_DATA.nodes.find(n => n.id === otherId);
-                    if (!otherNode) return null;
-
-                    return (
-                      <div
-                        key={edge.id}
-                        onClick={() => {
-                          setSelectedNodeId(otherNode.id);
-                        }}
-                        className="bg-white p-3 rounded-xl border border-slate-200/80 hover:border-indigo-300 transition-all cursor-pointer shadow-2xs"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5">
-                            {getNodeIcon(otherNode.type)}
-                            <span className="font-bold text-xs text-slate-900 line-clamp-1">
-                              {otherNode.label}
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 whitespace-nowrap">
-                            {edge.label}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                          {edge.detail}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* カルテ遷移リンク */}
-              {selectedNode.linkUrl && (
-                <div className="pt-2">
-                  <Link
-                    href={selectedNode.linkUrl}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-100 transition-all"
-                  >
-                    <span>{selectedNode.label} の企業カルテを見る</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              )}
+              <span className="text-xs font-mono font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full">
+                {relatedItems.officersAndFounders.length} 件
+              </span>
             </div>
-          ) : (
-            <div className="text-center py-12 text-slate-400">
-              <Share2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-xs font-bold">ノードを選択して詳細と関係性を表示</p>
+
+            {relatedItems.officersAndFounders.length === 0 ? (
+              <p className="text-xs text-slate-400 py-3 italic text-center">該当する役員・創業家データはありません</p>
+            ) : (
+              <ul className="space-y-2 text-xs divide-y divide-slate-100">
+                {relatedItems.officersAndFounders.map(({ node, edge }, idx) => (
+                  <li key={idx} className="pt-2 flex items-center justify-between hover:bg-white p-2 rounded-xl transition group">
+                    <button
+                      onClick={() => setCurrentCenterId(node.id)}
+                      className="flex items-center gap-2 text-left font-bold text-slate-800 group-hover:text-amber-800 transition"
+                    >
+                      <CornerDownRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600" />
+                      <span>{node.label}</span>
+                      {node.subLabel && (
+                        <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-normal">
+                          {node.subLabel}
+                        </span>
+                      )}
+                    </button>
+                    {edge.label && (
+                      <span className="text-[11px] font-mono font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md shrink-0">
+                        {edge.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* ③ 🏛️ 主要大株主・出資比率 */}
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-teal-100 text-teal-800">
+                  <Coins className="w-4 h-4" />
+                </span>
+                <h4 className="text-xs font-extrabold text-slate-900">
+                  {isEn ? 'Major Shareholders' : '🏛️ 主要大株主・資本関係'}
+                </h4>
+              </div>
+              <span className="text-xs font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full">
+                {relatedItems.majorShareholders.length} 件
+              </span>
             </div>
-          )}
+
+            {relatedItems.majorShareholders.length === 0 ? (
+              <p className="text-xs text-slate-400 py-3 italic text-center">該当する大株主データはありません</p>
+            ) : (
+              <ul className="space-y-2 text-xs divide-y divide-slate-100">
+                {relatedItems.majorShareholders.map(({ node, edge }, idx) => (
+                  <li key={idx} className="pt-2 flex items-center justify-between hover:bg-white p-2 rounded-xl transition group">
+                    <button
+                      onClick={() => setCurrentCenterId(node.id)}
+                      className="flex items-center gap-2 text-left font-bold text-slate-800 group-hover:text-teal-700 transition"
+                    >
+                      <CornerDownRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-600" />
+                      <span>{node.label}</span>
+                    </button>
+                    {edge.label && (
+                      <span className="text-[11px] font-mono font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-md shrink-0">
+                        {edge.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* ④ 🎨 文化財団・顕彰機関 */}
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-rose-100 text-rose-800">
+                  <Award className="w-4 h-4" />
+                </span>
+                <h4 className="text-xs font-extrabold text-slate-900">
+                  {isEn ? 'Foundations & Cultural Institutions' : '🎨 創業家財団・文化顕彰機関'}
+                </h4>
+              </div>
+              <span className="text-xs font-mono font-bold text-rose-800 bg-rose-50 px-2 py-0.5 rounded-full">
+                {relatedItems.foundationsAndCultural.length} 件
+              </span>
+            </div>
+
+            {relatedItems.foundationsAndCultural.length === 0 ? (
+              <p className="text-xs text-slate-400 py-3 italic text-center">該当する設立財団データはありません</p>
+            ) : (
+              <ul className="space-y-2 text-xs divide-y divide-slate-100">
+                {relatedItems.foundationsAndCultural.map(({ node, edge }, idx) => (
+                  <li key={idx} className="pt-2 flex items-center justify-between hover:bg-white p-2 rounded-xl transition group">
+                    <button
+                      onClick={() => setCurrentCenterId(node.id)}
+                      className="flex items-center gap-2 text-left font-bold text-slate-800 group-hover:text-rose-700 transition"
+                    >
+                      <CornerDownRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-600" />
+                      <span>{node.label}</span>
+                    </button>
+                    {edge.label && (
+                      <span className="text-[11px] font-mono font-bold text-rose-800 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md shrink-0">
+                        {edge.label}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
         </div>
+      )}
+
+      {/* 🛡️ データソース注記 */}
+      <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+        <div className="flex items-center gap-1.5">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>有価証券報告書（大株主・関係会社）、会社法第440条官報決算公告、公式定款に基づく検証済データ</span>
+        </div>
+        <span className="font-mono">Real-time Relationship Directory</span>
       </div>
     </div>
   );
