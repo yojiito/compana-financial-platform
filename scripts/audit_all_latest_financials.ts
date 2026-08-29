@@ -85,7 +85,7 @@ async function deepAuditAllFinancials() {
     if (comp) {
       console.log(`\n🏢 [${comp.tickerCode}] ${comp.name}:`);
       for (const r of comp.financials) {
-        console.log(`  - FY${r.fiscalYear} (期末: ${r.fiscalPeriodEnd || '-'}): 売上=${(r.revenue ? (r.revenue / 100000000).toFixed(1) + '億円' : '-')} / 営利=${(r.operatingIncome ? (r.operatingIncome / 100000000).toFixed(1) + '億円' : '-')} / 純利=${(r.netIncome ? (r.netIncome / 100000000).toFixed(1) + '億円' : '-')} / 総資産=${(r.totalAssets ? (r.totalAssets / 100000000).toFixed(1) + '億円' : '-')} / 純資産=${(r.netAssets ? (r.netAssets / 100000000).toFixed(1) + '億円' : '-')}`);
+        console.log(`  - FY${r.fiscalYear} (期末: ${r.periodEnd || '-'}): 売上=${(r.revenue ? (r.revenue / 100000000).toFixed(1) + '億円' : '-')} / 営利=${(r.operatingIncome ? (r.operatingIncome / 100000000).toFixed(1) + '億円' : '-')} / 純利=${(r.netIncome ? (r.netIncome / 100000000).toFixed(1) + '億円' : '-')} / 総資産=${(r.totalAssets ? (r.totalAssets / 100000000).toFixed(1) + '億円' : '-')} / 純資産=${(r.netAssets ? (r.netAssets / 100000000).toFixed(1) + '億円' : '-')}`);
       }
     }
   }

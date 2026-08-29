@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "sync:all": "tsx scripts/cron_auto_sync.ts",
+    "sync:daily": "tsx scripts/cron_auto_sync.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

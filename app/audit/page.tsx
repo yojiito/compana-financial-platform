@@ -18,7 +18,10 @@ import {
   Award,
   Layers,
   Coins,
-  Briefcase
+  Briefcase,
+  RefreshCw,
+  Loader2,
+  Sparkles,
 } from 'lucide-react';
 import { REIT_LIST } from '@/lib/reits-data';
 import { UNLISTED_COMPANIES_DATA } from '@/lib/unlisted-companies-data';
@@ -67,6 +70,31 @@ export default function UniversalAuditPortalPage() {
   const [activeTab, setActiveTab] = useState<DomainType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAudit, setSelectedAudit] = useState<UniversalAuditResult | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<any | null>(null);
+
+  const handleTriggerSync = async () => {
+    setIsSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch('/api/cron/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ batchSize: 500 })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSyncResult(data);
+      } else {
+        const err = await res.json();
+        setSyncResult({ status: 'ERROR', logs: [err.error || '同期エラー'] });
+      }
+    } catch (e: any) {
+      setSyncResult({ status: 'ERROR', logs: [e.message || 'ネットワークエラー'] });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // 全エンティティの監査結果を生成
   const stockAudits: UniversalAuditResult[] = SAMPLE_STOCKS.map((s) => auditStockEntity(s.code, s.name));
@@ -177,6 +205,78 @@ export default function UniversalAuditPortalPage() {
             <strong className="text-emerald-400 text-lg sm:text-xl font-black font-mono">0 (Zero)</strong>
           </div>
         </div>
+      </div>
+
+      {/* 🔄 全社最新データ定期同期・パイプライン実行パネル */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-7 rounded-3xl border border-indigo-500/30 shadow-lg space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-300 bg-teal-950/80 border border-teal-500/30 px-2.5 py-0.5 rounded-full">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Automated Periodic Data Sync' : '全社データ定期自動更新パイプライン'}</span>
+            </div>
+            <h3 className="text-lg font-black text-white">
+              {isEn ? 'Synchronize All 3,903 Listed & Unlisted Enterprises' : '全3,903社・未上場・REIT・官報 統合データ同期'}
+            </h3>
+            <p className="text-xs text-slate-300 max-w-2xl">
+              {isEn 
+                ? 'Run automated batch pipelines to verify 2025 fiscal reports, synchronize market capitalizations, update shareholdings, and ingest official gazette balance sheets.'
+                : '東証全3,903社の上場企業、未上場名門企業、2025年期最新決算、大株主名簿、官報決算公告のデータを一括で検証・同期・更新します。'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleTriggerSync}
+              disabled={isSyncing}
+              className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-black transition-all shadow-lg ${
+                isSyncing
+                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-300 hover:to-emerald-400 text-slate-950 shadow-teal-900/40 hover:scale-[1.02]'
+              }`}
+            >
+              {isSyncing ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                  <span>{isEn ? 'Synchronizing All Data...' : '全社データ同期中...'}</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4 text-slate-950" />
+                  <span>{isEn ? 'Trigger Full Sync Pipeline' : '全社データを即時同期・更新'}</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* 同期実行結果 ＆ ログ */}
+        {syncResult && (
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${syncResult.status === 'SUCCESS' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                <span className="text-xs font-bold text-white">
+                  {syncResult.status === 'SUCCESS' ? '✅ 定期同期パイプライン 正常完了' : '❌ 同期エラー'}
+                </span>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  (所要時間: {((syncResult.durationMs || 0) / 1000).toFixed(2)}秒)
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                {syncResult.completedAt}
+              </span>
+            </div>
+
+            {syncResult.logs && syncResult.logs.length > 0 && (
+              <div className="bg-slate-900 p-3 rounded-xl max-h-36 overflow-y-auto space-y-1 font-mono text-[11px] text-slate-300 border border-slate-800">
+                {syncResult.logs.map((log: string, idx: number) => (
+                  <div key={idx} className="leading-relaxed">{log}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 🎛️ ドメイン切替タブ ＆ 検索バー */}

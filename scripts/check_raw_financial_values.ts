@@ -7,7 +7,7 @@ async function checkRawValues() {
   });
   console.log('=== トヨタ自動車 (7203) の FinancialReport 生データ ===');
   for (const r of toyota) {
-    console.log(`FY${r.fiscalYear}: revenue=${r.revenue}, opIncome=${r.operatingIncome}, netIncome=${r.netIncome}, totalAssets=${r.totalAssets}, netAssets=${r.netAssets}, eps=${r.eps}, roe=${r.roe}`);
+    console.log(`FY${r.fiscalYear}: revenue=${r.revenue}, opIncome=${r.operatingIncome}, netIncome=${r.netIncome}, totalAssets=${r.totalAssets}, netAssets=${r.netAssets}, eps=${r.eps}, equityRatio=${r.equityRatio}`);
   }
 
   const sony = await prisma.financialReport.findMany({
