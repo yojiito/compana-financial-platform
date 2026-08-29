@@ -133,8 +133,13 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
     { id: 'person-giyou-sato', label: '佐藤義亮', type: 'person', subLabel: '新潮社創業者', description: '1896年新潮社を創業。日本文学史を彩る文芸出版の礎を築く。', tags: ['創業者'] },
     { id: 'foundation-shincho', label: '公益財団法人新潮文芸振興会', type: 'foundation', subLabel: '文学顕彰機関', description: '三島由紀夫賞、山本周五郎賞、小林秀雄賞、新潮ドキュメント賞の主宰運営母体。', tags: ['文学賞', '財団'] },
 
-    { id: 'unlisted-kodansha', label: '株式会社講談社', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第86期)', description: 'コミック、文芸、学術、デジタル出版最大手。創業家（野間家）統括。', linkUrl: '/unlisted/kodansha', tags: ['出版', '創業家経営'] },
-    { id: 'corp-king-records', label: 'キングレコード株式会社', type: 'unlisted_corp', subLabel: '講談社子会社', description: '大手レコード会社・アニメ音楽製作レーベル（KING AMUSEMENT CREATIVE）。', tags: ['音楽子会社'] },
+    { id: 'unlisted-kodansha', label: '株式会社講談社', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第88期)', description: 'コミック、文芸、学術、デジタル出版最大手。創業家（野間家）統括。', linkUrl: '/unlisted/kodansha', tags: ['出版', '創業家経営'] },
+    { id: 'corp-kobunsha', label: '株式会社光文社', type: 'unlisted_corp', subLabel: '音羽グループ中核総合出版社', description: '『VERY』『CLASSY.』『FLASH』『光文社文庫』『光文社新書』等の出版事業。', tags: ['出版子会社', '音羽グループ'] },
+    { id: 'corp-king-records', label: 'キングレコード株式会社', type: 'unlisted_corp', subLabel: '講談社完全子会社 (100%)', description: '大手レコード会社・アニメ音楽製作レーベル（KING AMUSEMENT CREATIVE）。', tags: ['音楽子会社'] },
+    { id: 'corp-nikkan-gendai', label: '株式会社日刊現代', type: 'unlisted_corp', subLabel: '講談社子会社 (日刊ゲンダイ)', description: '夕刊紙『日刊ゲンダイ』の発行およびデジタルニュースメディア運営。', tags: ['新聞子会社'] },
+    { id: 'corp-seikaisha', label: '株式会社星海社', type: 'unlisted_corp', subLabel: '講談社完全子会社 (100%)', description: '星海社新書・星海社FICTIONS・若手クリエイター出版。', tags: ['出版子会社'] },
+    { id: 'corp-hokoku-printing', label: '株式会社豊国印刷', type: 'unlisted_corp', subLabel: '講談社グループ専門印刷会社', description: '講談社コミックス・雑誌・書籍の製版・高速オフセット印刷・製本。', tags: ['印刷会社', 'グループ製造'] },
+    { id: 'corp-kodansha-logicom', label: '株式会社講談社ロジコム', type: 'unlisted_corp', subLabel: '講談社物流子会社', description: '書籍・雑誌の全国取次・書店向け入出荷、在庫保管・返品管理。', tags: ['物流子会社'] },
     { id: 'person-yoshifumi-noma', label: '野間省伸', type: 'person', subLabel: '代表取締役社長 (野間家)', description: '講談社第7代社長。デジタルグローバル戦略「Inspire Impossible Stories」を牽引。', tags: ['代表取締役', '創業家'] },
     { id: 'person-seiji-noma', label: '野間清治', type: 'person', subLabel: '講談社創業者', description: '「キング」「少年倶楽部」等を発行し大衆雑誌出版の父と呼ばれる。', tags: ['創業者'] },
     { id: 'foundation-noma', label: '公益財団法人野間文化財団', type: 'foundation', subLabel: '文化顕彰財団', description: '野間文芸賞、野間児童文芸賞、野間出版文化賞を主宰運営。', tags: ['文学賞', '財団'] },
@@ -231,8 +236,13 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
     { id: 'e-sc-giyou', source: 'person-giyou-sato', target: 'unlisted-shinchosha', relationType: 'governance', label: '創業者', detail: '1896年新潮社設立' },
     { id: 'e-sc-fnd', source: 'unlisted-shinchosha', target: 'foundation-shincho', relationType: 'foundation', label: '主宰設立母体', detail: '三島賞・山本賞運営' },
 
-    // 講談社
-    { id: 'e-kd-king', source: 'unlisted-kodansha', target: 'corp-king-records', relationType: 'capital', label: '子会社 100%', detail: '音楽・映像レーベル', ratio: 100.0 },
+    // 講談社 (音羽グループ)
+    { id: 'e-kd-kobunsha', source: 'unlisted-kodansha', target: 'corp-kobunsha', relationType: 'capital', label: '音羽グループ中核', detail: '女性誌・文芸・新書事業', ratio: 100.0 },
+    { id: 'e-kd-king', source: 'unlisted-kodansha', target: 'corp-king-records', relationType: 'capital', label: '完全子会社 100%', detail: '音楽・映像レーベル', ratio: 100.0 },
+    { id: 'e-kd-gendai', source: 'unlisted-kodansha', target: 'corp-nikkan-gendai', relationType: 'capital', label: '子会社 100%', detail: '夕刊紙・デジタル報道', ratio: 100.0 },
+    { id: 'e-kd-seikaisha', source: 'unlisted-kodansha', target: 'corp-seikaisha', relationType: 'capital', label: '完全子会社 100%', detail: '新世代出版・ジセダイ', ratio: 100.0 },
+    { id: 'e-kd-hokoku', source: 'unlisted-kodansha', target: 'corp-hokoku-printing', relationType: 'capital', label: '専門印刷 100%', detail: '書籍・雑誌オフセット印刷', ratio: 100.0 },
+    { id: 'e-kd-logicom', source: 'unlisted-kodansha', target: 'corp-kodansha-logicom', relationType: 'capital', label: '物流子会社 100%', detail: '全国出版流通・倉庫管理', ratio: 100.0 },
     { id: 'e-kd-noma', source: 'person-yoshifumi-noma', target: 'unlisted-kodansha', relationType: 'governance', label: '代表取締役社長', detail: '野間家第7代社長' },
     { id: 'e-kd-seiji', source: 'person-seiji-noma', target: 'unlisted-kodansha', relationType: 'governance', label: '創業者', detail: '大衆雑誌出版の祖' },
     { id: 'e-kd-fnd', source: 'unlisted-kodansha', target: 'foundation-noma', relationType: 'foundation', label: '主宰設立母体', detail: '野間文芸賞運営' },

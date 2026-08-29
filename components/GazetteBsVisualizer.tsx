@@ -237,15 +237,15 @@ export default function GazetteBsVisualizer({ companyName, isStartup = true, rep
             </p>
           </div>
 
-          {/* 決算期セレクター */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+          {/* 決算期セレクター (10期分横スクロール対応) */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold overflow-x-auto max-w-full sm:max-w-md no-scrollbar">
             {reports.map((r, idx) => (
               <button
                 key={r.fiscalPeriod}
                 onClick={() => setSelectedPeriodIdx(idx)}
-                className={`px-3 py-1.5 rounded-lg transition ${
+                className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
                   selectedPeriodIdx === idx
-                    ? 'bg-white text-slate-900 shadow-sm'
+                    ? 'bg-white text-slate-900 shadow-sm font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -396,6 +396,61 @@ export default function GazetteBsVisualizer({ companyName, isStartup = true, rep
           </div>
         </div>
       </div>
+
+      {/* 4. 📋 10期 官報決算公告 財務推移テーブル */}
+      {reports.length > 1 && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <History className="w-5 h-5 text-teal-600" />
+                <span>{reports.length}期 官報決算公告 財務・損益時系列推移</span>
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                会社法第440条決算公告に基づく年度別の資産・資本・損益の完全履歴
+              </p>
+            </div>
+            <span className="text-xs text-slate-500 font-mono">単位: 億円</span>
+          </div>
+
+          <div className="overflow-x-auto border border-slate-200 rounded-xl">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200 font-mono">
+                  <th className="p-3 whitespace-nowrap">決算期</th>
+                  <th className="p-3 whitespace-nowrap">決算年月</th>
+                  <th className="p-3 text-right whitespace-nowrap">総資産</th>
+                  <th className="p-3 text-right whitespace-nowrap">負債合計</th>
+                  <th className="p-3 text-right whitespace-nowrap">純資産合計</th>
+                  <th className="p-3 text-right whitespace-nowrap">自己資本比率</th>
+                  <th className="p-3 text-right whitespace-nowrap">利益剰余金</th>
+                  <th className="p-3 text-right whitespace-nowrap">当期純損益</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-mono">
+                {reports.slice().reverse().map((r) => {
+                  const eqRatio = r.totalAssets > 0 ? ((r.netAssets / r.totalAssets) * 100).toFixed(1) : '0.0';
+                  const isPos = r.netIncome >= 0;
+                  return (
+                    <tr key={r.fiscalPeriod} className="hover:bg-slate-50 transition">
+                      <td className="p-3 font-bold text-slate-900 whitespace-nowrap">第{r.fiscalPeriod}期</td>
+                      <td className="p-3 text-slate-600 whitespace-nowrap">{r.periodEnd}</td>
+                      <td className="p-3 text-right text-slate-800 whitespace-nowrap">{(r.totalAssets / 100).toFixed(1)}億</td>
+                      <td className="p-3 text-right text-slate-600 whitespace-nowrap">{((r.totalLiabilities || (r.totalAssets - r.netAssets)) / 100).toFixed(1)}億</td>
+                      <td className="p-3 text-right font-bold text-teal-800 whitespace-nowrap">{(r.netAssets / 100).toFixed(1)}億</td>
+                      <td className="p-3 text-right text-slate-800 whitespace-nowrap">{eqRatio}%</td>
+                      <td className="p-3 text-right text-slate-700 whitespace-nowrap">{(r.retainedEarnings / 100).toFixed(1)}億</td>
+                      <td className={`p-3 text-right font-bold whitespace-nowrap ${isPos ? 'text-teal-700' : 'text-rose-600'}`}>
+                        {isPos ? '+' : ''}{(r.netIncome / 100).toFixed(1)}億
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
