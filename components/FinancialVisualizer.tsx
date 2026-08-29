@@ -63,7 +63,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
   };
 
   const chartData = financials.map((f) => ({
-    year: `${f.fiscalYear}期`,
+    year: f.periodType && f.periodType !== 'FY' ? `${f.fiscalYear}期 ${f.periodType}` : `${f.fiscalYear}期`,
     revenue: Math.round(f.revenue / 100),
     operatingIncome: Math.round(f.operatingIncome / 100),
     netIncome: Math.round(f.netIncome / 100),
@@ -302,8 +302,8 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                   <th className="p-3 sticky left-0 bg-slate-100 z-10">項目 / 決算期</th>
                   {financials.map((f) => (
-                    <th key={f.fiscalYear} className="p-3 text-right font-mono min-w-[100px]">
-                      {f.fiscalYear}年3月期
+                    <th key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono min-w-[100px]">
+                      {f.periodType && f.periodType !== 'FY' ? `${f.fiscalYear}期 ${f.periodType}` : `${f.fiscalYear}年3月期`}
                     </th>
                   ))}
                 </tr>
@@ -312,7 +312,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 font-semibold text-slate-900 bg-slate-50/50">
                   <td className="p-3 sticky left-0 bg-inherit z-10">売上高</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono">
                       {formatYen(f.revenue)}
                     </td>
                   ))}
@@ -320,7 +320,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 font-semibold text-teal-700">
                   <td className="p-3 sticky left-0 bg-inherit z-10">営業利益</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono">
                       {formatYen(f.operatingIncome)}
                     </td>
                   ))}
@@ -328,7 +328,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 text-slate-600">
                   <td className="p-3 sticky left-0 bg-inherit z-10">営業利益率</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono font-bold text-amber-600">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono font-bold text-amber-600">
                       {f.operatingMargin ?? ((f.operatingIncome / f.revenue) * 100).toFixed(2)}%
                     </td>
                   ))}
@@ -336,7 +336,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 font-semibold text-indigo-700">
                   <td className="p-3 sticky left-0 bg-inherit z-10">当期純利益</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono">
                       {formatYen(f.netIncome)}
                     </td>
                   ))}
@@ -344,7 +344,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 text-slate-600 border-t-2 border-slate-200">
                   <td className="p-3 sticky left-0 bg-inherit z-10">総資産</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono">
                       {formatYen(f.totalAssets)}
                     </td>
                   ))}
@@ -352,7 +352,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 text-slate-600">
                   <td className="p-3 sticky left-0 bg-inherit z-10">純資産 (自己資本)</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono">
                       {formatYen(f.netAssets)}
                     </td>
                   ))}
@@ -360,7 +360,7 @@ export default function FinancialVisualizer({ financials, companyName = '当該�
                 <tr className="hover:bg-slate-50 text-slate-600">
                   <td className="p-3 sticky left-0 bg-inherit z-10">自己資本比率</td>
                   {financials.map((f) => (
-                    <td key={f.fiscalYear} className="p-3 text-right font-mono font-bold text-teal-600">
+                    <td key={`${f.fiscalYear}-${f.periodType}`} className="p-3 text-right font-mono font-bold text-teal-600">
                       {f.equityRatio ?? ((f.netAssets / f.totalAssets) * 100).toFixed(1)}%
                     </td>
                   ))}

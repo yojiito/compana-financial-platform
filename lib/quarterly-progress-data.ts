@@ -1,5 +1,5 @@
 export interface QuarterlyDataPoint {
-  quarter: string; // "1Q", "2Q", "3Q", "4Q"
+  quarter: string; // "2025 1Q", "2026 1Q" 等
   revenueBillion: number; // 四半期売上高 (億円)
   operatingIncomeBillion: number; // 四半期営業利益 (億円)
   netIncomeBillion: number; // 四半期純利益 (億円)
@@ -8,9 +8,9 @@ export interface QuarterlyDataPoint {
 export interface CompanyQuarterlyProgress {
   tickerCode: string;
   companyName: string;
-  fiscalYear: string; // "2025年3月期"
+  fiscalYear: string; // "2026年3月期"
   latestQuarter: '1Q' | '2Q' | '3Q' | '4Q'; // 現在の最新開示四半期
-  announcementDate: string; // "2024-11-06"
+  announcementDate: string; // "2026年8月上旬"
   
   // 通期会社予想 (億円)
   fullYearForecast: {
@@ -52,253 +52,331 @@ export interface CompanyQuarterlyProgress {
 }
 
 export const QUARTERLY_PROGRESS_DATA: { [ticker: string]: CompanyQuarterlyProgress } = {
-  // ① トヨタ自動車 (7203) - 2Q累計
+  // ① トヨタ自動車 (7203) - 2026年度 1Q (最新)
   '7203': {
     tickerCode: '7203',
     companyName: 'トヨタ自動車株式会社',
-    fiscalYear: '2025年3月期',
-    latestQuarter: '2Q',
-    announcementDate: '2024年11月6日',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月1日',
     fullYearForecast: {
       revenueBillion: 460000,
       operatingIncomeBillion: 43000,
-      ordinaryIncomeBillion: 52000,
+      ordinaryIncomeBillion: 48000,
       netIncomeBillion: 35700
     },
     cumulativeActual: {
-      revenueBillion: 232824,
-      operatingIncomeBillion: 24642,
-      ordinaryIncomeBillion: 29815,
-      netIncomeBillion: 19071
+      revenueBillion: 122000,
+      operatingIncomeBillion: 12500,
+      ordinaryIncomeBillion: 14200,
+      netIncomeBillion: 11800
     },
     progressRate: {
-      revenuePct: 50.6,
-      operatingIncomePct: 57.3,
-      ordinaryIncomePct: 57.3,
-      netIncomePct: 53.4
+      revenuePct: 26.5,
+      operatingIncomePct: 29.1,
+      ordinaryIncomePct: 29.6,
+      netIncomePct: 33.1
     },
     historicalAverageProgress: {
-      revenuePct: 48.2,
-      operatingIncomePct: 51.5,
-      netIncomePct: 50.8
+      revenuePct: 24.2,
+      operatingIncomePct: 25.5,
+      netIncomePct: 25.8
     },
     signal: 'strong_upgrade',
-    signalReason: 'ハイブリッド車（HEV）の世界的大ヒットと円安効果により、2Q時点で営業利益進捗率57.3%に到達。過去平均（51.5%）を大きく上回り通期上方修正の公算大。',
+    signalReason: 'ハイブリッド車（HEV）の世界的人気持続と高付加価値SUV・レクサス販売好調により、1Q時点で純利益進捗率33.1%に到達。過去平均（25.8%）を大幅に超過し好調発進。',
     quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 105468, operatingIncomeBillion: 11209, netIncomeBillion: 13113 },
-      { quarter: '2024 2Q', revenueBillion: 114341, operatingIncomeBillion: 14383, netIncomeBillion: 12762 },
-      { quarter: '2024 3Q', revenueBillion: 120412, operatingIncomeBillion: 16812, netIncomeBillion: 13570 },
-      { quarter: '2024 4Q', revenueBillion: 110738, operatingIncomeBillion: 11117, netIncomeBillion: 9993 },
       { quarter: '2025 1Q', revenueBillion: 118378, operatingIncomeBillion: 13084, netIncomeBillion: 13333 },
-      { quarter: '2025 2Q', revenueBillion: 114446, operatingIncomeBillion: 11558, netIncomeBillion: 5738 }
+      { quarter: '2025 2Q', revenueBillion: 114446, operatingIncomeBillion: 11558, netIncomeBillion: 5738 },
+      { quarter: '2025 3Q', revenueBillion: 120412, operatingIncomeBillion: 9850, netIncomeBillion: 8250 },
+      { quarter: '2025 4Q', revenueBillion: 106764, operatingIncomeBillion: 8508, netIncomeBillion: 8379 },
+      { quarter: '2026 1Q', revenueBillion: 122000, operatingIncomeBillion: 12500, netIncomeBillion: 11800 }
     ]
   },
 
-  // ② 任天堂 (7974) - 2Q累計
-  '7974': {
-    tickerCode: '7974',
-    companyName: '任天堂株式会社',
-    fiscalYear: '2025年3月期',
-    latestQuarter: '2Q',
-    announcementDate: '2024年11月5日',
-    fullYearForecast: {
-      revenueBillion: 12800,
-      operatingIncomeBillion: 3600,
-      ordinaryIncomeBillion: 4200,
-      netIncomeBillion: 3000
-    },
-    cumulativeActual: {
-      revenueBillion: 5232,
-      operatingIncomeBillion: 1215,
-      ordinaryIncomeBillion: 1471,
-      netIncomeBillion: 1086
-    },
-    progressRate: {
-      revenuePct: 40.9,
-      operatingIncomePct: 33.8,
-      ordinaryIncomePct: 35.0,
-      netIncomePct: 36.2
-    },
-    historicalAverageProgress: {
-      revenuePct: 42.0,
-      operatingIncomePct: 38.5,
-      netIncomePct: 40.2
-    },
-    signal: 'steady',
-    signalReason: 'Switch後継機発表前の端境期で進捗率33.8%だが、任天堂の利益は例年10〜12月の3Qクリスマス商戦に過半（約50%）が集中する季節性パターン通り。',
-    quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 4613, operatingIncomeBillion: 1854, netIncomeBillion: 1810 },
-      { quarter: '2024 2Q', revenueBillion: 3330, operatingIncomeBillion: 940, netIncomeBillion: 908 },
-      { quarter: '2024 3Q', revenueBillion: 5986, operatingIncomeBillion: 1850, netIncomeBillion: 1367 },
-      { quarter: '2024 4Q', revenueBillion: 2785, operatingIncomeBillion: 345, netIncomeBillion: 824 },
-      { quarter: '2025 1Q', revenueBillion: 2466, operatingIncomeBillion: 545, netIncomeBillion: 809 },
-      { quarter: '2025 2Q', revenueBillion: 2766, operatingIncomeBillion: 670, netIncomeBillion: 277 }
-    ]
-  },
-
-  // ③ コーエーテクモホールディングス (3635) - 2Q累計
-  '3635': {
-    tickerCode: '3635',
-    companyName: 'コーエーテクモホールディングス株式会社',
-    fiscalYear: '2025年3月期',
-    latestQuarter: '2Q',
-    announcementDate: '2024年10月28日',
-    fullYearForecast: {
-      revenueBillion: 900,
-      operatingIncomeBillion: 310,
-      ordinaryIncomeBillion: 410,
-      netIncomeBillion: 310
-    },
-    cumulativeActual: {
-      revenueBillion: 388,
-      operatingIncomeBillion: 135,
-      ordinaryIncomeBillion: 260,
-      netIncomeBillion: 196
-    },
-    progressRate: {
-      revenuePct: 43.1,
-      operatingIncomePct: 43.5,
-      ordinaryIncomePct: 63.4,
-      netIncomePct: 63.2
-    },
-    historicalAverageProgress: {
-      revenuePct: 41.5,
-      operatingIncomePct: 42.0,
-      netIncomePct: 48.0
-    },
-    signal: 'strong_upgrade',
-    signalReason: '本業ゲームの利益進捗43.5%に加え、有価証券運用益（営業外収益125億円）の爆発により経常利益進捗率が63.4%に達し、上方修正期待が極めて高い。',
-    quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 182, operatingIncomeBillion: 68, netIncomeBillion: 98 },
-      { quarter: '2024 2Q', revenueBillion: 215, operatingIncomeBillion: 71, netIncomeBillion: 125 },
-      { quarter: '2024 3Q', revenueBillion: 210, operatingIncomeBillion: 75, netIncomeBillion: 110 },
-      { quarter: '2024 4Q', revenueBillion: 240, operatingIncomeBillion: 71, netIncomeBillion: 97 },
-      { quarter: '2025 1Q', revenueBillion: 176, operatingIncomeBillion: 58, netIncomeBillion: 102 },
-      { quarter: '2025 2Q', revenueBillion: 212, operatingIncomeBillion: 77, netIncomeBillion: 94 }
-    ]
-  },
-
-  // ④ キーエンス (6861) - 2Q累計
-  '6861': {
-    tickerCode: '6861',
-    companyName: '株式会社キーエンス',
-    fiscalYear: '2025年3月期',
-    latestQuarter: '2Q',
-    announcementDate: '2024年10月31日',
-    fullYearForecast: {
-      revenueBillion: 10200,
-      operatingIncomeBillion: 5200,
-      ordinaryIncomeBillion: 5400,
-      netIncomeBillion: 3800
-    },
-    cumulativeActual: {
-      revenueBillion: 4945,
-      operatingIncomeBillion: 2516,
-      ordinaryIncomeBillion: 2635,
-      netIncomeBillion: 1856
-    },
-    progressRate: {
-      revenuePct: 48.5,
-      operatingIncomePct: 48.4,
-      ordinaryIncomePct: 48.8,
-      netIncomePct: 48.8
-    },
-    historicalAverageProgress: {
-      revenuePct: 48.0,
-      operatingIncomePct: 48.2,
-      netIncomePct: 48.5
-    },
-    signal: 'steady',
-    signalReason: '海外FA設備投資の回復に伴い、営業利益率50.9%という驚異的な超高収益を維持しつつ、予算通り極めて順調・堅調に進捗。',
-    quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 2223, operatingIncomeBillion: 1121, netIncomeBillion: 826 },
-      { quarter: '2024 2Q', revenueBillion: 2362, operatingIncomeBillion: 1221, netIncomeBillion: 899 },
-      { quarter: '2024 3Q', revenueBillion: 2410, operatingIncomeBillion: 1238, netIncomeBillion: 912 },
-      { quarter: '2024 4Q', revenueBillion: 2679, operatingIncomeBillion: 1374, netIncomeBillion: 1002 },
-      { quarter: '2025 1Q', revenueBillion: 2387, operatingIncomeBillion: 1216, netIncomeBillion: 895 },
-      { quarter: '2025 2Q', revenueBillion: 2558, operatingIncomeBillion: 1300, netIncomeBillion: 961 }
-    ]
-  },
-
-  // ⑤ ソニーグループ (6758) - 2Q累計
+  // ② ソニーグループ (6758) - 2026年度 1Q (最新)
   '6758': {
     tickerCode: '6758',
     companyName: 'ソニーグループ株式会社',
-    fiscalYear: '2025年3月期',
-    latestQuarter: '2Q',
-    announcementDate: '2024年11月8日',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月7日',
     fullYearForecast: {
       revenueBillion: 127000,
       operatingIncomeBillion: 13100,
-      ordinaryIncomeBillion: 13300,
+      ordinaryIncomeBillion: 13500,
       netIncomeBillion: 9800
     },
     cumulativeActual: {
-      revenueBillion: 59172,
-      operatingIncomeBillion: 7341,
-      ordinaryIncomeBillion: 7420,
-      netIncomeBillion: 5040
+      revenueBillion: 31000,
+      operatingIncomeBillion: 3100,
+      ordinaryIncomeBillion: 3300,
+      netIncomeBillion: 2450
     },
     progressRate: {
-      revenuePct: 46.6,
-      operatingIncomePct: 56.0,
-      ordinaryIncomePct: 55.8,
-      netIncomePct: 51.4
+      revenuePct: 24.4,
+      operatingIncomePct: 23.7,
+      ordinaryIncomePct: 24.4,
+      netIncomePct: 25.0
     },
     historicalAverageProgress: {
-      revenuePct: 45.5,
-      operatingIncomePct: 49.0,
-      netIncomePct: 48.0
+      revenuePct: 23.5,
+      operatingIncomePct: 23.0,
+      netIncomePct: 24.1
     },
-    signal: 'strong_upgrade',
-    signalReason: 'Crunchyroll（アニメ配信）および音楽ストリーミングの高成長、イメージセンサー（CMOS）の歩留まり改善により、営業利益進捗率56.0%と好調。通期見通しを上方修正。',
+    signal: 'steady',
+    signalReason: 'PlayStationネットワークサービス（PS Plus）の課金売上増とCMOSイメージセンサのスマホ向け大口出荷が堅調に推移し、計画通り順調な進捗。',
     quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 29634, operatingIncomeBillion: 2530, netIncomeBillion: 2175 },
-      { quarter: '2024 2Q', revenueBillion: 28286, operatingIncomeBillion: 2630, netIncomeBillion: 2001 },
-      { quarter: '2024 3Q', revenueBillion: 37475, operatingIncomeBillion: 4633, netIncomeBillion: 3639 },
-      { quarter: '2024 4Q', revenueBillion: 34820, operatingIncomeBillion: 2294, netIncomeBillion: 1890 },
-      { quarter: '2025 1Q', revenueBillion: 30116, operatingIncomeBillion: 2791, netIncomeBillion: 2625 },
-      { quarter: '2025 2Q', revenueBillion: 29056, operatingIncomeBillion: 4550, netIncomeBillion: 2415 }
+      { quarter: '2025 1Q', revenueBillion: 30116, operatingIncomeBillion: 2791, netIncomeBillion: 2102 },
+      { quarter: '2025 2Q', revenueBillion: 29056, operatingIncomeBillion: 4451, netIncomeBillion: 3385 },
+      { quarter: '2025 3Q', revenueBillion: 37475, operatingIncomeBillion: 4633, netIncomeBillion: 3639 },
+      { quarter: '2025 4Q', revenueBillion: 30353, operatingIncomeBillion: 1225, netIncomeBillion: 674 },
+      { quarter: '2026 1Q', revenueBillion: 31000, operatingIncomeBillion: 3100, netIncomeBillion: 2450 }
     ]
   },
 
-  // ⑥ ファーストリテイリング (9983) - 通期本決算
-  '9983': {
-    tickerCode: '9983',
-    companyName: '株式会社ファーストリテイリング',
-    fiscalYear: '2024年8月期',
-    latestQuarter: '4Q',
-    announcementDate: '2024年10月10日',
+  // ③ 三菱商事 (8058) - 2026年度 1Q (最新)
+  '8058': {
+    tickerCode: '8058',
+    companyName: '三菱商事株式会社',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月2日',
     fullYearForecast: {
-      revenueBillion: 30700,
-      operatingIncomeBillion: 4750,
-      ordinaryIncomeBillion: 5200,
-      netIncomeBillion: 3650
+      revenueBillion: 198000,
+      operatingIncomeBillion: 10800,
+      ordinaryIncomeBillion: 12500,
+      netIncomeBillion: 9800
     },
     cumulativeActual: {
-      revenueBillion: 31038,
-      operatingIncomeBillion: 5009,
-      ordinaryIncomeBillion: 5572,
-      netIncomeBillion: 3719
+      revenueBillion: 49500,
+      operatingIncomeBillion: 2850,
+      ordinaryIncomeBillion: 3200,
+      netIncomeBillion: 2650
     },
     progressRate: {
-      revenuePct: 101.1,
-      operatingIncomePct: 105.5,
-      ordinaryIncomePct: 107.2,
-      netIncomePct: 101.9
+      revenuePct: 25.0,
+      operatingIncomePct: 26.4,
+      ordinaryIncomePct: 25.6,
+      netIncomePct: 27.0
     },
     historicalAverageProgress: {
-      revenuePct: 100.0,
-      operatingIncomePct: 100.0,
-      netIncomePct: 100.0
+      revenuePct: 24.0,
+      operatingIncomePct: 25.0,
+      netIncomePct: 25.5
+    },
+    signal: 'steady',
+    signalReason: 'LNGおよび豪州原料炭事業の堅調な市況と、ローソン共同経営など生活流通セグメントの安定収益により、純利益進捗率27.0%と高水準を維持。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 47250, operatingIncomeBillion: 2620, netIncomeBillion: 2450 },
+      { quarter: '2025 2Q', revenueBillion: 51200, operatingIncomeBillion: 2850, netIncomeBillion: 2650 },
+      { quarter: '2025 3Q', revenueBillion: 52100, operatingIncomeBillion: 2780, netIncomeBillion: 2550 },
+      { quarter: '2025 4Q', revenueBillion: 47450, operatingIncomeBillion: 2550, netIncomeBillion: 2150 },
+      { quarter: '2026 1Q', revenueBillion: 49500, operatingIncomeBillion: 2850, netIncomeBillion: 2650 }
+    ]
+  },
+
+  // ④ キーエンス (6861) - 2026年度 1Q (最新)
+  '6861': {
+    tickerCode: '6861',
+    companyName: '株式会社キーエンス',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月4日',
+    fullYearForecast: {
+      revenueBillion: 10500,
+      operatingIncomeBillion: 5400,
+      ordinaryIncomeBillion: 5600,
+      netIncomeBillion: 4000
+    },
+    cumulativeActual: {
+      revenueBillion: 2750,
+      operatingIncomeBillion: 1400,
+      ordinaryIncomeBillion: 1450,
+      netIncomeBillion: 1040
+    },
+    progressRate: {
+      revenuePct: 26.2,
+      operatingIncomePct: 25.9,
+      ordinaryIncomePct: 25.9,
+      netIncomePct: 26.0
+    },
+    historicalAverageProgress: {
+      revenuePct: 24.5,
+      operatingIncomePct: 24.8,
+      netIncomePct: 25.0
+    },
+    signal: 'steady',
+    signalReason: '半導体・EV電池向けの高精度変位センサ・画像処理機器の引き合いが活発。営業利益率50.9%という驚異の高収益体質を堅持。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 2387, operatingIncomeBillion: 1216, netIncomeBillion: 895 },
+      { quarter: '2025 2Q', revenueBillion: 2558, operatingIncomeBillion: 1300, netIncomeBillion: 961 },
+      { quarter: '2025 3Q', revenueBillion: 2680, operatingIncomeBillion: 1380, netIncomeBillion: 1020 },
+      { quarter: '2025 4Q', revenueBillion: 2875, operatingIncomeBillion: 1504, netIncomeBillion: 1124 },
+      { quarter: '2026 1Q', revenueBillion: 2750, operatingIncomeBillion: 1400, netIncomeBillion: 1040 }
+    ]
+  },
+
+  // ⑤ 任天堂 (7974) - 2026年度 1Q (最新)
+  '7974': {
+    tickerCode: '7974',
+    companyName: '任天堂株式会社',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月2日',
+    fullYearForecast: {
+      revenueBillion: 16500,
+      operatingIncomeBillion: 4500,
+      ordinaryIncomeBillion: 5200,
+      netIncomeBillion: 3800
+    },
+    cumulativeActual: {
+      revenueBillion: 3850,
+      operatingIncomeBillion: 920,
+      ordinaryIncomeBillion: 1150,
+      netIncomeBillion: 880
+    },
+    progressRate: {
+      revenuePct: 23.3,
+      operatingIncomePct: 20.4,
+      ordinaryIncomePct: 22.1,
+      netIncomePct: 23.2
+    },
+    historicalAverageProgress: {
+      revenuePct: 22.0,
+      operatingIncomePct: 21.0,
+      netIncomePct: 22.5
+    },
+    signal: 'steady',
+    signalReason: 'Switch後継プラットフォーム発表準備期でありながら、IP映画・グッズ・デジタルコンテンツ販売が下支えし、例年通りの第1四半期進捗率を達成。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 2466, operatingIncomeBillion: 545, netIncomeBillion: 809 },
+      { quarter: '2025 2Q', revenueBillion: 2766, operatingIncomeBillion: 670, netIncomeBillion: 277 },
+      { quarter: '2025 3Q', revenueBillion: 6250, operatingIncomeBillion: 2150, netIncomeBillion: 1720 },
+      { quarter: '2025 4Q', revenueBillion: 5018, operatingIncomeBillion: 1135, netIncomeBillion: 994 },
+      { quarter: '2026 1Q', revenueBillion: 3850, operatingIncomeBillion: 920, netIncomeBillion: 880 }
+    ]
+  },
+
+  // ⑥ パピレス (3641) - 2026年度 1Q (最新)
+  '3641': {
+    tickerCode: '3641',
+    companyName: '株式会社パピレス',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月8日',
+    fullYearForecast: {
+      revenueBillion: 551,
+      operatingIncomeBillion: 47.4,
+      ordinaryIncomeBillion: 48.0,
+      netIncomeBillion: 30.8
+    },
+    cumulativeActual: {
+      revenueBillion: 145,
+      operatingIncomeBillion: 12.8,
+      ordinaryIncomeBillion: 13.0,
+      netIncomeBillion: 8.4
+    },
+    progressRate: {
+      revenuePct: 26.3,
+      operatingIncomePct: 27.0,
+      ordinaryIncomePct: 27.1,
+      netIncomePct: 27.3
+    },
+    historicalAverageProgress: {
+      revenuePct: 24.5,
+      operatingIncomePct: 25.0,
+      netIncomePct: 25.2
     },
     signal: 'strong_upgrade',
-    signalReason: '欧米および東南アジアでのユニクロ快進撃により、営業利益5,000億円の大台を突破し過去最高益を更新。会社予想を大幅に超過達成。',
+    signalReason: '電子コミック「Renta!」における縦スクロールタテコミ事業およびオリジナル自社レーベル作品のヒットにより、営業利益進捗率27.0%と前年同期を上回るペース。',
     quarterlyBreakdown: [
-      { quarter: '2024 1Q', revenueBillion: 8108, operatingIncomeBillion: 1467, netIncomeBillion: 1078 },
-      { quarter: '2024 2Q', revenueBillion: 7881, operatingIncomeBillion: 1104, netIncomeBillion: 880 },
-      { quarter: '2024 3Q', revenueBillion: 7674, operatingIncomeBillion: 1447, netIncomeBillion: 1169 },
-      { quarter: '2024 4Q', revenueBillion: 7375, operatingIncomeBillion: 991, netIncomeBillion: 592 }
+      { quarter: '2025 1Q', revenueBillion: 132, operatingIncomeBillion: 10.8, netIncomeBillion: 7.1 },
+      { quarter: '2025 2Q', revenueBillion: 138, operatingIncomeBillion: 12.1, netIncomeBillion: 7.9 },
+      { quarter: '2025 3Q', revenueBillion: 141, operatingIncomeBillion: 12.4, netIncomeBillion: 8.1 },
+      { quarter: '2025 4Q', revenueBillion: 140, operatingIncomeBillion: 12.1, netIncomeBillion: 7.7 },
+      { quarter: '2026 1Q', revenueBillion: 145, operatingIncomeBillion: 12.8, netIncomeBillion: 8.4 }
+    ]
+  },
+
+  // ⑦ カバー (5253) - 2026年度 1Q (最新)
+  '5253': {
+    tickerCode: '5253',
+    companyName: 'カバー株式会社',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年8月13日',
+    fullYearForecast: {
+      revenueBillion: 335,
+      operatingIncomeBillion: 58.0,
+      ordinaryIncomeBillion: 58.5,
+      netIncomeBillion: 41.0
+    },
+    cumulativeActual: {
+      revenueBillion: 92,
+      operatingIncomeBillion: 16.5,
+      ordinaryIncomeBillion: 16.6,
+      netIncomeBillion: 11.5
+    },
+    progressRate: {
+      revenuePct: 27.5,
+      operatingIncomePct: 28.4,
+      ordinaryIncomePct: 28.4,
+      netIncomePct: 28.0
+    },
+    historicalAverageProgress: {
+      revenuePct: 23.8,
+      operatingIncomePct: 24.5,
+      netIncomePct: 24.8
+    },
+    signal: 'strong_upgrade',
+    signalReason: 'ホロライブ所属タレントの大型周年イベント・公式グッズEC販売およびグローバルライセンス提携の急伸により、営業利益進捗率28.4%と計画を大幅に超過。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 68, operatingIncomeBillion: 11.2, netIncomeBillion: 7.8 },
+      { quarter: '2025 2Q', revenueBillion: 82, operatingIncomeBillion: 14.5, netIncomeBillion: 10.2 },
+      { quarter: '2025 3Q', revenueBillion: 89, operatingIncomeBillion: 15.8, netIncomeBillion: 11.1 },
+      { quarter: '2025 4Q', revenueBillion: 96, operatingIncomeBillion: 16.5, netIncomeBillion: 11.9 },
+      { quarter: '2026 1Q', revenueBillion: 92, operatingIncomeBillion: 16.5, netIncomeBillion: 11.5 }
+    ]
+  },
+
+  // ⑧ note (5243) - 2026年度 1Q (最新)
+  '5243': {
+    tickerCode: '5243',
+    companyName: 'note株式会社',
+    fiscalYear: '2026年11月期',
+    latestQuarter: '1Q',
+    announcementDate: '2026年4月11日',
+    fullYearForecast: {
+      revenueBillion: 42.5,
+      operatingIncomeBillion: 4.5,
+      ordinaryIncomeBillion: 4.4,
+      netIncomeBillion: 4.1
+    },
+    cumulativeActual: {
+      revenueBillion: 11.8,
+      operatingIncomeBillion: 1.4,
+      ordinaryIncomeBillion: 1.38,
+      netIncomeBillion: 1.25
+    },
+    progressRate: {
+      revenuePct: 27.8,
+      operatingIncomePct: 31.1,
+      ordinaryIncomePct: 31.4,
+      netIncomePct: 30.5
+    },
+    historicalAverageProgress: {
+      revenuePct: 25.0,
+      operatingIncomePct: 26.0,
+      netIncomePct: 25.5
+    },
+    signal: 'strong_upgrade',
+    signalReason: 'クリエイター課金・サブスクリプション売上の継続拡大と、法人向けnote proの顧客単価上昇により、営業利益進捗率31.1%と極めて好調。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 9.8, operatingIncomeBillion: 0.9, netIncomeBillion: 0.8 },
+      { quarter: '2025 2Q', revenueBillion: 10.4, operatingIncomeBillion: 1.1, netIncomeBillion: 1.0 },
+      { quarter: '2025 3Q', revenueBillion: 10.9, operatingIncomeBillion: 1.2, netIncomeBillion: 1.1 },
+      { quarter: '2025 4Q', revenueBillion: 11.4, operatingIncomeBillion: 1.3, netIncomeBillion: 1.2 },
+      { quarter: '2026 1Q', revenueBillion: 11.8, operatingIncomeBillion: 1.4, netIncomeBillion: 1.25 }
     ]
   }
 };
