@@ -67,10 +67,11 @@ export default function ProfitAnatomyBreakdown({
     const rdCost = latestFin.rdExpenses || Math.round(rev * 0.03);
     const adCost = latestFin.adExpenses || Math.round(rev * 0.04);
 
-    const employees = parseInt(company?.employeesCount?.replace(/[^0-9]/g, '') || '250', 10);
+    const empMatch = company?.employeesCount?.match(/^([0-9,]+)/);
+    const employees = empMatch ? parseInt(empMatch[1].replace(/,/g, ''), 10) : (company?.employeesCount ? parseInt(company.employeesCount.replace(/[^0-9]/g, '').slice(0, 5), 10) : 1000);
     const revPerEmp = parseFloat(((rev / Math.max(1, employees))).toFixed(1));
     const opPerEmp = parseFloat(((op / Math.max(1, employees))).toFixed(1));
-    const salary = company?.avgSalary ? company.avgSalary * 10 : 7500;
+    const salary = company?.avgSalary ? company.avgSalary * 10 : 8000;
 
     anatomy = {
       tickerCode,
