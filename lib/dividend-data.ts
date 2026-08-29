@@ -163,5 +163,28 @@ export const DIVIDEND_ANALYSIS_DATA: { [ticker: string]: CompanyDividendAnalysis
       { fiscalYear: '2024', dps: 350.0, payoutRatio: 32.5, dividendYield: 1.38, shareBuybackBillion: 0, totalReturnRatio: 32.5 },
       { fiscalYear: '2025(予)', dps: 400.0, payoutRatio: 34.0, dividendYield: 1.45, shareBuybackBillion: 0, totalReturnRatio: 34.0 }
     ]
+  },
+
+  // ⑦ 三井物産 (8031) - 累進配当公約 ＆ 機動的自社株買い
+  '8031': {
+    tickerCode: '8031',
+    companyName: '三井物産株式会社',
+    consecutiveDividendIncreases: 4,
+    noDividendCutYears: 9,
+    dividendPolicy: '「累進配当（減配せず増配または維持）」を導入。基礎営業キャッシュフローに対する総還元性向37%以上（中計期間中は45〜50%を目安）として、安定増配と機動的自社株買いを実施。',
+    currentYield: 3.20,
+    latestForecastDps: 100.0,
+    records: [
+      { fiscalYear: '2016', dps: 64.0, payoutRatio: 0.0, dividendYield: 4.80, shareBuybackBillion: 0, totalReturnRatio: 0.0 }, // 赤字期
+      { fiscalYear: '2017', dps: 55.0, payoutRatio: 32.2, dividendYield: 3.40, shareBuybackBillion: 300, totalReturnRatio: 42.0 },
+      { fiscalYear: '2018', dps: 70.0, payoutRatio: 29.7, dividendYield: 3.80, shareBuybackBillion: 500, totalReturnRatio: 41.6 },
+      { fiscalYear: '2019', dps: 80.0, payoutRatio: 32.3, dividendYield: 4.60, shareBuybackBillion: 700, totalReturnRatio: 48.5 },
+      { fiscalYear: '2020', dps: 80.0, payoutRatio: 35.1, dividendYield: 5.20, shareBuybackBillion: 500, totalReturnRatio: 47.9 },
+      { fiscalYear: '2021', dps: 85.0, payoutRatio: 42.8, dividendYield: 3.70, shareBuybackBillion: 500, totalReturnRatio: 57.7 },
+      { fiscalYear: '2022', dps: 105.0, payoutRatio: 18.7, dividendYield: 3.20, shareBuybackBillion: 1750, totalReturnRatio: 37.8 },
+      { fiscalYear: '2023', dps: 140.0, payoutRatio: 19.0, dividendYield: 3.40, shareBuybackBillion: 2400, totalReturnRatio: 40.2 },
+      { fiscalYear: '2024', dps: 170.0, payoutRatio: 24.1, dividendYield: 3.10, shareBuybackBillion: 2500, totalReturnRatio: 47.6 },
+      { fiscalYear: '2025(予)', dps: 100.0, payoutRatio: 33.1, dividendYield: 3.20, shareBuybackBillion: 2000, totalReturnRatio: 55.3 }
+    ]
   }
 };

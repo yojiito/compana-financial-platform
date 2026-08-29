@@ -396,5 +396,53 @@ export const PROFIT_ANATOMIES: { [ticker: string]: ProfitAnatomy } = {
       profitEngine: 'トレンド服ではなくヒートテック・エアリズム等の「通年・定番ベーシックウェア」のため値引き廃棄ロスが極端に少なく、定価販売比率が極めて高い（粗利率52.6%）。',
       investmentLeverageSecret: 'ネットキャッシュ9,000億円という圧倒的無借金キャッシュリッチのため、金利上昇局面で毎年数百億円の受取利息が自動加算される盤石の財務体質。'
     }
+  },
+
+  // ⑧ 三井物産 (8031) - 資源権益配当 ＆ グローバルサプライチェーン超高収益
+  '8031': {
+    tickerCode: '8031',
+    companyName: '三井物産株式会社',
+    fiscalYear: '2025年3月期 決算有報ベース',
+    revenueMillion: 13800000, // 13.8兆円
+    cogsRatio: 86.0, // 原価率 86.0% (金属・エネルギー・穀物の調達原価)
+    cogsMillion: 11868000,
+    grossMarginRatio: 14.0, // 売上総利益率 14.0%
+    sgaRatio: 7.3, // 販管費率 7.3%
+    sgaMillion: 1012000,
+    operatingMarginRatio: 6.7, // 営業利益率 6.7% (9,200億円)
+    operatingIncomeMillion: 920000,
+    costBreakdown: {
+      laborCostRatio: 3.0,
+      laborCostMillion: 414000,
+      laborCostNote: '単体平均年収1,783万円。グローバル展開を担う精鋭専門職集団への高水準報酬還元',
+      rdCostRatio: 0.1,
+      rdCostMillion: 13800,
+      advertisingCostRatio: 0.2,
+      advertisingCostMillion: 27600,
+      otherSgaRatio: 4.0
+    },
+    nonOperating: {
+      nonOperatingIncomeMillion: 240000, // 資源鉱山・LNGプロジェクトからの配当・持分法利益
+      nonOperatingExpensesMillion: 42000,
+      netNonOperatingMillion: 198000,
+      nonOperatingRatio: 1.4,
+      keyDrivers: '豪州鉄鉱石・LNGプロジェクトおよびIHH Healthcare（アジア最大病院チェーン）等からの巨額の持分法投資利益・受取配当金'
+    },
+    ordinaryIncomeMillion: 1118000, // 税引前利益 1兆1,180億円
+    ordinaryMarginRatio: 8.1,
+    netIncomeMillion: 900000, // 当期純利益 9,000億円
+    netMarginRatio: 6.5,
+    productivity: {
+      employeesCount: 5548, // 単体
+      revenuePerEmployeeMillion: 2487.4, // 1人あたり売上 24.8億円
+      operatingIncomePerEmployeeMillion: 165.8, // 1人あたり営業利益 1.66億円
+      avgAnnualSalaryThousandYen: 17830 // 平均年収 1,783万円
+    },
+    secretMechanism: {
+      headline: '「世界屈指の低コスト資源鉱山・LNG利権」×「アジア最大病院IHH等の非資源インフラ」×「1人あたり営業利益1.6億円の精鋭経営」',
+      costControlSecret: '数十年前からの優良鉱山・油ガス田への直接権益出資により、一次生産原価が極めて低く抑えられ、市況変動に左右されない圧倒的な低コスト調達基盤を確立。',
+      profitEngine: '鉄鉱石・LNGの安定的な高マージン取引に加え、アジア最大の民間病院チェーンIHH Healthcareやグローバル再生可能エネルギーIPP等の事業投資先から巨額のキャッシュフローを獲得。',
+      investmentLeverageSecret: '年1兆円を超える営業キャッシュフローを原資に、累進的増配と大規模な自社株買い（総還元性向45〜50%）を継続しつつ、次世代グリーンエネルギー（水素・アンモニア）へ積極投資。'
+    }
   }
 };

@@ -746,5 +746,76 @@ export const ASSET_PORTFOLIOS: { [ticker: string]: CompanyAssetPortfolio } = {
     },
     totalLiquidAssetsMillion: 206300, // 現金+有価証券+土地 = 約2,063億円
     marketCapCoverageRatio: 42.5
+  },
+
+  // ⑧ 三井物産 (8031) - グローバル資源利権 ＆ IHH医療・大手町ヘッドクォーター
+  '8031': {
+    tickerCode: '8031',
+    companyName: '三井物産株式会社',
+    asOfDate: '2025年3月期 有価証券報告書 開示基準',
+    cash: {
+      cashAndEquivalentsMillion: 1350000, // 約1.35兆円
+      interestBearingDebtMillion: 3950000, // 約3.95兆円
+      netCashMillion: -2600000, // ネット有利子負債 約2.6兆円 (ネットDER 0.45倍と健全)
+      cashToMonthlySalesRatio: 1.17,
+      financialStatus: 'leveraged'
+    },
+    securities: {
+      totalInvestmentSecuritiesMillion: 5420000, // 投資有価証券・持分法出資 約5.42兆円
+      policyHoldingSecuritiesMillion: 380000, // 政策保有株式 約3,800億円
+      policyReductionPolicy: 'コーポレートガバナンス・コードに基づき、保有意義の薄れた政策保有株式を毎年数百億円規模で計画的に売却・縮減し、高収益事業・自社株買いへ再投資。',
+      holdings: [
+        {
+          name: 'IHH Healthcare Berhad (アジア最大民間病院チェーン)',
+          tickerCode: 'IHH (マレーシア・シンガポール上場)',
+          shares: '28億7,000万株 (筆頭株主 32.8%)',
+          carryingAmountMillion: 980000,
+          holdingRatio: 32.8,
+          purpose: 'アジア全域における総合ヘルスケア・病院ネットワークの共同経営およびデジタル医療推進',
+          statusNote: 'コア戦略投資先'
+        },
+        {
+          name: '株式会社三井住友フィナンシャルグループ',
+          tickerCode: '8316 (東証P)',
+          shares: '1,850万株',
+          carryingAmountMillion: 185000,
+          holdingRatio: 1.35,
+          purpose: '三井グループ基幹金融機関との協業、グローバルプロジェクトファイナンス組成',
+          statusNote: '資本業務提携'
+        },
+        {
+          name: '三井不動産株式会社',
+          tickerCode: '8801 (東証P)',
+          shares: '1,200万株',
+          carryingAmountMillion: 54000,
+          holdingRatio: 1.25,
+          purpose: '大手町Otemachi One再開発をはじめとする国内外都市開発・不動産ファンド事業連携',
+          statusNote: '三井グループ中核連携'
+        }
+      ]
+    },
+    realEstate: {
+      landBookValueMillion: 185000, // 土地簿価 約1,850億円
+      buildingsBookValueMillion: 340000, // 建物簿価 約3,400億円
+      rentalPropertiesFairValueMillion: 420000,
+      rentalPropertiesBookValueMillion: 195000,
+      unrealizedGainMillion: 225000, // 賃貸不動産含み益 約2,250億円
+      mainFacilities: [
+        {
+          name: 'Otemachi One 三井物産ビル (本社)',
+          location: '東京都千代田区大手町一丁目2番1号',
+          areaOrScale: '地上31階・地下5階 延床面積約36万㎡ 超高層複合ランドマーク',
+          purpose: 'グローバル本社・先端オフィス・国際会議場・ホール機能'
+        },
+        {
+          name: '三井物産 大阪ビル',
+          location: '大阪府大阪市北区中之島二丁目3番33号',
+          areaOrScale: '地上22階 関西統括拠点',
+          purpose: '関西圏トレード・西日本ビジネスハブ'
+        }
+      ]
+    },
+    totalLiquidAssetsMillion: 6955000, // 現金+有価証券+土地 = 約6.95兆円
+    marketCapCoverageRatio: 67.4
   }
 };

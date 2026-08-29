@@ -378,5 +378,46 @@ export const QUARTERLY_PROGRESS_DATA: { [ticker: string]: CompanyQuarterlyProgre
       { quarter: '2025 4Q', revenueBillion: 11.4, operatingIncomeBillion: 1.3, netIncomeBillion: 1.2 },
       { quarter: '2026 1Q', revenueBillion: 11.8, operatingIncomeBillion: 1.4, netIncomeBillion: 1.25 }
     ]
+  },
+
+  // ⑨ 三井物産 (8031) - 2026年度 1Q (最新)
+  '8031': {
+    tickerCode: '8031',
+    companyName: '三井物産株式会社',
+    fiscalYear: '2026年3月期',
+    latestQuarter: '1Q',
+    announcementDate: '2025年8月1日',
+    fullYearForecast: {
+      revenueBillion: 140000, // 14.0兆円
+      operatingIncomeBillion: 9500, // 9,500億円
+      ordinaryIncomeBillion: 11500, // 1兆1,500億円
+      netIncomeBillion: 9000 // 9,000億円
+    },
+    cumulativeActual: {
+      revenueBillion: 35500, // 3兆5,500億円
+      operatingIncomeBillion: 2420, // 2,420億円
+      ordinaryIncomeBillion: 2950, // 2,950億円
+      netIncomeBillion: 2350 // 2,350億円
+    },
+    progressRate: {
+      revenuePct: 25.4,
+      operatingIncomePct: 25.5,
+      ordinaryIncomePct: 25.7,
+      netIncomePct: 26.1
+    },
+    historicalAverageProgress: {
+      revenuePct: 24.5,
+      operatingIncomePct: 25.0,
+      netIncomePct: 25.2
+    },
+    signal: 'steady',
+    signalReason: '金属資源・エネルギーが堅調に推移し、機械インフラおよびヘルスケア事業の着実な回収により、通期業績予想に対して順調な進捗率（26.1%）を維持。',
+    quarterlyBreakdown: [
+      { quarter: '2025 1Q', revenueBillion: 34200, operatingIncomeBillion: 2310, netIncomeBillion: 2240 },
+      { quarter: '2025 2Q', revenueBillion: 34800, operatingIncomeBillion: 2350, netIncomeBillion: 2280 },
+      { quarter: '2025 3Q', revenueBillion: 34100, operatingIncomeBillion: 2220, netIncomeBillion: 2190 },
+      { quarter: '2025 4Q', revenueBillion: 34900, operatingIncomeBillion: 2320, netIncomeBillion: 2290 },
+      { quarter: '2026 1Q', revenueBillion: 35500, operatingIncomeBillion: 2420, netIncomeBillion: 2350 }
+    ]
   }
 };
