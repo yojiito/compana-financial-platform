@@ -223,9 +223,12 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
     { id: 'foundation-noma', label: '公益財団法人野間文化財団', type: 'foundation', subLabel: '文化顕彰財団', description: '野間文芸賞、野間児童文芸賞を主宰運営。', tags: ['文学賞', '財団'] },
 
     { id: 'unlisted-shueisha', label: '株式会社集英社', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第84期)', description: '『週刊少年ジャンプ』『ヤングジャンプ』『りぼん』等を発行。', linkUrl: '/unlisted/shueisha', tags: ['出版', '一ツ橋グループ'] },
-    { id: 'corp-shogakukan', label: '株式会社小学館', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第88期)', description: '『コロコロコミック』『週刊少年サンデー』『小学一年生』等を発行。', linkUrl: '/unlisted/shogakukan', tags: ['出版', '一ツ橋グループ'] },
+    { id: 'corp-shogakukan', label: '株式会社小学館', type: 'unlisted_corp', subLabel: '未上場・総合出版大手 (第88期)', description: '『コロコロコミック』『週刊少年サンデー』『小学一年生』等を発行。相賀家経営。', linkUrl: '/unlisted/shogakukan', tags: ['出版', '一ツ橋グループ'] },
+    { id: 'corp-shodensha', label: '株式会社祥伝社', type: 'unlisted_corp', subLabel: '一ツ橋グループ系列総合出版社', description: '『FEEL YOUNG』『小説NON』『祥伝社新書』『黄金文庫』。1970年小学館共同出資により設立。', tags: ['出版子会社', '一ツ橋グループ'] },
     { id: 'corp-hakusensha', label: '株式会社白泉社', type: 'unlisted_corp', subLabel: '一ツ橋グループ子会社 (100%)', description: '『花とゆめ』『LaLa』『ヤングアニマル』『ベルセルク』等の独自コミック出版。', tags: ['出版子会社'] },
     { id: 'corp-shopro', label: '株式会社小学館集英社プロダクション (ShoPro)', type: 'unlisted_corp', subLabel: '小学館 (50%) × 集英社 (50%)', description: '『ポケットモンスター』『名探偵コナン』等のアニメ・キャラクターライセンス・教育事業統括。', tags: ['ライセンス子会社'] },
+    { id: 'corp-shorinsha', label: '株式会社照林社', type: 'unlisted_corp', subLabel: '看護・医療専門出版 (小学館100%)', description: '『エキスパートナース』『プチナース』等の看護・医療専門誌出版。', tags: ['専門出版子会社'] },
+    { id: 'corp-shogakukan-logi', label: '株式会社小学館ロジスティクス (P-PAL)', type: 'unlisted_corp', subLabel: '一ツ橋グループ物流子会社', description: '書籍・雑誌の全国取次・書店向け配送、在庫保管・返品入出荷管理。', tags: ['物流子会社'] },
 
     { id: 'unlisted-shinchosha', label: '株式会社新潮社', type: 'unlisted_corp', subLabel: '未上場・名門出版社 (第81期)', description: '文芸書、新潮文庫、週刊新潮、波を発行。創業家（佐藤家）が経営統括。', linkUrl: '/unlisted/shinchosha', tags: ['出版', '創業家経営', '東京'] },
     { id: 'person-takanobu-sato', label: '佐藤隆信', type: 'person', subLabel: '代表取締役社長 (佐藤家4代目)', description: '新潮社代表取締役社長。', tags: ['代表取締役', '創業家'] },
@@ -386,8 +389,13 @@ export const MASTER_RELATIONSHIP_DATA: NetworkGraphData = {
     { id: 'e-kd-seiji', source: 'person-seiji-noma', target: 'unlisted-kodansha', relationType: 'governance', label: '創業者', detail: '大衆雑誌出版の祖' },
     { id: 'e-kd-fnd', source: 'unlisted-kodansha', target: 'foundation-noma', relationType: 'foundation', label: '主宰設立母体', detail: '野間文芸賞運営' },
 
-    // 一ツ橋グループ (集英社・小学館・白泉社・ShoPro)
-    { id: 'e-sh-hakusen', source: 'unlisted-shueisha', target: 'corp-hakusensha', relationType: 'capital', label: 'グループ子会社 100%', detail: '少女・青年コミック出版', ratio: 100.0 },
+    // 一ツ橋グループ (小学館・集英社・祥伝社・白泉社・ShoPro・照林社・物流)
+    { id: 'e-sg-shueisha', source: 'corp-shogakukan', target: 'unlisted-shueisha', relationType: 'capital', label: '娯楽部門独立', detail: '1926年小学館より独立設立・中核相互出資' },
+    { id: 'e-sg-shodensha', source: 'corp-shogakukan', target: 'corp-shodensha', relationType: 'capital', label: '系列子会社 50.0%', detail: '1970年共同出資設立・文芸新書', ratio: 50.0 },
+    { id: 'e-sg-hakusen', source: 'corp-shogakukan', target: 'corp-hakusensha', relationType: 'capital', label: 'グループ系列 100%', detail: '少女・青年コミック出版', ratio: 100.0 },
+    { id: 'e-sh-hakusen', source: 'unlisted-shueisha', target: 'corp-hakusensha', relationType: 'capital', label: 'グループ子会社 100%', detail: '1973年集英社より独立設立', ratio: 100.0 },
+    { id: 'e-sg-shorinsha', source: 'corp-shogakukan', target: 'corp-shorinsha', relationType: 'capital', label: '完全子会社 100%', detail: '看護・医療専門出版', ratio: 100.0 },
+    { id: 'e-sg-logi', source: 'corp-shogakukan', target: 'corp-shogakukan-logi', relationType: 'capital', label: '完全子会社 100%', detail: '一ツ橋グループ出版物流', ratio: 100.0 },
     { id: 'e-sh-shopro', source: 'unlisted-shueisha', target: 'corp-shopro', relationType: 'capital', label: '共同出資 50.0%', detail: 'ポケモン・コナンライセンス', ratio: 50.0 },
     { id: 'e-sg-shopro', source: 'corp-shogakukan', target: 'corp-shopro', relationType: 'capital', label: '共同出資 50.0%', detail: 'メディア・キャラクター事業', ratio: 50.0 },
 
