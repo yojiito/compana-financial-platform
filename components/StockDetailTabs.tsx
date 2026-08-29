@@ -296,6 +296,7 @@ export default function StockDetailTabs({
           <ShareholderTracker
             shareholders={shareholders}
             largeHoldings={largeHoldings}
+            company={company}
           />
         )}
 
