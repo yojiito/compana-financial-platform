@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ContentProtection from '@/components/ContentProtection';
 import { LanguageProvider } from '@/lib/language-context';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="ja" className={`${inter.variable} ${mono.variable}`}>
       <body className="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans antialiased selection:bg-teal-500 selection:text-white">
         <LanguageProvider>
+          <ContentProtection />
           <Navbar />
           <main className="flex-1">
             {children}

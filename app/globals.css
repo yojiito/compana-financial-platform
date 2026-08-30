@@ -12,4 +12,26 @@ body {
   color: rgb(var(--foreground-rgb));
   background: #f8fafc;
   min-height: 100vh;
+  /* 🛡️ コンテンツ保護・テキストコピペ防止 */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 入力欄（検索バーやフォーム）は通常通り選択・編集可能 */
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* 画像のドラッグ保存防止 */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: auto;
 }
