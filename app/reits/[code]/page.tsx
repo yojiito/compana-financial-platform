@@ -10,6 +10,7 @@ import {
 } from '@/lib/reits-data';
 import StockCandleChart from '@/components/StockCandleChart';
 import FactAuditModal from '@/components/FactAuditModal';
+import { AutoPagerizeControl } from '@/components/AutoPagerizeControl';
 import { runFactAudit } from '@/lib/fact-checker';
 import { useLanguage } from '@/lib/language-context';
 import { getCompanyName } from '@/lib/company-english-names';
@@ -292,6 +293,8 @@ export default function ReitDetailPage() {
   const [propertyFilter, setPropertyFilter] = useState<string>('all');
   const [propertySearch, setPropertySearch] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isAutoPagerizeEnabled, setIsAutoPagerizeEnabled] = useState<boolean>(true);
+  const [visiblePropertiesCount, setVisiblePropertiesCount] = useState<number>(30);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
   const itemsPerPage = 30;
 
@@ -1240,9 +1243,10 @@ export default function ReitDetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-mono text-slate-800 text-xs">
-                {filteredProperties
-                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                  .map((p) => (
+                {(isAutoPagerizeEnabled
+                  ? filteredProperties.slice(0, visiblePropertiesCount)
+                  : filteredProperties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                ).map((p) => (
                   <tr key={p.id} className="hover:bg-teal-50/40 transition">
                     <td className="py-3.5 px-4 font-sans font-black text-slate-900">
                       <div className="font-bold text-[13px]">
@@ -1311,41 +1315,70 @@ export default function ReitDetailPage() {
             </table>
           </div>
 
-          {/* ページネーションコントロール */}
+          {/* ⚡ AutoPagerize & ページネーションコントロール */}
           {filteredProperties.length > itemsPerPage && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-500 font-medium font-sans">
-                {isEn ? 'Showing' : '表示中'}: <b>{(currentPage - 1) * itemsPerPage + 1}</b> - <b>{Math.min(currentPage * itemsPerPage, filteredProperties.length)}</b> / <b>{filteredProperties.length}</b> {isEn ? 'Properties' : '棟'}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed font-bold transition shadow-2xs"
-                >
-                  {isEn ? '← Prev' : '← 前へ'}
-                </button>
-                {Array.from({ length: Math.ceil(filteredProperties.length / itemsPerPage) }, (_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentPage(idx + 1)}
-                    className={`w-8 h-8 rounded-lg text-xs font-bold font-mono transition ${
-                      currentPage === idx + 1
-                        ? 'bg-teal-700 text-white shadow-xs'
-                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setCurrentPage(Math.min(Math.ceil(filteredProperties.length / itemsPerPage), currentPage + 1))}
-                  disabled={currentPage === Math.ceil(filteredProperties.length / itemsPerPage)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed font-bold transition shadow-2xs"
-                >
-                  {isEn ? 'Next →' : '次へ →'}
-                </button>
-              </div>
+            <div className="pt-2 border-t border-slate-100">
+              {isAutoPagerizeEnabled ? (
+                <AutoPagerizeControl
+                  currentLoadedCount={Math.min(visiblePropertiesCount, filteredProperties.length)}
+                  totalCount={filteredProperties.length}
+                  itemsPerPage={itemsPerPage}
+                  onLoadMore={() => setVisiblePropertiesCount((prev) => Math.min(prev + itemsPerPage, filteredProperties.length))}
+                  isAutoPagerizeEnabled={isAutoPagerizeEnabled}
+                  onToggleAutoPagerize={(enabled) => {
+                    setIsAutoPagerizeEnabled(enabled);
+                    if (!enabled) {
+                      setCurrentPage(1);
+                    }
+                  }}
+                  unitLabel={isEn ? 'props' : '棟'}
+                  isEn={isEn}
+                />
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="text-slate-500 font-medium font-sans">
+                      {isEn ? 'Showing' : '表示中'}: <b>{(currentPage - 1) * itemsPerPage + 1}</b> - <b>{Math.min(currentPage * itemsPerPage, filteredProperties.length)}</b> / <b>{filteredProperties.length}</b> {isEn ? 'Properties' : '棟'}
+                    </span>
+                    <button
+                      onClick={() => setIsAutoPagerizeEnabled(true)}
+                      className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition flex items-center gap-1"
+                    >
+                      <span>⚡</span>
+                      <span>{isEn ? 'Switch to AutoPagerize' : 'AutoPagerizeに切替'}</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed font-bold transition shadow-2xs"
+                    >
+                      {isEn ? '← Prev' : '← 前へ'}
+                    </button>
+                    {Array.from({ length: Math.ceil(filteredProperties.length / itemsPerPage) }, (_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentPage(idx + 1)}
+                        className={`w-8 h-8 rounded-lg text-xs font-bold font-mono transition ${
+                          currentPage === idx + 1
+                            ? 'bg-teal-700 text-white shadow-xs'
+                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {idx + 1}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setCurrentPage(Math.min(Math.ceil(filteredProperties.length / itemsPerPage), currentPage + 1))}
+                      disabled={currentPage === Math.ceil(filteredProperties.length / itemsPerPage)}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed font-bold transition shadow-2xs"
+                    >
+                      {isEn ? 'Next →' : '次へ →'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

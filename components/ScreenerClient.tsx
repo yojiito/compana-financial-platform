@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { AutoPagerizeControl } from '@/components/AutoPagerizeControl';
 import {
   Filter,
   ArrowUpDown,
@@ -111,9 +112,11 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
   const [sortField, setSortField] = useState<SortField>('marketCap');
   const [sortAsc, setSortAsc] = useState<boolean>(false);
 
-  // ページネーション
+  // ページネーション & AutoPagerize
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(50);
+  const [isAutoPagerizeEnabled, setIsAutoPagerizeEnabled] = useState<boolean>(true);
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   const { isEn, t } = useLanguage();
 
@@ -194,12 +197,15 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
     });
   }, [filtered, sortField, sortAsc]);
 
-  // ページネーション計算
+  // ページネーション & AutoPagerize 計算
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const paginatedCompanies = useMemo(() => {
+    if (isAutoPagerizeEnabled) {
+      return sorted.slice(0, visibleCount);
+    }
     const start = (currentPage - 1) * pageSize;
     return sorted.slice(start, start + pageSize);
-  }, [sorted, currentPage, pageSize]);
+  }, [sorted, currentPage, pageSize, isAutoPagerizeEnabled, visibleCount]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -909,47 +915,74 @@ export default function ScreenerClient({ initialCompanies }: ScreenerClientProps
           </table>
         </div>
 
-        {/* ページネーション */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-slate-100 text-xs text-slate-500">
-          <div>
-            <span>
-              全 {sorted.length.toLocaleString()} 件中 {(currentPage - 1) * pageSize + 1} 〜 {Math.min(currentPage * pageSize, sorted.length)} 件を表示
-            </span>
-          </div>
+        {/* ⚡ AutoPagerize & ページネーション */}
+        <div className="pt-4 border-t border-slate-100">
+          {isAutoPagerizeEnabled ? (
+            <AutoPagerizeControl
+              currentLoadedCount={Math.min(visibleCount, sorted.length)}
+              totalCount={sorted.length}
+              itemsPerPage={pageSize}
+              onLoadMore={() => setVisibleCount((prev) => Math.min(prev + pageSize, sorted.length))}
+              isAutoPagerizeEnabled={isAutoPagerizeEnabled}
+              onToggleAutoPagerize={(enabled) => {
+                setIsAutoPagerizeEnabled(enabled);
+                if (!enabled) {
+                  setCurrentPage(1);
+                }
+              }}
+              unitLabel="社"
+              isEn={isEn}
+            />
+          ) : (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+              <div className="flex items-center gap-3">
+                <span>
+                  全 {sorted.length.toLocaleString()} 件中 {(currentPage - 1) * pageSize + 1} 〜 {Math.min(currentPage * pageSize, sorted.length)} 件を表示
+                </span>
+                <button
+                  onClick={() => setIsAutoPagerizeEnabled(true)}
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition flex items-center gap-1"
+                >
+                  <span>⚡</span>
+                  <span>AutoPagerizeに切替</span>
+                </button>
+              </div>
 
-          <div className="flex items-center gap-1 self-center sm:self-auto">
-            <button
-              onClick={() => setCurrentPage(1)}
-              disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="px-3 py-1 font-mono font-bold text-slate-900 bg-slate-50 rounded-lg border border-slate-200">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
-            >
-              <ChevronsRight className="w-4 h-4" />
-            </button>
-          </div>
+              <div className="flex items-center gap-1 self-center sm:self-auto">
+                <button
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="px-3 py-1 font-mono font-bold text-slate-900 bg-slate-50 rounded-lg border border-slate-200">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

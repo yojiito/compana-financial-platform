@@ -7,6 +7,7 @@ import {
   ReitData,
 } from '@/lib/reits-data';
 import { useLanguage } from '@/lib/language-context';
+import { AutoPagerizeControl } from '@/components/AutoPagerizeControl';
 import { getCompanyName, getReitPropertyName } from '@/lib/company-english-names';
 import {
   Building2,
@@ -116,6 +117,9 @@ export default function ReitsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'marketCap' | 'yield' | 'nav'>('marketCap');
+  const [isAutoPagerizeEnabled, setIsAutoPagerizeEnabled] = useState<boolean>(true);
+  const [visibleCount, setVisibleCount] = useState<number>(18);
+  const itemsPerPage = 18;
   const { isEn, t } = useLanguage();
 
   const categories = [
@@ -291,7 +295,7 @@ export default function ReitsPage() {
 
       {/* REITカードグリッド */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredReits.map((reit) => {
+        {(isAutoPagerizeEnabled ? filteredReits.slice(0, visibleCount) : filteredReits).map((reit) => {
           const displayReitName = getCompanyName(reit.tickerCode, reit.name, isEn);
           const displayCategory = isEn ? (CATEGORY_EN_MAP[reit.category] || reit.categoryLabel) : reit.categoryLabel;
           const displaySponsor = translateSponsorName(reit.tickerCode, reit.sponsor, isEn);
@@ -409,6 +413,20 @@ export default function ReitsPage() {
           );
         })}
       </div>
+
+      {/* ⚡ AutoPagerize コントロール */}
+      {filteredReits.length > itemsPerPage && (
+        <AutoPagerizeControl
+          currentLoadedCount={Math.min(visibleCount, filteredReits.length)}
+          totalCount={filteredReits.length}
+          itemsPerPage={itemsPerPage}
+          onLoadMore={() => setVisibleCount((prev) => Math.min(prev + itemsPerPage, filteredReits.length))}
+          isAutoPagerizeEnabled={isAutoPagerizeEnabled}
+          onToggleAutoPagerize={(enabled) => setIsAutoPagerizeEnabled(enabled)}
+          unitLabel="銘柄"
+          isEn={isEn}
+        />
+      )}
     </div>
   );
 }
